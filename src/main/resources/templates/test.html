@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../static/dist/test.css">
+    <script src="../static/lib/js/es6-promise.js"></script>
+    <script src="../static/dist/test.js"></script>
+    <script type="text/html" id="music-template">
+        <div></div>
+    </script>
+    <script id="magic-template" type="text/html">
+        <table>
+            <tbody name>
+            <tr>
+                <td>asdf</td>
+            </tr>
+            </tbody>
+        </table>
+    </script>
+</head>
+<body>
+
+<form>
+    <div class="form-group">
+        <label for="name">name</label>
+        <input id="name" class="form-control" name="name" required data-placeholder="퍽큐">
+    </div>
+    <div class="form-group">
+        <label for="number">number</label>
+        <input id="number" class="form-control" type="number" name="number">
+    </div>
+    <div class="form-group">
+        <div class="form-check-inline">
+            <input id="check1" class="form-check-input" type="checkbox" value="check1" name="check">
+            <label class="form-check-label" for="check1">check1</label>
+        </div>
+        <div class="form-check-inline">
+            <input id="check2" class="form-check-input" type="checkbox" value="check2" name="check">
+            <label class="form-check-label" for="check2">check2</label>
+        </div>
+        <div class="form-check-inline">
+            <input id="check3" class="form-check-input" type="checkbox" value="check3" name="check">
+            <label class="form-check-label" for="check3">check3</label>
+        </div>
+        <div class="form-check-inline">
+            <input id="check4" class="form-check-input" type="checkbox" value="check4" name="check">
+            <label class="form-check-label" for="check4">check4</label>
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <div class="form-check-inline">
+            <input id="radio1" class="form-check-input" type="checkbox" value="radio1" name="check">
+            <label class="form-check-label" for="radio1">radio1</label>
+        </div>
+        <div class="form-check-inline">
+            <input id="radio2" class="form-check-input" type="checkbox" value="radio2" name="check">
+            <label class="form-check-label" for="radio2">radio2</label>
+        </div>
+        <div class="form-check-inline">
+            <input id="radio3" class="form-check-input" type="checkbox" value="radio3" name="check">
+            <label class="form-check-label" for="radio3">radio3</label>
+        </div>
+        <div class="form-check-inline">
+            <input id="radio4" class="form-check-input" type="checkbox" value="radio4" name="check">
+            <label class="form-check-label" for="radio4">radio4</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="select">select</label>
+        <select id="select" class="custom-select" name="select" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="textarea">textarea</label>
+        <textarea name="textarea" class="form-control" id="textarea"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="file">file</label>
+        <input type="file" id="file" name="file">
+    </div>
+
+    <div class="form-group">
+        <label for="file-multi">file-multi</label>
+        <input type="file" id="file-multi" name="file-multi" multiple>
+    </div>
+</form>
+
+<input id="input1">
+<input id="input2">
+<button id="button">run</button>
+<button id="form-button">form</button>
+<main></main>
+
+
+</body>
+</html>

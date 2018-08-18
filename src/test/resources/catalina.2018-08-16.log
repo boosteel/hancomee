@@ -1,0 +1,20 @@
+16-Aug-2018 20:41:08.895 정보 [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/i386:/lib:/usr/lib
+16-Aug-2018 20:41:09.047 정보 [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-9061"]
+16-Aug-2018 20:41:09.066 정보 [main] org.apache.tomcat.util.net.NioSelectorPool.getSharedSelector Using a shared selector for servlet write/read
+16-Aug-2018 20:41:09.067 정보 [main] org.apache.catalina.startup.Catalina.load Initialization processed in 600 ms
+16-Aug-2018 20:41:09.090 정보 [main] org.apache.catalina.core.StandardService.startInternal Starting service boosteel
+16-Aug-2018 20:41:09.090 정보 [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet Engine: Apache Tomcat/8.0.50
+16-Aug-2018 20:41:09.101 정보 [boosteel.com-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory /home/hosting_users/boosteel/tomcat/webapps/host-manager
+16-Aug-2018 20:41:09.616 정보 [boosteel.com-startStop-1] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+16-Aug-2018 20:41:12.418 경고 [boosteel.com-startStop-1] org.apache.catalina.util.SessionIdGeneratorBase.createSecureRandom Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [2,798] milliseconds.
+16-Aug-2018 20:41:12.439 정보 [boosteel.com-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory /home/hosting_users/boosteel/tomcat/webapps/host-manager has finished in 3,338 ms
+16-Aug-2018 20:41:12.439 정보 [boosteel.com-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory /home/hosting_users/boosteel/tomcat/webapps/ROOT
+16-Aug-2018 20:41:14.071 정보 [boosteel.com-startStop-1] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+16-Aug-2018 20:41:14.175 정보 [boosteel.com-startStop-1] org.apache.catalina.core.ApplicationContext.log 2 Spring WebApplicationInitializers detected on classpath
+16-Aug-2018 20:41:16.549 정보 [boosteel.com-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring embedded WebApplicationContext
+16-Aug-2018 20:41:17.947 정보 [boosteel.com-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory /home/hosting_users/boosteel/tomcat/webapps/ROOT has finished in 5,508 ms
+16-Aug-2018 20:41:17.947 정보 [boosteel.com-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory /home/hosting_users/boosteel/tomcat/webapps/manager
+16-Aug-2018 20:41:18.093 정보 [boosteel.com-startStop-1] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+16-Aug-2018 20:41:18.094 정보 [boosteel.com-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory /home/hosting_users/boosteel/tomcat/webapps/manager has finished in 147 ms
+16-Aug-2018 20:41:18.096 정보 [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-9061"]
+16-Aug-2018 20:41:18.101 정보 [main] org.apache.catalina.startup.Catalina.start Server startup in 9033 ms

@@ -1,0 +1,7 @@
+Connection: keep-alive
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,und;q=0.6
+Cookie: rxx=2cfggmutfcd.17n81yp4&v=1; _ga=GA1.2.581239314.1533393091; _gid=GA1.2.813332142.1533393091; __utma=189990958.581239314.1533393091.1533393091.1533393091.1; __utmb=189990958.0.10.1533393091; __utmc=189990958; __utmz=189990958.1533393091.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); tmgioct=5b65bdc2595f070207090030

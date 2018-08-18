@@ -1,0 +1,35 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    //"allowJs": true,    // js도 import할 수 있게
+    "target": "es5",
+    "module": "amd",
+    "moduleResolution": "classic",
+    "sourceMap": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": false,
+
+    /*
+     *  @types 규칙이 있다.
+     *  @types 하위 폴더안 index.d.ts를 자동으로의 읽어들인다.
+     */
+    //"typeRoots": ["./node_modules/@types", "./node_modules/hellofunc-ts/@types"],
+
+    "baseUrl": "D:/programing/web/", // paths는 반드시 baseUrl을 설정해야 한다.
+
+    "paths": {
+      "jquery": ["./node_modules/jquery/dist/jquery"],
+      "angular": ["./node_modules/angular/angular"]
+    }
+  },
+  "include": [
+    "web-resources"
+  ],
+  "exclude": [
+    "node_modules",
+    "target",
+    "src"
+  ]
+}

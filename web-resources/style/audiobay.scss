@@ -1,0 +1,145 @@
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+
+
+body {
+  padding: {
+    bottom: 150px;
+  }
+  font-family: 'Nanum Gothic';
+  letter-spacing: -.01em;
+}
+
+a {
+  &:hover, &:link, &:visited {
+    text-decoration: none;
+  }
+}
+
+.loading {
+  opacity: .28;
+}
+
+.time-count {
+  display: block;
+  width: 30px;
+  color: #ffd226;
+  font-size: 26px;
+  font-weight: bold;
+  font-family: tahoma;
+  text-align: center;
+}
+
+.header {
+  border-bottom: 1px solid #b3b3b3;
+  margin: {
+    bottom: 10px;
+    top: 30px;
+  }
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: -1.5px;
+
+  > a {
+    color: #b95e5e;
+  }
+}
+
+#search {
+  width: 30%;
+}
+
+ul.data {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+
+    position: relative;
+    padding: {
+      left: 0px;
+    }
+
+    &:hover {
+      background-color: #f8f8f8;
+    }
+
+    i {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 3px;
+      width: 35px;
+      text-align: right;
+      color: #999;
+
+      &.hit {
+        color: #ce1616;
+      }
+    }
+    span {
+      $size: 27px;
+
+      display: block;
+      overflow: hidden;
+      height: $size;
+      line-height: $size;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      > a {
+
+        color: #646464;
+        font-size: 15px;
+
+        &:hover {
+          text-decoration: none;
+          color: #111;
+        }
+      }
+
+      &.catch {
+        > a {
+          color: #ca1717;
+          > b {
+            background-color: #fff62c;
+          }
+        }
+      }
+    }
+
+    &.sold-out {
+      opacity: .4;
+    }
+
+    &.new {
+      span:before {
+        display: block;
+        content: '';
+        border-radius: 50%;
+        background-color: red;
+        width: 4px;
+        height: 4px;
+        position: absolute;
+        top: 13px;
+        margin-left: -9px;
+      }
+    }
+  }
+}
+
+
+@media only screen and (min-width:1004px) {
+
+  ul.data {
+    li {
+      padding: {
+        left: 50px;
+      }
+      i {
+        display: block;
+      }
+    }
+  }
+}

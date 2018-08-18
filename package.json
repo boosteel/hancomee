@@ -1,0 +1,35 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "description": "hello hello func",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "hellofunc",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jquery": "^2.0.48",
+    "angular": "^1.6.4",
+    "bootstrap-sass": "^3.3.7",
+    "css-loader": "^0.28.5",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^3.1.0",
+    "gulp-typescript": "^3.1.4",
+    "jquery": "^2.2.4",
+    "node-sass": "^4.5.3",
+    "postcss-loader": "^2.0.6",
+    "reflect-metadata": "^0.1.10",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "ts-loader": "^2.3.3",
+    "typescript": "^2.6.2",
+    "uglifyjs-webpack-plugin": "^0.4.6",
+    "webpack": "^3.5.5",
+    "webpack-typescript": "^0.5.6"
+  },
+  "dependencies": {
+    "@types/es6-promise": "0.0.33"
+  }
+}
