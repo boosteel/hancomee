@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 14);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -189,6 +189,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
     exports.extend = extend;
     function _extend(dest, source) {
+        if (source == null)
+            return dest;
         if (isArrayLike(source)) {
             var i = 0, l = source.length;
             for (; i < l; i++) {
@@ -504,6 +506,73 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Created by hellofunc on 2017-03-01.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Access;
+    (function (Access) {
+        // dot으로 구분된 프로퍼티 읽어오기
+        Access.read = (function () {
+            function ___read(prop, data) {
+                var value = data[prop];
+                return typeof value === 'function' ? value.call(data) : value;
+            }
+            return function (prop, data, nullSafeVal) {
+                if (nullSafeVal === void 0) { nullSafeVal = null; }
+                var props = prop.split(/\./), i = 0, l = props.length, result = data;
+                for (; i < l; i++) {
+                    result = ___read(props[i], result);
+                    if (result == null)
+                        return nullSafeVal;
+                }
+                return Access.primitive(result);
+            };
+        })();
+        Access.primitive = (function () {
+            var r_number = /^\d+$/, r_boolean = /^true$|^false$/, r_string = /^['"][^"']+['"]$/, r_date = /^\d{4}-\d{2}-\d{2}$|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/, r_string_replace = /["']/g;
+            return function (val) {
+                if (typeof val === 'string' && val.length > 0) {
+                    if (r_number.test(val))
+                        return parseInt(val);
+                    if (r_boolean.test(val))
+                        return val === 'true';
+                    if (r_string.test(val))
+                        return val.replace(r_string_replace, '');
+                    if (r_date.test(val))
+                        return new Date(val);
+                }
+                return val;
+            };
+        })();
+        function access(target, _props, val, force) {
+            var props = _props.split(/\./), len = props.length - 1, obj = target, temp, i = 0;
+            for (; obj != null && i < len; i++) {
+                temp = obj[props[i]];
+                if (temp == null && force)
+                    temp = obj[props[i]] = {};
+                obj = temp;
+            }
+            // [1] getter
+            if (arguments.length === 2)
+                return obj != null ? obj[props[i]] : obj;
+            // [2] setter
+            obj != null && (obj[props[i]] = val);
+            return target;
+        }
+        Access.access = access;
+    })(Access = exports.Access || (exports.Access = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 4 */,
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * Created by hellofunc on 2017-02-28.
  */
 var __extends = (this && this.__extends) || (function () {
@@ -516,7 +585,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(2), __webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, NameMap_1, arrays_1, core_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(7), __webpack_require__(2), __webpack_require__(0), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, NameMap_1, arrays_1, core_1, access_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Events = /** @class */ (function () {
@@ -557,14 +626,21 @@ var __extends = (this && this.__extends) || (function () {
     exports.Events = Events;
     var EventsGroup = /** @class */ (function () {
         function EventsGroup() {
-            this.isActive = false;
+            this.isActive = true;
             this.map = new NameMap_1.NameMap();
         }
         EventsGroup.prototype.register = function (element, type, handler) {
-            if (typeof type === 'string')
-                this.map.add(type, new Events(element, type.split(/\./)[0], handler));
-            else
+            if (typeof type === 'string') {
+                var e = new Events(element, type.split(/\./)[0], handler);
+                if (!this.isActive)
+                    e.off();
+                this.map.add(type, e);
+            }
+            else {
+                if (!this.isActive)
+                    element.off();
                 this.map.add(element.type, element);
+            }
             return this;
         };
         EventsGroup.prototype.on = function (n) {
@@ -618,6 +694,7 @@ var __extends = (this && this.__extends) || (function () {
     }());
     exports.TargetEvent = TargetEvent;
     (function (Events) {
+        var primitive = access_1.Access.primitive;
         function closest(target, selector, ele) {
             var list = target.querySelectorAll(selector), l = list.length;
             while (l-- > 0)
@@ -776,6 +853,52 @@ var __extends = (this && this.__extends) || (function () {
             });
         }
         Events.eventWorks = eventWorks;
+        /*
+         *  event가 발생하면 target 엘리먼트부터 상위엘리먼트로 올라가면서
+         *  어트리뷰트를 읽어 데이터맵을 만들어준다.
+         */
+        function read(target, limit, obj) {
+            var event, n, v, vv, fn;
+            while (target && limit !== target) {
+                if (event == null) {
+                    if (event = target.getAttribute('data-event')) {
+                        if (typeof obj['setTarget'] === 'function')
+                            obj['setTarget'](target);
+                        else
+                            obj.target = target;
+                    }
+                }
+                // target 자체를
+                if (v = target.getAttribute('data-self')) {
+                    // set{Value}()가 있으면 거기에 넣어준다.
+                    if (typeof (fn = obj['set' + v[0].toUpperCase() + v.slice(1)]) === 'function')
+                        fn(target);
+                    else
+                        obj[v] = target;
+                }
+                // property 이름
+                if (v = target.getAttribute('data-property')) {
+                    // 값
+                    if (vv = target.getAttribute('data-value')) {
+                        // set{Value}()가 있으면 거기에 넣어준다.
+                        if (typeof (fn = obj['set' + v[0].toUpperCase() + v.slice(1)]) === 'function')
+                            fn(primitive(vv));
+                        else
+                            obj[v] = primitive(vv);
+                    }
+                }
+                target = target.parentElement;
+            }
+            return event;
+        }
+        // 데이터가 있을때만
+        function propertyMap(target, type, handlers, factory) {
+            return new Events(target, type, function (e) {
+                var obj = factory ? new factory(e) : {}, p = read(e.target, target, obj);
+                handlers[p] && handlers[p](obj, e);
+            });
+        }
+        Events.propertyMap = propertyMap;
     })(Events = exports.Events || (exports.Events = {}));
     exports.Events = Events;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -783,9 +906,8 @@ var __extends = (this && this.__extends) || (function () {
 
 
 /***/ }),
-/* 4 */,
-/* 5 */,
-/* 6 */
+/* 6 */,
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
@@ -833,14 +955,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 7 */,
 /* 8 */,
 /* 9 */,
 /* 10 */,
-/* 11 */
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, events_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, events_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var MediaController = /** @class */ (function () {

@@ -1,7 +1,7 @@
 import {getFunctionName} from "./core";
 import {DOM} from "./dom";
 import {Arrays} from "./arrays";
-import {Strings} from "./strings";
+import {HTML} from "./html";
 
 type WatchAll = () => void
 type Watch = (newVal, oldVal) => void
@@ -136,7 +136,7 @@ export function Template<T extends Template>(name?, directives?) {
 
 export namespace Template {
 
-    import unCamelCase = Strings.unCamelCase;
+    import unCamelCase = HTML.unCamelCase;
     let PRIVATE_KEY = "_____object_____";
 
     export let default_directive = {};

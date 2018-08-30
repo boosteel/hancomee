@@ -26,10 +26,6 @@ public class AnyTest {
     @Test
     public void test() throws Exception {
 
-
-        NaverCafe nc = new NaverCafe();
-        out(nc.info("joonggonara"));
-
     }
 
     private void getter(String bo_table, int page) throws Exception {

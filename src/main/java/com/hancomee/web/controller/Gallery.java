@@ -2,6 +2,7 @@ package com.hancomee.web.controller;
 
 import com.hancomee.util.DB;
 import com.hancomee.util.SQL;
+import com.hancomee.web.controller.support.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +24,9 @@ public class Gallery {
 
     @RequestMapping("values")
     @ResponseBody
-    public Values values(Query query) throws Exception {
+    public PageRequest values(Query query) throws Exception {
         String[] sql = query.SQL();
-        return new Values(
+        return new PageRequest(
                 db.execute(sql[0], (rs) -> SQL.readAll(rs)),
                 db.execute(sql[1], (rs) -> rs.getLong(1)),
                 query.page,
@@ -199,18 +200,4 @@ public class Gallery {
 
     }
 
-    static class Values {
-        public List<Map<String, Object>> values;
-        public long count;
-        public long totalPages;
-        public int page;
-
-        Values(List<Map<String, Object>> values, long count, int page, int size) {
-            this.values = values;
-            this.count = count;
-            totalPages = count / size;
-            if(count % size != 0) totalPages++;
-            this.page = page;
-        }
-    }
 }

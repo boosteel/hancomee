@@ -1,7 +1,8 @@
+import {Access} from "./access";
+
 /**
  * Created by hellofunc on 2017-03-01.
  */
-import {_access} from './access';
 
 export namespace Formats {
 
@@ -11,7 +12,7 @@ export namespace Formats {
         let v;
         if (val == null) return str;
         return str.replace(rr, function (_, prop) {
-            v = _access(val, prop);
+            v = Access.access(val, prop);
             return v == null ? '' : v;
         });
     }

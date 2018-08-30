@@ -1,0 +1,103 @@
+
+@import "./lib/animation/fade-page";
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+table {
+  border-collapse: collapse;
+  > tbody {
+    > tr {
+      >td {
+        border: 1px solid black;
+      }
+    }
+  }
+}
+
+.line {
+  width: 500px;
+  height: 0.2mm;
+  background-color: black;
+}
+
+.dot {
+  width: 500px;
+  height: 1px;
+  background: {
+    image: url("../img/dot_12.png");
+    repeat: repeat-x;
+  }
+}
+
+
+.test {
+  position: absolute;
+  width: 800px;
+  height: 1200px;
+}
+
+.test1 {
+  background-color: orange;
+}
+.test2{
+  background-color: purple;
+}
+
+.page-in {
+  @extend %page-in;
+}
+
+.page-out {
+  @extend %page-out;
+}
+
+@media print{
+
+  -webkit-print-color-adjust: exact;
+
+  @page {
+    width: 21cm;
+    height: 29.7cm;
+
+  }
+
+  body {
+    margin: 2cm;
+  }
+  table {
+    border-collapse: collapse;
+    > tbody {
+      > tr {
+        >td {
+          width: 100mm;
+          height: 100mm;
+          border:  0.12mm solid black;
+        }
+      }
+    }
+  }
+}
+
+
+ul {
+
+  padding: 0;
+  margin: 0;
+
+  &, li {
+    display: flex;
+    list-style: none;
+  }
+
+  li {
+    overflow: hidden;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-basis: 100px;
+    background-color: #ddd;
+    border: 1px solid #aaa;
+
+    > span {
+      border: 1px solid #999;
+    }
+  }
+}

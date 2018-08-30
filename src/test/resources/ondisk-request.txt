@@ -1,0 +1,5 @@
+Cookie: _ga=GA1.3.890836628.1534756193; _gid=GA1.3.418381580.1534756193; _e_charge9=done; PCID=15347585098277147135228; Intro_domain_chk=ondisk.co.kr; keep_query_string=%2Findex.php%3F; charge=no; mid=76d2314897a16d2314897a36d2314897a96d2314897a85d2314897a75d2314897a96d2314897a56d2314897a35d2314897a65d2314897aa5d2314897a; UID=koreanmagic; nick=%B1%E8%B9%CE%B1%B82; join_path=main; mp_info2=y; adult=1; cmn_cash=0; bns_cash=0; coupon=0; Lidx=%241%24.wemFI28%24zotCX6xW6VAH69NknTr3Q.; SCkey=NzZkMjMxNDg5N2ExNmQyMzE0ODk3YTM2ZDIzMTQ4OTdhOTZkMjMxNDg5N2E4NWQyMzE0ODk3YTc1ZDIzMTQ4OTdhOTZkMjMxNDg5N2E1NmQyMzE0ODk3YTM1ZDIzMTQ4OTdhNjVkMjMxNDg5N2FhNWQyMzE0ODk3YXwlQjElRTglQjklQ0UlQjElQjgyfDE%253D; popup_guide=false; _gat=1; prev_keyword=%25ED%258E%25A8%25EB%258F%2594; sendId=Y
+Host: fast.ondisk.co.kr
+Referer: http://fast.ondisk.co.kr/?list_row=20&sub_category=&hid_adult=N&fixed_view=N&sort_type=default&category=ALL&search_column=title&search=%ED%8E%A8%EB%8F%94
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36
+X-Requested-With: XMLHttpRequest

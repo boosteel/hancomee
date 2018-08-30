@@ -1,0 +1,1 @@
+npm install --save-dev html-es6-template-loader

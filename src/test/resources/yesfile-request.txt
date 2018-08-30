@@ -1,0 +1,5 @@
+Cookie: PHPSESSID=97bpac0p7hl2c3r8mvp0kbrv74; filecity_ref=https%3A%2F%2Fsearch.naver.com%2Fsearch.naver%3Fwhere%3Dnexearch%26sm%3Dtop_hty%26fbm%3D0%26ie%3Dutf8%26query%3D%25EC%2598%2588%25EC%258A%25A4%25ED%258C%258C%25EC%259D%25BC; count_index=1; yesfile_hj_log=main; chkjoin=1; alarm_memo=1; Nnum=1; lately_keyword=%uB300%uB538%7Cfa%7C%uC740%uAF34%7C%uAD6D%uC0B0%7C%uB4A4%uCE58%uAE30
+Host: www.yesfile.com
+Referer: https://www.yesfile.com/board/list.php?t_search_value2=&board_sel=all&sec=13&t_search_code=BD_AD&oneself=yes&cate_data_str=&keyword_save=Y&promotion_event_go=N&promotion_event_search_check=Y&t_search_value=%B4%EB%B5%FE
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36
+X-Requested-With: XMLHttpRequest

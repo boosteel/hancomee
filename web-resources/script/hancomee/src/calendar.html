@@ -1,0 +1,21 @@
+<script id="data" type="text/html">
+    <div class="content">
+        <div class="type type-{{type}}">{{typeName}}</div>
+        <div class="title">
+            <span data-handler="view" data-handler-value="{{id}}">{{title}}</span>
+        </div>
+    </div>
+</script>
+
+<script id="cell" type="text/html">
+    <div class="calendar-cell{{class}}" data-col="{{index}}">
+        <span class="number" data-handler="add" data-handler-value="{{isodate}}">{{num}}</span>
+        <div id="date-{{isodate}}" class="contents">{{html}}</div>
+    </div>
+</script>
+
+
+<script id="type" type="text/html">
+    <input type="radio" name="type" class="form-check-input" id="type-{{i}}">
+    <label class="form-check-label" for="type-{{i}}">{{name}}</label>
+</script>

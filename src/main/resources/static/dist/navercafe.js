@@ -60,11 +60,12 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 20);
+/******/ 	return __webpack_require__(__webpack_require__.s = 30);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -189,6 +190,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
     exports.extend = extend;
     function _extend(dest, source) {
+        if (source == null)
+            return dest;
         if (isArrayLike(source)) {
             var i = 0, l = source.length;
             for (; i < l; i++) {
@@ -348,7 +351,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-/* 1 */
+
+/***/ 1:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -560,7 +564,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 2 */
+
+/***/ 2:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -711,11 +716,424 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 3 */,
-/* 4 */
+
+/***/ 21:
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, dom_1, arrays_1, strings_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var CountLoop = /** @class */ (function () {
+        function CountLoop(time, handler) {
+            var _this = this;
+            this.time = time;
+            this.handler = handler;
+            this._isActive = false;
+            this._count = 0;
+            this._handler = function () { return _this.run(); };
+        }
+        CountLoop.prototype.start = function () {
+            if (!this._isActive) {
+                this._index = setTimeout(this._handler, this.time);
+                this._isActive = true;
+            }
+            return this;
+        };
+        CountLoop.prototype.stop = function () {
+            if (this._isActive) {
+                clearTimeout(this._index);
+                this._isActive = false;
+            }
+            this._count = 0;
+            return this;
+        };
+        CountLoop.prototype.run = function () {
+            this.handler(++this._count, this);
+            // handler중에 stop()이 호출됐을수도 있다.
+            if (this._isActive)
+                this._index = setTimeout(this._handler, this.time);
+        };
+        return CountLoop;
+    }());
+    exports.CountLoop = CountLoop;
+    /*
+     *  setTimeout()
+     */
+    var Loop;
+    (function (Loop) {
+        function _timeloop(handler, time) {
+            var count = 1, index = -1, dispatcher = function () {
+                if (handler(count++) === false)
+                    clearTimeout(index);
+                else
+                    loop();
+            }, loop = function () { return index = setTimeout(dispatcher, time); };
+            loop();
+        }
+        function countLoop(handler, time, count) {
+        }
+        Loop.countLoop = countLoop;
+    })(Loop = exports.Loop || (exports.Loop = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 30:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(21), __webpack_require__(8), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, loop_1, template_1, dom_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var className = dom_1.DOM.className;
+    var $$resolve = Promise.resolve(), filter = (function (key) {
+        return key ? new RegExp(key, 'gi') : null;
+    })(decodeURIComponent(location.search.replace(/^\?/, '')));
+    var Data = /** @class */ (function () {
+        function Data(config) {
+            this.config = config;
+            this.xhr = new XMLHttpRequest();
+            this.loading = false;
+            this._resolve = $$resolve;
+            this.checks = [];
+            this.values = [];
+        }
+        Data.prototype.refresh = function () {
+            var _this = this;
+            if (this.loading)
+                return this._resolve;
+            className(this.$template, ['loading'], true);
+            return this._resolve = new Promise(function (o, x) {
+                var xhr = _this.xhr;
+                _this.loading = true;
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) {
+                        if (xhr.status == 200) {
+                            _this.values = JSON.parse(xhr.responseText);
+                            className(_this.$template, ['loading'], false);
+                            _this.apply();
+                            _this.loading = false;
+                            _this.checks = _this.values.map(function (s) { return s.url; });
+                        }
+                        o();
+                    }
+                };
+                xhr.open('GET', _this.config.url, true);
+                xhr.send(null);
+            });
+        };
+        Data.prototype.apply = function () {
+            return this;
+        };
+        Data = __decorate([
+            template_1.Template({
+                ul: function (ele, attrs, data) {
+                    return function () {
+                        var values = data.values, checks = data.checks, v, title, html = [], i = 0, l = 20;
+                        for (; i < l; i++) {
+                            if (v = values[i]) {
+                                var classes = [], ii = 0;
+                                if (v.soldout)
+                                    classes[ii++] = 'sold-out';
+                                if (checks.length && checks.indexOf(v.url) === -1)
+                                    classes[ii++] = 'new';
+                                if (filter && filter.test(v.title)) {
+                                    title = '<span class="catch"><a href="' + v.url + '" target="_blank">' +
+                                        v.title.replace(filter, function (a) { return '<b>' + a + '</b>'; }) +
+                                        '</a></span></li>';
+                                }
+                                else {
+                                    title = '<span><a href="' + v.url + '" target="_blank">' + v.title + '</a></span></li>';
+                                }
+                                html[i] = '<li' + (classes.length ? ' class="' + classes.join(' ') + '"' : '') + '>' +
+                                    (v.count > 200 ? '<i class="hit">' + v.count + '</i>' : '<i>' + v.count + '</i>') +
+                                    title;
+                            }
+                            else
+                                html[i] = '<li><i></i><a></a></li>';
+                        }
+                        ele.innerHTML = html.join('');
+                    };
+                },
+                a: function (ele, attrs, data) {
+                    ele.href = data.config.link;
+                    ele.textContent = data.config.name;
+                }
+            }),
+            __metadata("design:paramtypes", [Object])
+        ], Data);
+        return Data;
+    }());
+    core_1.$ready(function () {
+        var container = document.querySelector('.row'), t = document.querySelector('.time-count'), xhr = new XMLHttpRequest(), id = /navercafe\/([^\/]+)/.exec(location.pathname)[1], value = decodeURIComponent(location.search.replace(/^\?/, '')), values = value ? value.split(/,/) : [];
+        xhr.open('GET', '/navercafe/data/info?id=' + id, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    var r_1 = JSON.parse(xhr.responseText), anchor = document.querySelector('.navbar-brand'), list_1 = values.filter(function (l) { return !!l; }).map(function (l) {
+                        l = l.trim();
+                        var d = new Data({ name: l, link: '',
+                            url: '/navercafe/data/list?id=' + r_1.id +
+                                '&name=' + r_1.url + '&searchBy=1&page=1&word=' + l });
+                        container.appendChild(d.$template);
+                        return d;
+                    }), loop_2 = new loop_1.CountLoop(1000, function (count, loop) {
+                        t.textContent = (30 - count).toString();
+                        if (count == 30) {
+                            loop.stop();
+                            $refresh_1();
+                        }
+                    }), $refresh_1 = function () { return Promise.all(list_1.map(function (l) { return l.refresh(); })).then(function () { return loop_2.start(); }); };
+                    document.title = r_1.name;
+                    anchor.textContent = r_1.name + ' 검색';
+                    anchor.target = '_blank';
+                    anchor.href = 'http://cafe.naver.com/' + r_1.url;
+                    $refresh_1();
+                }
+            }
+        };
+        xhr.send(null);
+    });
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 4:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var HTML;
+    (function (HTML) {
+        HTML.unCamelCase = (function (r_data, r_up, fn) {
+            return function (s) { return s.replace(r_data, '').replace(r_up, fn); };
+        })(/^data-/, /-([^-])/g, function (_, i) { return i.toUpperCase(); });
+        var r = /{{(.*?)}}/g, r_compile_test = /{{[^{}]+}}/;
+        function replaceHTML(str, obj) {
+            return str.replace(r, function (_, p) {
+                return obj[p] == null ? '' : obj[p];
+            });
+        }
+        HTML.replaceHTML = replaceHTML;
+        function compile(str) {
+            if (!r_compile_test.test(str))
+                return function () { return str; };
+            var i = 0, l = str.length, s = 0, e = 0, array = [];
+            var _loop_1 = function () {
+                if ((s = str.indexOf('{{', i)) !== -1) {
+                    var $v_1 = str.substring(i, s);
+                    array.push(function () { return $v_1; });
+                    e = str.indexOf('}}', s += 2);
+                    // _를 가지고 있을때만 Function 생성
+                    var ss_1 = str.substring(s, e), $fn = ss_1.indexOf('_') === -1 ?
+                        function (obj) { return obj[ss_1] == null ? '' : obj[ss_1]; } :
+                        new Function('_', 'return ' + ss_1 + ';');
+                    array.push($fn);
+                    i = e + 2;
+                }
+                else {
+                    var $v_2 = str.substring(i, l);
+                    array.push(function () { return $v_2; });
+                    i = l;
+                }
+            };
+            while (i !== l) {
+                _loop_1();
+            }
+            l = array.length;
+            return function (obj) {
+                var i = 0, result = [];
+                while (i < l) {
+                    result[i] = array[i++](obj);
+                }
+                return result.join('');
+            };
+        }
+        HTML.compile = compile;
+        var r_ease = /^\/+|\/+$/, r_split = /\//, template = '<li data-active="false">' +
+            '<i data-child="{{!!_.childs}}">&gt;</i>' +
+            '<a href="{{href}}">{{name}}</a>' +
+            '{{_.childs ? "<ul>" + _.childs + "</ul>" : ""}}' +
+            '</li>';
+        function a(str, obj) {
+            if (obj === void 0) { obj = {}; }
+            var s = str.replace(r_ease, '').split(r_split), i = 0, l = s.length, v;
+            for (; i < l; i++) {
+                obj = (obj[(v = s[i])] || (obj[v] = {}));
+            }
+        }
+        function toObject(list, obj) {
+            if (obj === void 0) { obj = {}; }
+            if (typeof list === 'string')
+                a(list, obj);
+            else {
+                var l = list.length;
+                while (l-- > 0)
+                    a(list[l], obj);
+            }
+            return obj;
+        }
+        HTML.toObject = toObject;
+        function $createHTML($com, obj, name, url) {
+            if (obj == null)
+                return '';
+            var p, c, array = [];
+            for (p in obj) {
+                if (c = $createHTML($com, obj[p], p, (url ? url + '/' + p : p)))
+                    array.push(c);
+            }
+            return $com({ href: url, name: name, childs: array.join('') });
+        }
+        function createTree(values, html, rootName) {
+            if (html === void 0) { html = template; }
+            if (rootName === void 0) { rootName = 'root'; }
+            var c = document.createElement('div');
+            c.innerHTML = '<ul>' + $createHTML(compile(html), toObject(values), rootName, '') + '</ul>';
+            c = c.firstElementChild;
+            // <a> 엘리먼트들을 미리 땡겨놓는다.
+            var anchors = c.querySelectorAll('a[href]'), ctrl = {
+                element: c,
+                active: function (path) {
+                    var l = anchors.length, anchor;
+                    while (l-- > 0) {
+                        anchor = anchors[l];
+                        if (path.indexOf(anchor.getAttribute('href')) === 0) {
+                            anchor.parentElement.setAttribute('data-active', 'true');
+                        }
+                        else {
+                            anchor.parentElement.setAttribute('data-active', 'false');
+                        }
+                    }
+                },
+                handler: null
+            };
+            c.addEventListener('click', function (e) {
+                var target = e.target;
+                if (target['href']) {
+                    ctrl.handler && ctrl.handler(target.getAttribute('href'), e);
+                    e.preventDefault();
+                }
+                else if (/i/i.test(target.tagName)) {
+                    var p = target.parentElement;
+                    p.setAttribute('data-active', p.getAttribute('data-active') === 'true' ? 'false' : 'true');
+                }
+            });
+            return ctrl;
+        }
+        HTML.createTree = createTree;
+        function createChildren(html) {
+            var div = document.createElement('div'), children, l, i = 0, pos = 0, c, array = [];
+            div.innerHTML = html;
+            children = div.children;
+            l = children.length;
+            while (i < l) {
+                if ((c = children[i++]) && c.nodeType === 1) {
+                    array[pos++] = c;
+                }
+            }
+            return array;
+        }
+        function create(html, handler) {
+            var children = createChildren(html), l, i;
+            if (typeof handler !== 'function')
+                return children;
+            if (l = children.length) {
+                i = 0;
+                while (i < l)
+                    handler(children[i], i++);
+            }
+        }
+        HTML.create = create;
+        function createFragment(html) {
+            var frag = document.createDocumentFragment();
+            if (typeof html === 'string')
+                create(html, function (v) { return frag.appendChild(v); });
+            else {
+                var l = html.length;
+                while (l-- > 0)
+                    frag.insertBefore(html[l], frag.firstChild);
+            }
+            return frag;
+        }
+        HTML.createFragment = createFragment;
+        var r_script = /script/i, r_template = /template/i;
+        function templateMap(html) {
+            var result = { doc: {}, com: {} }, array = createChildren(html), l = array.length, e;
+            while (l-- > 0) {
+                e = array[l];
+                if (e.id) {
+                    if (r_script.test(e.tagName)) {
+                        e.type.indexOf('html') !== -1 && (result.com[e.id] = compile(e.innerText));
+                    }
+                    if (r_template.test(e.tagName))
+                        (result.doc[e.id] = createFragment(e.children));
+                }
+            }
+            return result;
+        }
+        HTML.templateMap = templateMap;
+        /*
+         *   TO DO
+         *   태그만 골라낸다.
+         *   textNode부분은 더 작업해야 한다.
+         */
+        function htmlParser(html) {
+            var pos = 0, lines = [], linesIndex = -1, stack = [], stackIndex = -1;
+            while ((pos = html.indexOf('<', pos)) !== -1) {
+                var l = html.indexOf('>', pos) + 1, line = html.substring(pos, l); // <...>
+                // ① 시작 태그
+                if (html[pos + 1] !== '/') {
+                    var t = pos += 1, tagName = void 0;
+                    // tagName 골라내기
+                    while (t < l && html[++t] !== '/' && html[t] !== ' ' && html[t] !== '>')
+                        ;
+                    tagName = lines[++linesIndex] = html.substring(pos, t);
+                    stack[++stackIndex] = line;
+                }
+                // ② 끝 태그
+                else {
+                    var t = pos += 2, tagName = void 0;
+                    // tagName 골라내기
+                    while (t < l && html[++t] !== ' ' && html[t] !== '>')
+                        ;
+                    tagName = html.substring(pos, t);
+                    while (linesIndex > -1 && lines[linesIndex] !== tagName) {
+                        // 닫는 태그가 없는 엘리먼트들이 여기에 걸린다.
+                        linesIndex--;
+                        console.log('-' + stack[stackIndex--]);
+                    }
+                    linesIndex--;
+                    console.log(stack[stackIndex--]);
+                }
+                // 끝부분 확인
+                pos = l;
+            }
+            return pos;
+        }
+    })(HTML = exports.HTML || (exports.HTML = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 8:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, dom_1, arrays_1, html_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function $snapshot(data, names) {
@@ -807,7 +1225,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
     exports.Template = Template;
     (function (Template) {
-        var unCamelCase = strings_1.Strings.unCamelCase;
+        var unCamelCase = html_1.HTML.unCamelCase;
         var PRIVATE_KEY = "_____object_____";
         Template.default_directive = {};
         //*********************** ▼ INNER CLASS ▼ ***********************//
@@ -976,233 +1394,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Strings;
-    (function (Strings) {
-        Strings.unCamelCase = (function (r_data, r_up, fn) {
-            return function (s) { return s.replace(r_data, '').replace(r_up, fn); };
-        })(/^data-/, /-([^-])/g, function (_, i) { return i.toUpperCase(); });
-        var r = /{{(.*?)}}/g;
-        function replaceHTML(str, obj) {
-            return str.replace(r, function (_, p) {
-                return obj[p] == null ? '' : obj[p];
-            });
-        }
-        Strings.replaceHTML = replaceHTML;
-    })(Strings = exports.Strings || (exports.Strings = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var CountLoop = /** @class */ (function () {
-        function CountLoop(time, handler) {
-            var _this = this;
-            this.time = time;
-            this.handler = handler;
-            this._isActive = false;
-            this._count = 0;
-            this._handler = function () { return _this.run(); };
-        }
-        CountLoop.prototype.start = function () {
-            if (!this._isActive) {
-                this._index = setTimeout(this._handler, this.time);
-                this._isActive = true;
-            }
-            return this;
-        };
-        CountLoop.prototype.stop = function () {
-            if (this._isActive) {
-                clearTimeout(this._index);
-                this._isActive = false;
-            }
-            this._count = 0;
-            return this;
-        };
-        CountLoop.prototype.run = function () {
-            this.handler(++this._count, this);
-            // handler중에 stop()이 호출됐을수도 있다.
-            if (this._isActive)
-                this._index = setTimeout(this._handler, this.time);
-        };
-        return CountLoop;
-    }());
-    exports.CountLoop = CountLoop;
-    /*
-     *  setTimeout()
-     */
-    var Loop;
-    (function (Loop) {
-        function _timeloop(handler, time) {
-            var count = 1, index = -1, dispatcher = function () {
-                if (handler(count++) === false)
-                    clearTimeout(index);
-                else
-                    loop();
-            }, loop = function () { return index = setTimeout(dispatcher, time); };
-            loop();
-        }
-        function countLoop(handler, time, count) {
-        }
-        Loop.countLoop = countLoop;
-    })(Loop = exports.Loop || (exports.Loop = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */,
-/* 19 */,
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(14), __webpack_require__(4), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, loop_1, template_1, dom_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var className = dom_1.DOM.className;
-    var $$resolve = Promise.resolve(), filter = (function (key) {
-        return key ? new RegExp(key, 'gi') : null;
-    })(decodeURIComponent(location.search.replace(/^\?/, '')));
-    var Data = /** @class */ (function () {
-        function Data(config) {
-            this.config = config;
-            this.xhr = new XMLHttpRequest();
-            this.loading = false;
-            this._resolve = $$resolve;
-            this.checks = [];
-            this.values = [];
-        }
-        Data.prototype.refresh = function () {
-            var _this = this;
-            if (this.loading)
-                return this._resolve;
-            className(this.$template, ['loading'], true);
-            return this._resolve = new Promise(function (o, x) {
-                var xhr = _this.xhr;
-                _this.loading = true;
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4) {
-                        if (xhr.status == 200) {
-                            _this.values = JSON.parse(xhr.responseText);
-                            className(_this.$template, ['loading'], false);
-                            _this.apply();
-                            _this.loading = false;
-                            _this.checks = _this.values.map(function (s) { return s.url; });
-                        }
-                        o();
-                    }
-                };
-                xhr.open('GET', _this.config.url, true);
-                xhr.send(null);
-            });
-        };
-        Data.prototype.apply = function () {
-            return this;
-        };
-        Data = __decorate([
-            template_1.Template({
-                ul: function (ele, attrs, data) {
-                    return function () {
-                        var values = data.values, checks = data.checks, v, title, html = [], i = 0, l = 20;
-                        for (; i < l; i++) {
-                            if (v = values[i]) {
-                                var classes = [], ii = 0;
-                                if (v.soldout)
-                                    classes[ii++] = 'sold-out';
-                                if (checks.length && checks.indexOf(v.url) === -1)
-                                    classes[ii++] = 'new';
-                                if (filter && filter.test(v.title)) {
-                                    title = '<span class="catch"><a href="' + v.url + '" target="_blank">' +
-                                        v.title.replace(filter, function (a) { return '<b>' + a + '</b>'; }) +
-                                        '</a></span></li>';
-                                }
-                                else {
-                                    title = '<span><a href="' + v.url + '" target="_blank">' + v.title + '</a></span></li>';
-                                }
-                                html[i] = '<li' + (classes.length ? ' class="' + classes.join(' ') + '"' : '') + '>' +
-                                    (v.count > 200 ? '<i class="hit">' + v.count + '</i>' : '<i>' + v.count + '</i>') +
-                                    title;
-                            }
-                            else
-                                html[i] = '<li><i></i><a></a></li>';
-                        }
-                        ele.innerHTML = html.join('');
-                    };
-                },
-                a: function (ele, attrs, data) {
-                    ele.href = data.config.link;
-                    ele.textContent = data.config.name;
-                }
-            }),
-            __metadata("design:paramtypes", [Object])
-        ], Data);
-        return Data;
-    }());
-    core_1.$ready(function () {
-        var container = document.querySelector('.row'), t = document.querySelector('.time-count'), xhr = new XMLHttpRequest(), id = /navercafe\/([^\/]+)/.exec(location.pathname)[1], value = decodeURIComponent(location.search.replace(/^\?/, '')), values = value ? value.split(/,/) : [];
-        xhr.open('GET', '/navercafe/data/info?id=' + id, true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    var r_1 = JSON.parse(xhr.responseText), anchor = document.querySelector('.navbar-brand'), list_1 = values.filter(function (l) { return !!l; }).map(function (l) {
-                        l = l.trim();
-                        var d = new Data({ name: l, link: '',
-                            url: '/navercafe/data/list?id=' + r_1.id +
-                                '&name=' + r_1.url + '&searchBy=1&page=1&word=' + l });
-                        container.appendChild(d.$template);
-                        return d;
-                    }), loop_2 = new loop_1.CountLoop(1000, function (count, loop) {
-                        t.textContent = (30 - count).toString();
-                        if (count == 30) {
-                            loop.stop();
-                            $refresh_1();
-                        }
-                    }), $refresh_1 = function () { return Promise.all(list_1.map(function (l) { return l.refresh(); })).then(function () { return loop_2.start(); }); };
-                    document.title = r_1.name;
-                    anchor.textContent = r_1.name + ' 검색';
-                    anchor.target = '_blank';
-                    anchor.href = 'http://cafe.naver.com/' + r_1.url;
-                    $refresh_1();
-                }
-            }
-        };
-        xhr.send(null);
-    });
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
 /***/ })
-/******/ ]);
+
+/******/ });

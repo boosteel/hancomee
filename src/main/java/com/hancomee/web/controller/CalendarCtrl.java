@@ -20,15 +20,7 @@ public class CalendarCtrl {
 
     // new DB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
     // new DB("jdbc:mysql://localhost:3306/boosteel", "boosteel", "ko916304");
-    DB db = new DB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
-
-    public CalendarCtrl() {
-        try {
-            System.out.println(DriverManager.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    DB db = new DB("jdbc:mysql://localhost:3306/boosteel", "boosteel", "ko916304");
 
     @RequestMapping()
     public String intro() {

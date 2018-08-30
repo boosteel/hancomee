@@ -6,15 +6,25 @@ declare namespace iSPA {
         after?(html: HTMLElement, param, cIndex, oIndex): Promise<any> | void
     }
 
-    export type param = {[index: string]: any}
+    export interface factory<T> {
+        new(): module<T>
+    }
 
-    export type factory = new() => module
+    export interface config {
+        before?(pathname: string, param, cIndex, oIndex): Promise<any> | void
 
+        onChange(currentElement: HTMLElement, beforeElement: HTMLElement)
 
-    export interface module {
-        init(param: param): Promise<HTMLElement>
+        after?(pathname: string, param, cIndex, oIndex): Promise<any> | void
+    }
 
-        load(param: param): Promise<any> | void
+    export interface module<T> {
+
+        defaultParam?: T | (new() => T)
+
+        init(param: T): Promise<HTMLElement>
+
+        load(param: T): Promise<any> | void
 
         close(): Promise<any> | void
     }

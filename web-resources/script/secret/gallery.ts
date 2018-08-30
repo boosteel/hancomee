@@ -214,7 +214,8 @@ $ready(() => {
                     })
                     return {
                         '#hash'() {
-                            current.textContent = browser.search.page.toString();
+                            current.textContent = browser.search.page + ' / ' +
+                                browser.search._totalPages;
                         }
                     }
                 },

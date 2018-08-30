@@ -1,0 +1,103 @@
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+@import "variables";
+@import "main/aside";
+@import "main/nav";
+@import "../lib/animation/fade-page";
+
+
+a {
+  color: inherit;
+  &:hover, &:visited, &:active {
+    text-decoration: none;
+  }
+}
+
+
+body {
+
+  overflow-x: hidden;
+
+  padding: {
+    left: $aside-width-thumb;
+  }
+
+  font-family: 'Nanum Gothic';
+  letter-spacing: -.01em;
+
+}
+
+
+aside {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: $aside-width-thumb;
+  z-index: 1041;
+
+  background: {
+    color: #222;
+  }
+}
+
+main {
+
+  position: relative;
+
+  &.load {
+    opacity: .4;
+  }
+
+  > div, > nav {
+    top: 0;
+    right: 0;
+    left: 0;
+  }
+
+  > div {
+
+    display: none;
+    position: absolute;
+
+    &.page-in, &.page-out, &.on {
+      display: block;
+    }
+
+    &.page-in {
+      @extend %page-in;
+      nav {
+        left: 0;  // fade 애니메이션시 위치 보정
+      }
+    }
+
+    &.page-out {
+      @extend %page-out;
+    }
+
+    // 각 모듈이 반환하는 엘리먼트
+    > div {
+      padding: {
+        top: $nav-height;
+      }
+    }
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+
+    position: fixed;
+    top: 0;
+    left: $aside-width-thumb;
+    right: 0;
+
+    padding: 0 1rem 0 $aside-width-thumb;
+    height: $nav-height;
+
+    background-color: #f1f1f1;
+    border-bottom: 1px solid $nav-border-bottom-color;
+
+    color: #555;
+    text-shadow: 0px 1px 0px white;
+  }
+}

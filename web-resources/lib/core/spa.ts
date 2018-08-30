@@ -1,29 +1,35 @@
 import {Search, URLManager} from "./location";
 import {Mapper} from "./spa/mapper";
+import {_extend} from "./core";
+import {HTML} from "./html";
 
 let
-    filter = {
-        before(i) {
-            return typeof i.before === 'function'
-        },
-        after(i) {
-            return typeof i.after === 'function'
-        },
-    }
+    RESOLVE = Promise.resolve();
 
 
-class Provider extends Mapper {
-    private module: iSPA.module
-    private factory: iSPA.factory
+class Provider {
+    private factory: iSPA.factory<any>
+    module: iSPA.module<any>
+    element: HTMLElement
 
     // 클래스가 그대로 들어와도 되고, 객체가 들어와도 된다.
-    constructor(path: string[], f: iSPA.module | iSPA.factory) {
-        super(path);
+    constructor(public path: string, f: iSPA.module<any> | iSPA.factory<any>) {
         if (typeof f !== 'function') this.module = f;
         else this.factory = f;
     }
 
-    get() {
+    param(p?) {
+        let module = this.getModule(), {defaultParam} = module,
+            param = _extend({}, typeof defaultParam === 'function' ? new defaultParam : defaultParam);
+        if (p) param = _extend(p, param);
+        return param;
+    }
+
+    init(param) {
+        return this.getModule().init(param).then((ele) => this.element = ele);
+    }
+
+    private getModule() {
         return this.module || (this.module = new this.factory());
     }
 }
@@ -32,104 +38,87 @@ class Provider extends Mapper {
 export class SPA {
 
     private index: number
+    private isHash = false;
 
     private url = new URLManager('')        // Dummy
     private list: Provider[] = []
-    private $active: iSPA.module
-
-    private intercepters: iSPA.intercepter[] = []
-
+    private $active: Provider
     private _queue = <Promise<any>>Promise.resolve();
 
-    /*
-     *  { before: ~, after: ~ }
-     *  모듈이 변경될때, 전후로 불려질 인터셉터
-     */
-    addIntercepter(intercepter: iSPA.intercepter) {
-        let {intercepters} = this;
-        intercepters.indexOf(intercepter) === -1 && intercepters.push(intercepter);
-        return this;
+    constructor(public config: iSPA.config) {
     }
 
-    register(url: string, module: iSPA.module) {
-        this.list.push(new Provider(Mapper.toPath(url), module));
+    register(url: string, module: iSPA.module<any> | iSPA.factory<any>) {
+        this.list.push(new Provider(url, module));
         return this;
     }
 
     // 이 메서드를 통해 모듈변경이 이루어진다.
     run(path: string): Promise<any> {
+
         let {url, $active} = this,
             m = new URLManager(path),
             {pathname, search} = m;
 
-        //  ① pathname 체크 ==> 다를경우 새로운 모듈 로딩
+        //  ① 모듈변경
         if (url.pathname !== pathname) {
 
-            let temp = 0, count = 0, _index = 0, provider: Provider, param;
+            let {list, list: {length: l}} = this, _index = 0, provider: Provider;
 
-            // ③ 모듈 검색 (우선순위에 의한 선택)
-            this.list.forEach((v, i) => {
-                if (count < (temp = v.match(m.paths()))) {
-                    provider = v;
-                    _index = i;
-                    count = temp;
+            while (l-- > 0) {
+                if (list[l].path === pathname) {
+                    provider = list[l];
+                    _index = l;
+                    break;
                 }
-            });
+            }
 
-            // ④ pathname에 해당하는 모듈이 있을 경우
-            if (provider) {
-                let {index, intercepters} = this,
-                    module = provider.get();
+            if(provider) {
+                let {index, config} = this,
+                    param = Search.toObject(search, provider.param());
 
-                // ④-1 같은 모듈일 경우 load()   ex) {}나 *등으로 매핑된 모듈이 해당
-                if (module === $active) {
-                    this._queue = this._queue.then(() => this.$active.load(Search.toObject(search)));
-                }
+                this.url = m;               // 현재 url 갱신
+                this.index = _index;        // 모듈 인덱스 갱신
+                this.$active = provider;      // 현재 모듈 갱신
 
-                // ④-2 모듈이 바뀐 경우는 allChange()
-                else {
-                    this.url = m;               // 현재 url 갱신
-                    this.index = _index;        // 모듈 인덱스 갱신
-                    this.$active = module;      // 현재 모듈 갱신
-
-                    param = Search.toObject(search, provider.map(m.paths()));
-
-                    this._queue = this._queue
-
-                    // ① 열려진 모듈이 있으면 먼저 닫는다.
-                        .then(() => $active && $active.close())
-
-                        // ② 모듈 init
-                        .then(() => provider.get().init(param).then((html) => {
-
-                            // ③ intercepters 중에 before가 등록된 것만 실행
-                            return Promise.all(intercepters.filter(filter.before)
-                                .map(i => i.before(html, param, _index, index)))
-
-                            // ④ 모듈 load
-                                .then(() => module.load(param))
-
-                                // ⑤ intercepters 중에 after가 등록된 것만 실행
-                                .then(() => Promise.all(intercepters.filter(filter.after)
-                                    .map(i => i.after(html, param, _index, index))))
-                        }));
-                }
+                this._queue = this._queue
+                    .then(() => config.before && config.before(pathname, param, _index, index))
+                    .then(() => Promise.all([
+                        $active && $active.module.close(),
+                        provider.init(param)
+                    ]))
+                    .then(([, html]) => {
+                        return RESOLVE.then(() => provider.module.load(param))
+                            .then(() => config.onChange(provider.element, $active && $active.element))
+                    })
+                    .then(() => config.after && config.after(pathname, param, _index, index));
             }
         }
 
-        /*
-         *  ② search 체크 ==> 모듈 재로딩
-         */
-        else if ($active && !Search.equals(url.search, search))
-            this._queue = this._queue.then(() => this.$active.load(Search.toObject(search)));
+        // ② 모듈 재로딩
+        else if ($active && !Search.equals(url.search, search)) {
+            this._queue = this._queue.then(() =>
+                $active.module.load(Search.toObject(search, $active.param())));
+        }
+
 
         return this._queue;
+    }
+
+    onHash() {
+        if (!this.isHash) {
+            SPA.onHash(this);
+            this.isHash = true;
+        }
+        return this;
     }
 
 
 }
 
 export namespace SPA {
+
+    import createFragment = HTML.createFragment;
 
     export function onHash(spa: SPA) {
         let handler = () => {
@@ -138,6 +127,41 @@ export namespace SPA {
         window.addEventListener('hashchange', handler);
         handler();
         return spa;
+    }
+
+
+    function get(url) {
+        return new Promise<string>((o, x) => {
+
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            o(xhr.responseText);
+                        }
+                        else x(xhr);
+                    }
+                }
+                xhr.open('GET', url, true);
+                xhr.send(null);
+            }
+        );
+    }
+
+    // html 문서 가지고 오기
+    // 이건 서버에서 매칭되는 컨트롤러가 만드시 있어야 한다.
+    // /$template/{value}
+    export function getElement(url: string): Promise<DocumentFragment> {
+        return get('/templates/' + url).then((text) => createFragment(text))
+    }
+
+    export function getStyle(url: string): Promise<HTMLStyleElement> {
+        return get(url).then((text) => {
+            let style = document.createElement('style');
+            style.type = 'text/css';
+            style.innerHTML = text;
+            return style;
+        })
     }
 
 }

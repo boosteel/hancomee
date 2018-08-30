@@ -60,11 +60,12 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ 	return __webpack_require__(__webpack_require__.s = 25);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -189,6 +190,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
     exports.extend = extend;
     function _extend(dest, source) {
+        if (source == null)
+            return dest;
         if (isArrayLike(source)) {
             var i = 0, l = source.length;
             for (; i < l; i++) {
@@ -348,7 +351,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-/* 1 */
+
+/***/ 1:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -560,7 +564,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 2 */
+
+/***/ 2:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -711,305 +716,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 3 */,
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, dom_1, arrays_1, strings_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function $snapshot(data, names) {
-        var v;
-        return names.reduce(function (result, name) {
-            v = data[name];
-            if (Array.isArray(v))
-                result[name] = v.slice(); // 배열일 경우 스냅샷
-            else
-                result[name] = v;
-            return result;
-        }, {});
-    }
-    // 두개의 스냅샷 비교해서 수정된 프로퍼티 목록 뽑아내기
-    function $changeNames(snapshot, newSnapshot) {
-        var p, result = [], o, n;
-        for (p in newSnapshot) {
-            o = snapshot[p];
-            n = newSnapshot[p];
-            // 둘 중 하나가 Array
-            if (Array.isArray(o)) {
-                if (!Array.isArray(n))
-                    result.push(p);
-                else if (!arrays_1.Arrays.equals(o, n))
-                    result.push(p);
-            }
-            else if (o !== n)
-                result.push(p);
-        }
-        return result;
-    }
-    ;
-    var Watcher = /** @class */ (function () {
-        function Watcher(obj) {
-            this.obj = obj;
-            this.snapshot = {};
-            this.watchList = [];
-            this.watchMap = {};
-            this.applyHandler = [];
-            this.isApply = false;
-        }
-        Watcher.prototype.addWatch = function (v) {
-            if (!v)
-                return this;
-            var _a = this, watchMap = _a.watchMap, applyHandler = _a.applyHandler, watchList = _a.watchList, p;
-            // applyHandler
-            if (typeof v === 'function')
-                applyHandler.indexOf(v) === -1 && applyHandler.push(v);
-            // watchHandler
-            else {
-                var p_1;
-                for (p_1 in v) {
-                    watchList.indexOf(p_1) === -1 && watchList.push(p_1);
-                    (watchMap[p_1] || (watchMap[p_1] = [])).push(v[p_1]);
-                }
-            }
-            return this;
-        };
-        Watcher.prototype.apply = function (p) {
-            if (this.isApply)
-                return;
-            this.isApply = true;
-            var _a = this, obj = _a.obj, snapshot = _a.snapshot, watchMap = _a.watchMap, newSnapshot = this.snapshot = $snapshot(obj, this.watchList);
-            // property명이 들어올 경우 강제 apply!
-            if (p) {
-                if (typeof p === 'string')
-                    p = [p];
-                p.forEach(function (name) {
-                    watchMap[name] && watchMap[name].forEach(function (f) { return f(null, null); });
-                });
-            }
-            else {
-                // ① apply 핸들러
-                this.applyHandler.forEach(function (h) { return h(); });
-                // ② propery 핸들러
-                $changeNames(snapshot, newSnapshot).forEach(function (name) {
-                    watchMap[name] && watchMap[name].forEach(function (f) { return f(newSnapshot[name], snapshot[name]); });
-                });
-            }
-            this.isApply = false;
-        };
-        return Watcher;
-    }());
-    exports.Watcher = Watcher;
-    function Template(name, directives) {
-        return function (cons) {
-            Template.build(cons, name, directives);
-        };
-    }
-    exports.Template = Template;
-    (function (Template) {
-        var unCamelCase = strings_1.Strings.unCamelCase;
-        var PRIVATE_KEY = "_____object_____";
-        Template.default_directive = {};
-        //*********************** ▼ INNER CLASS ▼ ***********************//
-        var TemplateObject = /** @class */ (function () {
-            function TemplateObject(element, watcher) {
-                this.element = element;
-                this.watcher = watcher;
-                this.isInit = false;
-            }
-            TemplateObject.prototype.apply = function () {
-                this.isInit = true;
-                this.watcher.apply();
-            };
-            return TemplateObject;
-        }());
-        (function (TemplateObject) {
-            function get(obj, selector, directive) {
-                var r = obj[PRIVATE_KEY];
-                /*
-                 *  여기서 처음으로 컴파일된다.
-                 */
-                if (!r) {
-                    var watcher = new Watcher(obj), element = void 0;
-                    // HTML 템플릿 가지고 오기
-                    if (selector[0] === '=')
-                        selector = document.querySelector(selector.slice(1)).innerHTML.trim();
-                    if (selector[0] === '<')
-                        element = dom_1.DOM.createHTML(selector);
-                    else
-                        element = document.querySelector(selector);
-                    r = obj[PRIVATE_KEY] = new TemplateObject(element, watcher);
-                    each(element, directive, watcher);
-                }
-                return r;
-            }
-            TemplateObject.get = get;
-        })(TemplateObject || (TemplateObject = {}));
-        //*********************** ▲ INNER CLASS ▲ ***********************//
-        // 디렉티브 확장하기
-        function expendDirective(cons, directives) {
-            var consObj = cons[PRIVATE_KEY], dir = consObj ? consObj.directive : null, p;
-            if (dir) {
-                for (p in directives)
-                    dir[p] = directives[p];
-            }
-            return Template;
-        }
-        Template.expendDirective = expendDirective;
-        function build(cons, selector, directives) {
-            var consObj = cons[PRIVATE_KEY];
-            if (consObj && consObj.cons === cons)
-                return cons;
-            /*
-             *    ("name", {})
-             *    ("name")
-             *    ({})
-             */
-            // arguments
-            if (typeof selector !== 'string') {
-                if (selector)
-                    directives = selector;
-                selector = core_1.getFunctionName(cons);
-                selector = '=#' + selector[0].toLowerCase() + selector.slice(1) + '-template';
-            }
-            // 디렉티브 상속
-            var prototype = cons.prototype, apply = cons.prototype.apply, dir = (consObj && consObj.directive) || Template.default_directive, p, result = Object.create(dir);
-            if (directives)
-                for (p in directives)
-                    result[p] = directives[p];
-            /*
-             *
-             */
-            Object.defineProperty(prototype, '$template', {
-                get: function () {
-                    var temple = TemplateObject.get(this, selector, result);
-                    temple.isInit || temple.apply();
-                    return temple.element;
-                },
-                set: function (v) {
-                },
-                configurable: false,
-                enumerable: false
-            });
-            /*
-             *
-             */
-            prototype.apply = function () {
-                apply.apply(this);
-                TemplateObject.get(this, selector, result).apply();
-                return this;
-            };
-            cons[PRIVATE_KEY] = { directive: result, cons: cons };
-        }
-        Template.build = build;
-        function simpleEach(element, handler, data) {
-            if (element.nodeType !== 1)
-                return;
-            var attrs = dom_1.DOM.attrMap(element), children = element.children, attributes = element.attributes, len = attributes.length;
-            while (len-- > 0) {
-                if (handler(element, attrs, data) === false)
-                    return;
-            }
-            len = children.length;
-            while (len-- > 0)
-                simpleEach(children[len], handler, data);
-        }
-        function directiveEach(element, directive, watchMode, data) {
-            if (element.nodeType !== 1 || element.hasAttribute('data-template-compile'))
-                return;
-            var attrs = dom_1.DOM.attrMap(element), func = directive[unCamelCase(element.tagName.toLowerCase())];
-            // tag명이 일치하면 순회중지
-            if (func) {
-                if (watchMode)
-                    data.addWatch(func(element, attrs, data.obj));
-                else
-                    func(element, null, data);
-            }
-            // 디렉티브 중 표기하면 건너띈다.
-            if (element.hasAttribute('data-template-compile'))
-                return;
-            var children = element.children, len = element.children.length, p;
-            for (p in attrs) {
-                if (func = directive[p]) {
-                    if (watchMode)
-                        data.addWatch(func(element, attrs, data.obj));
-                    else
-                        func(element, attrs, data);
-                }
-            }
-            while (len-- > 0)
-                directiveEach(children[len], directive, watchMode, data);
-            if (watchMode)
-                return data;
-        }
-        function each(element, directive, data) {
-            if (typeof directive === 'function') {
-                simpleEach(element, directive, data);
-                return element;
-            }
-            var watchMode = data instanceof Watcher, attrs = dom_1.DOM.attrMap(element);
-            // ① 디렉티브 순회 전
-            if (typeof directive['$'] === 'function') {
-                if (watchMode)
-                    data.addWatch(directive['$'](element, attrs, data.obj));
-                else
-                    directive['$'](element, attrs, data);
-            }
-            // ② 디렉티브 순회
-            var rv = directiveEach(element, directive, watchMode, data);
-            // 컴파일 사실을 체크한다.
-            element.setAttribute('data-template-compile', 'true');
-            // ③ 디렉티브 순회 후
-            if (typeof directive['$$'] === 'function') {
-                if (watchMode)
-                    data.addWatch(directive['$$'](element, attrs, data.obj));
-                else
-                    directive['$$'](element, attrs, data);
-            }
-            return rv;
-        }
-        Template.each = each;
-        Template.snapshot = $snapshot;
-        Template.changeNames = $changeNames;
-    })(Template = exports.Template || (exports.Template = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Strings;
-    (function (Strings) {
-        Strings.unCamelCase = (function (r_data, r_up, fn) {
-            return function (s) { return s.replace(r_data, '').replace(r_up, fn); };
-        })(/^data-/, /-([^-])/g, function (_, i) { return i.toUpperCase(); });
-        var r = /{{(.*?)}}/g;
-        function replaceHTML(str, obj) {
-            return str.replace(r, function (_, p) {
-                return obj[p] == null ? '' : obj[p];
-            });
-        }
-        Strings.replaceHTML = replaceHTML;
-    })(Strings = exports.Strings || (exports.Strings = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */
+/***/ 21:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -1071,7 +779,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 15 */
+
+/***/ 25:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1083,7 +792,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __decorate =
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(14), __webpack_require__(4), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, loop_1, template_1, dom_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(21), __webpack_require__(8), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, loop_1, template_1, dom_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var className = dom_1.DOM.className;
@@ -1255,5 +964,492 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
+/***/ }),
+
+/***/ 4:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var HTML;
+    (function (HTML) {
+        HTML.unCamelCase = (function (r_data, r_up, fn) {
+            return function (s) { return s.replace(r_data, '').replace(r_up, fn); };
+        })(/^data-/, /-([^-])/g, function (_, i) { return i.toUpperCase(); });
+        var r = /{{(.*?)}}/g, r_compile_test = /{{[^{}]+}}/;
+        function replaceHTML(str, obj) {
+            return str.replace(r, function (_, p) {
+                return obj[p] == null ? '' : obj[p];
+            });
+        }
+        HTML.replaceHTML = replaceHTML;
+        function compile(str) {
+            if (!r_compile_test.test(str))
+                return function () { return str; };
+            var i = 0, l = str.length, s = 0, e = 0, array = [];
+            var _loop_1 = function () {
+                if ((s = str.indexOf('{{', i)) !== -1) {
+                    var $v_1 = str.substring(i, s);
+                    array.push(function () { return $v_1; });
+                    e = str.indexOf('}}', s += 2);
+                    // _를 가지고 있을때만 Function 생성
+                    var ss_1 = str.substring(s, e), $fn = ss_1.indexOf('_') === -1 ?
+                        function (obj) { return obj[ss_1] == null ? '' : obj[ss_1]; } :
+                        new Function('_', 'return ' + ss_1 + ';');
+                    array.push($fn);
+                    i = e + 2;
+                }
+                else {
+                    var $v_2 = str.substring(i, l);
+                    array.push(function () { return $v_2; });
+                    i = l;
+                }
+            };
+            while (i !== l) {
+                _loop_1();
+            }
+            l = array.length;
+            return function (obj) {
+                var i = 0, result = [];
+                while (i < l) {
+                    result[i] = array[i++](obj);
+                }
+                return result.join('');
+            };
+        }
+        HTML.compile = compile;
+        var r_ease = /^\/+|\/+$/, r_split = /\//, template = '<li data-active="false">' +
+            '<i data-child="{{!!_.childs}}">&gt;</i>' +
+            '<a href="{{href}}">{{name}}</a>' +
+            '{{_.childs ? "<ul>" + _.childs + "</ul>" : ""}}' +
+            '</li>';
+        function a(str, obj) {
+            if (obj === void 0) { obj = {}; }
+            var s = str.replace(r_ease, '').split(r_split), i = 0, l = s.length, v;
+            for (; i < l; i++) {
+                obj = (obj[(v = s[i])] || (obj[v] = {}));
+            }
+        }
+        function toObject(list, obj) {
+            if (obj === void 0) { obj = {}; }
+            if (typeof list === 'string')
+                a(list, obj);
+            else {
+                var l = list.length;
+                while (l-- > 0)
+                    a(list[l], obj);
+            }
+            return obj;
+        }
+        HTML.toObject = toObject;
+        function $createHTML($com, obj, name, url) {
+            if (obj == null)
+                return '';
+            var p, c, array = [];
+            for (p in obj) {
+                if (c = $createHTML($com, obj[p], p, (url ? url + '/' + p : p)))
+                    array.push(c);
+            }
+            return $com({ href: url, name: name, childs: array.join('') });
+        }
+        function createTree(values, html, rootName) {
+            if (html === void 0) { html = template; }
+            if (rootName === void 0) { rootName = 'root'; }
+            var c = document.createElement('div');
+            c.innerHTML = '<ul>' + $createHTML(compile(html), toObject(values), rootName, '') + '</ul>';
+            c = c.firstElementChild;
+            // <a> 엘리먼트들을 미리 땡겨놓는다.
+            var anchors = c.querySelectorAll('a[href]'), ctrl = {
+                element: c,
+                active: function (path) {
+                    var l = anchors.length, anchor;
+                    while (l-- > 0) {
+                        anchor = anchors[l];
+                        if (path.indexOf(anchor.getAttribute('href')) === 0) {
+                            anchor.parentElement.setAttribute('data-active', 'true');
+                        }
+                        else {
+                            anchor.parentElement.setAttribute('data-active', 'false');
+                        }
+                    }
+                },
+                handler: null
+            };
+            c.addEventListener('click', function (e) {
+                var target = e.target;
+                if (target['href']) {
+                    ctrl.handler && ctrl.handler(target.getAttribute('href'), e);
+                    e.preventDefault();
+                }
+                else if (/i/i.test(target.tagName)) {
+                    var p = target.parentElement;
+                    p.setAttribute('data-active', p.getAttribute('data-active') === 'true' ? 'false' : 'true');
+                }
+            });
+            return ctrl;
+        }
+        HTML.createTree = createTree;
+        function createChildren(html) {
+            var div = document.createElement('div'), children, l, i = 0, pos = 0, c, array = [];
+            div.innerHTML = html;
+            children = div.children;
+            l = children.length;
+            while (i < l) {
+                if ((c = children[i++]) && c.nodeType === 1) {
+                    array[pos++] = c;
+                }
+            }
+            return array;
+        }
+        function create(html, handler) {
+            var children = createChildren(html), l, i;
+            if (typeof handler !== 'function')
+                return children;
+            if (l = children.length) {
+                i = 0;
+                while (i < l)
+                    handler(children[i], i++);
+            }
+        }
+        HTML.create = create;
+        function createFragment(html) {
+            var frag = document.createDocumentFragment();
+            if (typeof html === 'string')
+                create(html, function (v) { return frag.appendChild(v); });
+            else {
+                var l = html.length;
+                while (l-- > 0)
+                    frag.insertBefore(html[l], frag.firstChild);
+            }
+            return frag;
+        }
+        HTML.createFragment = createFragment;
+        var r_script = /script/i, r_template = /template/i;
+        function templateMap(html) {
+            var result = { doc: {}, com: {} }, array = createChildren(html), l = array.length, e;
+            while (l-- > 0) {
+                e = array[l];
+                if (e.id) {
+                    if (r_script.test(e.tagName)) {
+                        e.type.indexOf('html') !== -1 && (result.com[e.id] = compile(e.innerText));
+                    }
+                    if (r_template.test(e.tagName))
+                        (result.doc[e.id] = createFragment(e.children));
+                }
+            }
+            return result;
+        }
+        HTML.templateMap = templateMap;
+        /*
+         *   TO DO
+         *   태그만 골라낸다.
+         *   textNode부분은 더 작업해야 한다.
+         */
+        function htmlParser(html) {
+            var pos = 0, lines = [], linesIndex = -1, stack = [], stackIndex = -1;
+            while ((pos = html.indexOf('<', pos)) !== -1) {
+                var l = html.indexOf('>', pos) + 1, line = html.substring(pos, l); // <...>
+                // ① 시작 태그
+                if (html[pos + 1] !== '/') {
+                    var t = pos += 1, tagName = void 0;
+                    // tagName 골라내기
+                    while (t < l && html[++t] !== '/' && html[t] !== ' ' && html[t] !== '>')
+                        ;
+                    tagName = lines[++linesIndex] = html.substring(pos, t);
+                    stack[++stackIndex] = line;
+                }
+                // ② 끝 태그
+                else {
+                    var t = pos += 2, tagName = void 0;
+                    // tagName 골라내기
+                    while (t < l && html[++t] !== ' ' && html[t] !== '>')
+                        ;
+                    tagName = html.substring(pos, t);
+                    while (linesIndex > -1 && lines[linesIndex] !== tagName) {
+                        // 닫는 태그가 없는 엘리먼트들이 여기에 걸린다.
+                        linesIndex--;
+                        console.log('-' + stack[stackIndex--]);
+                    }
+                    linesIndex--;
+                    console.log(stack[stackIndex--]);
+                }
+                // 끝부분 확인
+                pos = l;
+            }
+            return pos;
+        }
+    })(HTML = exports.HTML || (exports.HTML = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 8:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, dom_1, arrays_1, html_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function $snapshot(data, names) {
+        var v;
+        return names.reduce(function (result, name) {
+            v = data[name];
+            if (Array.isArray(v))
+                result[name] = v.slice(); // 배열일 경우 스냅샷
+            else
+                result[name] = v;
+            return result;
+        }, {});
+    }
+    // 두개의 스냅샷 비교해서 수정된 프로퍼티 목록 뽑아내기
+    function $changeNames(snapshot, newSnapshot) {
+        var p, result = [], o, n;
+        for (p in newSnapshot) {
+            o = snapshot[p];
+            n = newSnapshot[p];
+            // 둘 중 하나가 Array
+            if (Array.isArray(o)) {
+                if (!Array.isArray(n))
+                    result.push(p);
+                else if (!arrays_1.Arrays.equals(o, n))
+                    result.push(p);
+            }
+            else if (o !== n)
+                result.push(p);
+        }
+        return result;
+    }
+    ;
+    var Watcher = /** @class */ (function () {
+        function Watcher(obj) {
+            this.obj = obj;
+            this.snapshot = {};
+            this.watchList = [];
+            this.watchMap = {};
+            this.applyHandler = [];
+            this.isApply = false;
+        }
+        Watcher.prototype.addWatch = function (v) {
+            if (!v)
+                return this;
+            var _a = this, watchMap = _a.watchMap, applyHandler = _a.applyHandler, watchList = _a.watchList, p;
+            // applyHandler
+            if (typeof v === 'function')
+                applyHandler.indexOf(v) === -1 && applyHandler.push(v);
+            // watchHandler
+            else {
+                var p_1;
+                for (p_1 in v) {
+                    watchList.indexOf(p_1) === -1 && watchList.push(p_1);
+                    (watchMap[p_1] || (watchMap[p_1] = [])).push(v[p_1]);
+                }
+            }
+            return this;
+        };
+        Watcher.prototype.apply = function (p) {
+            if (this.isApply)
+                return;
+            this.isApply = true;
+            var _a = this, obj = _a.obj, snapshot = _a.snapshot, watchMap = _a.watchMap, newSnapshot = this.snapshot = $snapshot(obj, this.watchList);
+            // property명이 들어올 경우 강제 apply!
+            if (p) {
+                if (typeof p === 'string')
+                    p = [p];
+                p.forEach(function (name) {
+                    watchMap[name] && watchMap[name].forEach(function (f) { return f(null, null); });
+                });
+            }
+            else {
+                // ① apply 핸들러
+                this.applyHandler.forEach(function (h) { return h(); });
+                // ② propery 핸들러
+                $changeNames(snapshot, newSnapshot).forEach(function (name) {
+                    watchMap[name] && watchMap[name].forEach(function (f) { return f(newSnapshot[name], snapshot[name]); });
+                });
+            }
+            this.isApply = false;
+        };
+        return Watcher;
+    }());
+    exports.Watcher = Watcher;
+    function Template(name, directives) {
+        return function (cons) {
+            Template.build(cons, name, directives);
+        };
+    }
+    exports.Template = Template;
+    (function (Template) {
+        var unCamelCase = html_1.HTML.unCamelCase;
+        var PRIVATE_KEY = "_____object_____";
+        Template.default_directive = {};
+        //*********************** ▼ INNER CLASS ▼ ***********************//
+        var TemplateObject = /** @class */ (function () {
+            function TemplateObject(element, watcher) {
+                this.element = element;
+                this.watcher = watcher;
+                this.isInit = false;
+            }
+            TemplateObject.prototype.apply = function () {
+                this.isInit = true;
+                this.watcher.apply();
+            };
+            return TemplateObject;
+        }());
+        (function (TemplateObject) {
+            function get(obj, selector, directive) {
+                var r = obj[PRIVATE_KEY];
+                /*
+                 *  여기서 처음으로 컴파일된다.
+                 */
+                if (!r) {
+                    var watcher = new Watcher(obj), element = void 0;
+                    // HTML 템플릿 가지고 오기
+                    if (selector[0] === '=')
+                        selector = document.querySelector(selector.slice(1)).innerHTML.trim();
+                    if (selector[0] === '<')
+                        element = dom_1.DOM.createHTML(selector);
+                    else
+                        element = document.querySelector(selector);
+                    r = obj[PRIVATE_KEY] = new TemplateObject(element, watcher);
+                    each(element, directive, watcher);
+                }
+                return r;
+            }
+            TemplateObject.get = get;
+        })(TemplateObject || (TemplateObject = {}));
+        //*********************** ▲ INNER CLASS ▲ ***********************//
+        // 디렉티브 확장하기
+        function expendDirective(cons, directives) {
+            var consObj = cons[PRIVATE_KEY], dir = consObj ? consObj.directive : null, p;
+            if (dir) {
+                for (p in directives)
+                    dir[p] = directives[p];
+            }
+            return Template;
+        }
+        Template.expendDirective = expendDirective;
+        function build(cons, selector, directives) {
+            var consObj = cons[PRIVATE_KEY];
+            if (consObj && consObj.cons === cons)
+                return cons;
+            /*
+             *    ("name", {})
+             *    ("name")
+             *    ({})
+             */
+            // arguments
+            if (typeof selector !== 'string') {
+                if (selector)
+                    directives = selector;
+                selector = core_1.getFunctionName(cons);
+                selector = '=#' + selector[0].toLowerCase() + selector.slice(1) + '-template';
+            }
+            // 디렉티브 상속
+            var prototype = cons.prototype, apply = cons.prototype.apply, dir = (consObj && consObj.directive) || Template.default_directive, p, result = Object.create(dir);
+            if (directives)
+                for (p in directives)
+                    result[p] = directives[p];
+            /*
+             *
+             */
+            Object.defineProperty(prototype, '$template', {
+                get: function () {
+                    var temple = TemplateObject.get(this, selector, result);
+                    temple.isInit || temple.apply();
+                    return temple.element;
+                },
+                set: function (v) {
+                },
+                configurable: false,
+                enumerable: false
+            });
+            /*
+             *
+             */
+            prototype.apply = function () {
+                apply.apply(this);
+                TemplateObject.get(this, selector, result).apply();
+                return this;
+            };
+            cons[PRIVATE_KEY] = { directive: result, cons: cons };
+        }
+        Template.build = build;
+        function simpleEach(element, handler, data) {
+            if (element.nodeType !== 1)
+                return;
+            var attrs = dom_1.DOM.attrMap(element), children = element.children, attributes = element.attributes, len = attributes.length;
+            while (len-- > 0) {
+                if (handler(element, attrs, data) === false)
+                    return;
+            }
+            len = children.length;
+            while (len-- > 0)
+                simpleEach(children[len], handler, data);
+        }
+        function directiveEach(element, directive, watchMode, data) {
+            if (element.nodeType !== 1 || element.hasAttribute('data-template-compile'))
+                return;
+            var attrs = dom_1.DOM.attrMap(element), func = directive[unCamelCase(element.tagName.toLowerCase())];
+            // tag명이 일치하면 순회중지
+            if (func) {
+                if (watchMode)
+                    data.addWatch(func(element, attrs, data.obj));
+                else
+                    func(element, null, data);
+            }
+            // 디렉티브 중 표기하면 건너띈다.
+            if (element.hasAttribute('data-template-compile'))
+                return;
+            var children = element.children, len = element.children.length, p;
+            for (p in attrs) {
+                if (func = directive[p]) {
+                    if (watchMode)
+                        data.addWatch(func(element, attrs, data.obj));
+                    else
+                        func(element, attrs, data);
+                }
+            }
+            while (len-- > 0)
+                directiveEach(children[len], directive, watchMode, data);
+            if (watchMode)
+                return data;
+        }
+        function each(element, directive, data) {
+            if (typeof directive === 'function') {
+                simpleEach(element, directive, data);
+                return element;
+            }
+            var watchMode = data instanceof Watcher, attrs = dom_1.DOM.attrMap(element);
+            // ① 디렉티브 순회 전
+            if (typeof directive['$'] === 'function') {
+                if (watchMode)
+                    data.addWatch(directive['$'](element, attrs, data.obj));
+                else
+                    directive['$'](element, attrs, data);
+            }
+            // ② 디렉티브 순회
+            var rv = directiveEach(element, directive, watchMode, data);
+            // 컴파일 사실을 체크한다.
+            element.setAttribute('data-template-compile', 'true');
+            // ③ 디렉티브 순회 후
+            if (typeof directive['$$'] === 'function') {
+                if (watchMode)
+                    data.addWatch(directive['$$'](element, attrs, data.obj));
+                else
+                    directive['$$'](element, attrs, data);
+            }
+            return rv;
+        }
+        Template.each = each;
+        Template.snapshot = $snapshot;
+        Template.changeNames = $changeNames;
+    })(Template = exports.Template || (exports.Template = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
 /***/ })
-/******/ ]);
+
+/******/ });

@@ -47,8 +47,8 @@ public class twitter extends AbstractSpy {
     public void run() throws Exception {
 
         //  3ZBzD5cPmRZtaVu
-        //tour();
-        run("3ZBzD5cPmRZtaVu ");
+        tour();
+        //run("jungyeon03");
 
     }
 
@@ -119,7 +119,7 @@ public class twitter extends AbstractSpy {
             if (!addUUID(m.id)) {
                 out("이미 받음 ============> " + m);
                 if (!result.isEmpty()) $save(result);
-                //return;
+                return;
             } else {
                 m.readMedia((i, con, type) -> {
                     String t = con.getContentType();

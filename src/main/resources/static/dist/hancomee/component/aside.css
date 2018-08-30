@@ -1,0 +1,11 @@
+aside {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  background-color: #333;
+  transition: .3s ease width; }
+
+aside:hover {
+  width: 250px; }

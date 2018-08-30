@@ -6,6 +6,7 @@
 import {NameMap} from "./collections/NameMap";
 import {Arrays} from "./arrays";
 import {__makeArray} from "./core";
+import {Access} from "./access";
 
 type ISwitch = ko.types.event.Switch;
 
@@ -46,15 +47,21 @@ export class Events {
 
 
 export class EventsGroup {
-    isActive = false;
+    isActive = true;
     private map = new NameMap<Events>();
 
     register(event: Events)
     register(element: EventTarget, type: string, handler)
     register(element, type?, handler?): EventsGroup {
-        if (typeof type === 'string')
-            this.map.add(type, new Events(element, type.split(/\./)[0], handler));
-        else this.map.add(element.type, element);
+        if (typeof type === 'string') {
+            let e = new Events(element, type.split(/\./)[0], handler);
+            if (!this.isActive) e.off();
+            this.map.add(type, e);
+        }
+        else {
+            if (!this.isActive) element.off();
+            this.map.add(element.type, element);
+        }
         return this;
     }
 
@@ -119,6 +126,8 @@ export class TargetEvent {
 
 export namespace Events {
 
+
+    import primitive = Access.primitive;
 
     function closest(target: HTMLElement, selector: string, ele): HTMLElement {
         let list = target.querySelectorAll(selector), l = list.length;
@@ -286,6 +295,65 @@ export namespace Events {
 
     }
 
+
+    /*
+     *  event가 발생하면 target 엘리먼트부터 상위엘리먼트로 올라가면서
+     *  어트리뷰트를 읽어 데이터맵을 만들어준다.
+     */
+    function read(target: HTMLElement, limit, obj) {
+
+        let event: string, n, v: string, vv, fn;
+
+        while (target && limit !== target) {
+
+            if (event == null) {
+                if(event = target.getAttribute('data-event')) {
+                    if(typeof obj['setTarget'] === 'function') obj['setTarget'](target);
+                    else obj.target = target;
+                }
+            }
+
+            // target 자체를
+            if (v = target.getAttribute('data-self')) {
+                // set{Value}()가 있으면 거기에 넣어준다.
+                if (typeof (fn = obj['set' + v[0].toUpperCase() + v.slice(1)]) === 'function')
+                    fn(target);
+                else obj[v] = target;
+
+            }
+
+            // property 이름
+            if (v = target.getAttribute('data-property')) {
+
+                // 값
+                if (vv = target.getAttribute('data-value')) {
+
+                    // set{Value}()가 있으면 거기에 넣어준다.
+                    if (typeof (fn = obj['set' + v[0].toUpperCase() + v.slice(1)]) === 'function')
+                        fn(primitive(vv));
+                    else obj[v] = primitive(vv);
+
+                }
+            }
+            target = target.parentElement
+        }
+
+        return event;
+    }
+
+    type FACTORY<T> = new(e: Event) => T
+    type HANDLER<T> = (t: T, e: Event) => any
+    type HANDLERS<T> = { [index: string]: HANDLER<T> }
+
+    // 데이터가 있을때만
+    export function propertyMap<T>(target: HTMLElement, type: string, handlers: HANDLERS<T>, factory?: FACTORY<T>) {
+        return new Events(target, type, function (e) {
+            let obj = factory ? new factory(e) : <any>{},
+                p = read(<HTMLElement>e.target, target, obj);
+            handlers[p] && handlers[p](obj, e);
+        });
+
+    }
 }
 
 

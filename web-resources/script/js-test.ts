@@ -1,28 +1,13 @@
-import {Pager} from "../lib/core/pager";
-import {$ready} from "../lib/core/core";
-import {Toggle} from "../lib/core/support/toggle";
-import {Calendar} from "../lib/core/calendar";
+import {HTML} from "../lib/core/html";
+import createFragment = HTML.createFragment;
 
-
-class Rect {
-
-    constructor(public index: number, public width: number, public height: number) {}
-
-    
-}
-
-
-$ready(() => {
-
-    let limit = 1200,
-
-        list = [
-            [1500, 200], [300, 500]
-        ];
+const d: string = require("./js-test.html");
 
 
 
-    for (let i = 0, l = list.length; i < l; i++) {
+let r = /5/;
 
-    }
-})
+console.log(r.test('123412345'))
+
+
+

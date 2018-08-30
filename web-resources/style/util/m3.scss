@@ -1,0 +1,132 @@
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: #337390;
+}
+
+#result {
+  position: fixed;
+  display: flex;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 35%;
+  align-items: center;
+  text-align: center;
+  background-color: #205269;
+
+  > div {
+    margin: 0 auto;
+    color: #9ccade;
+
+    p {
+      margin: 0;
+      padding: 0;
+
+      &.size {
+        margin-bottom: 20px;
+        span {
+          font-size: 14px;
+        }
+        b {
+          font-size: 28px;
+        }
+      }
+
+      &.unit {
+        font-size: 46px;
+      }
+
+      &.price {
+        margin-top: -20px;
+        font-size: 80px;
+        color: #2bfdff;
+        i {
+          font-size: 30px;
+          font-weight: normal;
+          font-style: normal;
+        }
+      }
+    }
+  }
+}
+
+#add {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  z-index: 1041;
+  padding-top: 9px;
+
+  width: 130px;
+  height: 50px;
+  border-radius: 25px;
+  border: 3px solid;
+  font-size: 18px;
+  text-align: center;
+
+  color: white;
+  cursor: pointer;
+
+  transition: .2s ease color;
+
+  &:hover {
+    color: #2cfdff;
+  }
+}
+
+#values {
+  position: absolute;
+  top: 0;
+  left: 35%;
+  right: 0;
+
+  padding: {
+    top: 100px;
+    left: 100px;
+  }
+
+  .input-group {
+    & + .input-group {
+      margin: {
+        left: 15px;
+      }
+    }
+  }
+
+  .unit {
+    & + .unit {
+      margin-top: 15px;
+    }
+  }
+
+  .remove {
+    padding-top: 7px;
+    color: white;
+    cursor: pointer;
+    transition: .2s ease color;
+
+    &:hover {
+      color: #2cfdff;
+    }
+  }
+}
+
+.insert {
+
+  width: 450px;
+
+  .input-group {
+    & + .input-group {
+      margin-top: 25px;
+    }
+  }
+
+  .input-group-text {
+    width: 100px;
+  }
+}

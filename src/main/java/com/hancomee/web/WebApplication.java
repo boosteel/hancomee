@@ -11,6 +11,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.http.HttpServletRequest;
+
 @ComponentScan({"com.hancomee"})
 @SpringBootApplication
 @RequestMapping
@@ -34,10 +36,16 @@ public class WebApplication extends SpringBootServletInitializer implements WebM
         return "hello";
     }
 
+    @RequestMapping(value="templates/**/*")
+    public String $template(HttpServletRequest req) {
+        return req.getServletPath().substring(10) + ".html";
+    }
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/secret/gallery/**").addResourceLocations("file:D:/files/gallery/");
         registry.addResourceHandler("/local/**").addResourceLocations("file:D:/");
+        registry.addResourceHandler("/disc/**").addResourceLocations("file:/");
     }
 
 }

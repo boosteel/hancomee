@@ -67,6 +67,12 @@ public class DB {
         }
     }
 
+    public long save(String sql) throws Exception {
+        try (Statement s = getCon().createStatement()) {
+            return s.executeUpdate(sql);
+        }
+    }
+
     public long save(String tableName, List<Map<String, Object>> values) throws Exception {
         String sql = SQL.insert(tableName, values);
         try (Statement s = getCon().createStatement()) {

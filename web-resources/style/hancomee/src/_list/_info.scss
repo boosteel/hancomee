@@ -1,0 +1,65 @@
+
+
+#total-info {
+
+  @extend %_flex;
+  justify-content: space-between;
+
+  border-bottom: 1px solid $nav-border-bottom-color;
+  background-color: #f9f9f9;
+
+  > * {
+    flex-grow: 1;
+  }
+
+  .navi {
+
+  }
+
+  // 작업 버튼
+  .numbers {
+
+    &, > li {
+      @extend %_flex;
+    }
+    justify-content: space-evenly;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    > li {
+
+      overflow: hidden;
+
+      flex-grow: 1;
+      align-items: center;
+      flex-wrap: wrap;
+
+      padding: 10px;
+      width: 1%;
+      border-left: 1px solid $nav-border-bottom-color;
+
+      > * {
+        display: block;
+        width: 100%;
+        line-height: 1;
+        color: #666;
+      }
+
+      > i {
+        align-self: flex-start;
+        font-size: 14px;
+      }
+      // 작업건수
+      > b {
+        font-size: 45px;
+        align-self: flex-end;
+      }
+
+      > span {
+        align-self: flex-end;
+        font-size: 14px;
+      }
+    }
+  }
+}

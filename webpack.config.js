@@ -1,4 +1,6 @@
-const
+var
+
+    HtmlWebpackPlugin = require('html-webpack-plugin'),
     ExtractTextPlugin = require('extract-text-webpack-plugin'),
     UglifyJSPlugin = require('uglifyjs-webpack-plugin'),
     fs = require('fs'),
@@ -70,15 +72,22 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 loader: 'ts-loader'
+            },
+            {
+                test: /\.html$/,
+                loader: 'html-loader'
+
             }
-        ]
+        ],
+
     },
+
 
 
     plugins: [
         new ExtractTextPlugin({
             filename: 'dist/[name].bundle.css',
             allChunks: true,
-        })
+        }),
     ]
 };

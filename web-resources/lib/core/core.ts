@@ -146,6 +146,8 @@ export function _extend<T>(dest: ArrayLike<T>, source: ArrayLike<T>): ArrayLike<
 export function _extend<T>(dest: {}, source: T): T
 export function _extend(dest, source): any {
 
+    if(source == null) return dest;
+
     if (isArrayLike(source)) {
         let i = 0, l = source.length;
         for (; i < l; i++) {
@@ -161,6 +163,7 @@ export function _extend(dest, source): any {
 
     return dest;
 }
+
 
 export function _deepExtend<T>(dest: ArrayLike<T>, source: ArrayLike<T>): ArrayLike<T>
 export function _deepExtend<T>(dest: {}, source: T): T

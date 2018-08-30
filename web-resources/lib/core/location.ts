@@ -2,8 +2,8 @@
  * Created by hellofunc on 2017-05-06.
  */
 
-import {_access, _primitive} from './access';
 import {isPlainObject, isEmptyObject, extend, $extend} from "./core";
+import {Access} from "./access";
 
 let hasOwn = {}.hasOwnProperty,
     hasOwnProperty = (obj, value: string) => hasOwn.call(obj, value),
@@ -44,6 +44,7 @@ export class Search {
 
 export namespace Search {
 
+    import primitive = Access.primitive;
     let r_n = /&/
 
 
@@ -97,10 +98,10 @@ export namespace Search {
             .filter(a => a && a.indexOf('=') !== -1)
             .forEach(v => {
                 let [key, _value] = v.split(/=/),
-                    value = _access(obj, key);
+                    value = Access.access(obj, key);
 
                 // decoding
-                _value = _primitive(decodeURIComponent(_value));
+                _value = primitive(decodeURIComponent(_value));
 
                 // key가 같은 경우 array로
                 if (value) {
@@ -108,7 +109,7 @@ export namespace Search {
                     value.push(_value);
                 } else value = _value;
 
-                _access(obj, key, value, true);
+                Access.access(obj, key, value, true);
             })
 
         return obj;
@@ -176,7 +177,7 @@ export namespace URLManager {
             URL = url.split(/\//).reduce((r, v) => {
 
                 if (v[0] === ':' && (v = v.slice(1))) {
-                    let value = _access(obj, v);
+                    let value = Access.access(obj, v);
                     value != null && r.push(value);
                 }
                 else r.push(v);
@@ -191,7 +192,7 @@ export namespace URLManager {
 
                 let [prop, value] = v.split(/\=/);
                 if (value[0] === ':' && (value = value.slice(1))) {
-                    let u = _access(obj, value);
+                    let u = Access.access(obj, value);
                     u != null && r.push(prop + '=' + u);
                 }
                 else r.push(v);

@@ -80,6 +80,6 @@ public class Strings {
     }
 
     public static final String eraseWindowStr(String target) {
-        return target.replaceAll("\\\\|/|:|<|>|\\?|\\*|\\|", "");
+        return target.replaceAll("\\\\|/|:|<|>|\\?|\\*|\"|\\|", "");
     }
 }

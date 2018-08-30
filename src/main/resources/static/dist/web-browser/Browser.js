@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -189,6 +189,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
     exports.extend = extend;
     function _extend(dest, source) {
+        if (source == null)
+            return dest;
         if (isArrayLike(source)) {
             var i = 0, l = source.length;
             for (; i < l; i++) {
@@ -715,6 +717,291 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Created by hellofunc on 2017-03-01.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Access;
+    (function (Access) {
+        // dot으로 구분된 프로퍼티 읽어오기
+        Access.read = (function () {
+            function ___read(prop, data) {
+                var value = data[prop];
+                return typeof value === 'function' ? value.call(data) : value;
+            }
+            return function (prop, data, nullSafeVal) {
+                if (nullSafeVal === void 0) { nullSafeVal = null; }
+                var props = prop.split(/\./), i = 0, l = props.length, result = data;
+                for (; i < l; i++) {
+                    result = ___read(props[i], result);
+                    if (result == null)
+                        return nullSafeVal;
+                }
+                return Access.primitive(result);
+            };
+        })();
+        Access.primitive = (function () {
+            var r_number = /^\d+$/, r_boolean = /^true$|^false$/, r_string = /^['"][^"']+['"]$/, r_date = /^\d{4}-\d{2}-\d{2}$|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/, r_string_replace = /["']/g;
+            return function (val) {
+                if (typeof val === 'string' && val.length > 0) {
+                    if (r_number.test(val))
+                        return parseInt(val);
+                    if (r_boolean.test(val))
+                        return val === 'true';
+                    if (r_string.test(val))
+                        return val.replace(r_string_replace, '');
+                    if (r_date.test(val))
+                        return new Date(val);
+                }
+                return val;
+            };
+        })();
+        function access(target, _props, val, force) {
+            var props = _props.split(/\./), len = props.length - 1, obj = target, temp, i = 0;
+            for (; obj != null && i < len; i++) {
+                temp = obj[props[i]];
+                if (temp == null && force)
+                    temp = obj[props[i]] = {};
+                obj = temp;
+            }
+            // [1] getter
+            if (arguments.length === 2)
+                return obj != null ? obj[props[i]] : obj;
+            // [2] setter
+            obj != null && (obj[props[i]] = val);
+            return target;
+        }
+        Access.access = access;
+    })(Access = exports.Access || (exports.Access = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var HTML;
+    (function (HTML) {
+        HTML.unCamelCase = (function (r_data, r_up, fn) {
+            return function (s) { return s.replace(r_data, '').replace(r_up, fn); };
+        })(/^data-/, /-([^-])/g, function (_, i) { return i.toUpperCase(); });
+        var r = /{{(.*?)}}/g, r_compile_test = /{{[^{}]+}}/;
+        function replaceHTML(str, obj) {
+            return str.replace(r, function (_, p) {
+                return obj[p] == null ? '' : obj[p];
+            });
+        }
+        HTML.replaceHTML = replaceHTML;
+        function compile(str) {
+            if (!r_compile_test.test(str))
+                return function () { return str; };
+            var i = 0, l = str.length, s = 0, e = 0, array = [];
+            var _loop_1 = function () {
+                if ((s = str.indexOf('{{', i)) !== -1) {
+                    var $v_1 = str.substring(i, s);
+                    array.push(function () { return $v_1; });
+                    e = str.indexOf('}}', s += 2);
+                    // _를 가지고 있을때만 Function 생성
+                    var ss_1 = str.substring(s, e), $fn = ss_1.indexOf('_') === -1 ?
+                        function (obj) { return obj[ss_1] == null ? '' : obj[ss_1]; } :
+                        new Function('_', 'return ' + ss_1 + ';');
+                    array.push($fn);
+                    i = e + 2;
+                }
+                else {
+                    var $v_2 = str.substring(i, l);
+                    array.push(function () { return $v_2; });
+                    i = l;
+                }
+            };
+            while (i !== l) {
+                _loop_1();
+            }
+            l = array.length;
+            return function (obj) {
+                var i = 0, result = [];
+                while (i < l) {
+                    result[i] = array[i++](obj);
+                }
+                return result.join('');
+            };
+        }
+        HTML.compile = compile;
+        var r_ease = /^\/+|\/+$/, r_split = /\//, template = '<li data-active="false">' +
+            '<i data-child="{{!!_.childs}}">&gt;</i>' +
+            '<a href="{{href}}">{{name}}</a>' +
+            '{{_.childs ? "<ul>" + _.childs + "</ul>" : ""}}' +
+            '</li>';
+        function a(str, obj) {
+            if (obj === void 0) { obj = {}; }
+            var s = str.replace(r_ease, '').split(r_split), i = 0, l = s.length, v;
+            for (; i < l; i++) {
+                obj = (obj[(v = s[i])] || (obj[v] = {}));
+            }
+        }
+        function toObject(list, obj) {
+            if (obj === void 0) { obj = {}; }
+            if (typeof list === 'string')
+                a(list, obj);
+            else {
+                var l = list.length;
+                while (l-- > 0)
+                    a(list[l], obj);
+            }
+            return obj;
+        }
+        HTML.toObject = toObject;
+        function $createHTML($com, obj, name, url) {
+            if (obj == null)
+                return '';
+            var p, c, array = [];
+            for (p in obj) {
+                if (c = $createHTML($com, obj[p], p, (url ? url + '/' + p : p)))
+                    array.push(c);
+            }
+            return $com({ href: url, name: name, childs: array.join('') });
+        }
+        function createTree(values, html, rootName) {
+            if (html === void 0) { html = template; }
+            if (rootName === void 0) { rootName = 'root'; }
+            var c = document.createElement('div');
+            c.innerHTML = '<ul>' + $createHTML(compile(html), toObject(values), rootName, '') + '</ul>';
+            c = c.firstElementChild;
+            // <a> 엘리먼트들을 미리 땡겨놓는다.
+            var anchors = c.querySelectorAll('a[href]'), ctrl = {
+                element: c,
+                active: function (path) {
+                    var l = anchors.length, anchor;
+                    while (l-- > 0) {
+                        anchor = anchors[l];
+                        if (path.indexOf(anchor.getAttribute('href')) === 0) {
+                            anchor.parentElement.setAttribute('data-active', 'true');
+                        }
+                        else {
+                            anchor.parentElement.setAttribute('data-active', 'false');
+                        }
+                    }
+                },
+                handler: null
+            };
+            c.addEventListener('click', function (e) {
+                var target = e.target;
+                if (target['href']) {
+                    ctrl.handler && ctrl.handler(target.getAttribute('href'), e);
+                    e.preventDefault();
+                }
+                else if (/i/i.test(target.tagName)) {
+                    var p = target.parentElement;
+                    p.setAttribute('data-active', p.getAttribute('data-active') === 'true' ? 'false' : 'true');
+                }
+            });
+            return ctrl;
+        }
+        HTML.createTree = createTree;
+        function createChildren(html) {
+            var div = document.createElement('div'), children, l, i = 0, pos = 0, c, array = [];
+            div.innerHTML = html;
+            children = div.children;
+            l = children.length;
+            while (i < l) {
+                if ((c = children[i++]) && c.nodeType === 1) {
+                    array[pos++] = c;
+                }
+            }
+            return array;
+        }
+        function create(html, handler) {
+            var children = createChildren(html), l, i;
+            if (typeof handler !== 'function')
+                return children;
+            if (l = children.length) {
+                i = 0;
+                while (i < l)
+                    handler(children[i], i++);
+            }
+        }
+        HTML.create = create;
+        function createFragment(html) {
+            var frag = document.createDocumentFragment();
+            if (typeof html === 'string')
+                create(html, function (v) { return frag.appendChild(v); });
+            else {
+                var l = html.length;
+                while (l-- > 0)
+                    frag.insertBefore(html[l], frag.firstChild);
+            }
+            return frag;
+        }
+        HTML.createFragment = createFragment;
+        var r_script = /script/i, r_template = /template/i;
+        function templateMap(html) {
+            var result = { doc: {}, com: {} }, array = createChildren(html), l = array.length, e;
+            while (l-- > 0) {
+                e = array[l];
+                if (e.id) {
+                    if (r_script.test(e.tagName)) {
+                        e.type.indexOf('html') !== -1 && (result.com[e.id] = compile(e.innerText));
+                    }
+                    if (r_template.test(e.tagName))
+                        (result.doc[e.id] = createFragment(e.children));
+                }
+            }
+            return result;
+        }
+        HTML.templateMap = templateMap;
+        /*
+         *   TO DO
+         *   태그만 골라낸다.
+         *   textNode부분은 더 작업해야 한다.
+         */
+        function htmlParser(html) {
+            var pos = 0, lines = [], linesIndex = -1, stack = [], stackIndex = -1;
+            while ((pos = html.indexOf('<', pos)) !== -1) {
+                var l = html.indexOf('>', pos) + 1, line = html.substring(pos, l); // <...>
+                // ① 시작 태그
+                if (html[pos + 1] !== '/') {
+                    var t = pos += 1, tagName = void 0;
+                    // tagName 골라내기
+                    while (t < l && html[++t] !== '/' && html[t] !== ' ' && html[t] !== '>')
+                        ;
+                    tagName = lines[++linesIndex] = html.substring(pos, t);
+                    stack[++stackIndex] = line;
+                }
+                // ② 끝 태그
+                else {
+                    var t = pos += 2, tagName = void 0;
+                    // tagName 골라내기
+                    while (t < l && html[++t] !== ' ' && html[t] !== '>')
+                        ;
+                    tagName = html.substring(pos, t);
+                    while (linesIndex > -1 && lines[linesIndex] !== tagName) {
+                        // 닫는 태그가 없는 엘리먼트들이 여기에 걸린다.
+                        linesIndex--;
+                        console.log('-' + stack[stackIndex--]);
+                    }
+                    linesIndex--;
+                    console.log(stack[stackIndex--]);
+                }
+                // 끝부분 확인
+                pos = l;
+            }
+            return pos;
+        }
+    })(HTML = exports.HTML || (exports.HTML = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * Created by hellofunc on 2017-02-28.
  */
 var __extends = (this && this.__extends) || (function () {
@@ -727,7 +1014,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(2), __webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, NameMap_1, arrays_1, core_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(7), __webpack_require__(2), __webpack_require__(0), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, NameMap_1, arrays_1, core_1, access_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Events = /** @class */ (function () {
@@ -768,14 +1055,21 @@ var __extends = (this && this.__extends) || (function () {
     exports.Events = Events;
     var EventsGroup = /** @class */ (function () {
         function EventsGroup() {
-            this.isActive = false;
+            this.isActive = true;
             this.map = new NameMap_1.NameMap();
         }
         EventsGroup.prototype.register = function (element, type, handler) {
-            if (typeof type === 'string')
-                this.map.add(type, new Events(element, type.split(/\./)[0], handler));
-            else
+            if (typeof type === 'string') {
+                var e = new Events(element, type.split(/\./)[0], handler);
+                if (!this.isActive)
+                    e.off();
+                this.map.add(type, e);
+            }
+            else {
+                if (!this.isActive)
+                    element.off();
                 this.map.add(element.type, element);
+            }
             return this;
         };
         EventsGroup.prototype.on = function (n) {
@@ -829,6 +1123,7 @@ var __extends = (this && this.__extends) || (function () {
     }());
     exports.TargetEvent = TargetEvent;
     (function (Events) {
+        var primitive = access_1.Access.primitive;
         function closest(target, selector, ele) {
             var list = target.querySelectorAll(selector), l = list.length;
             while (l-- > 0)
@@ -987,6 +1282,52 @@ var __extends = (this && this.__extends) || (function () {
             });
         }
         Events.eventWorks = eventWorks;
+        /*
+         *  event가 발생하면 target 엘리먼트부터 상위엘리먼트로 올라가면서
+         *  어트리뷰트를 읽어 데이터맵을 만들어준다.
+         */
+        function read(target, limit, obj) {
+            var event, n, v, vv, fn;
+            while (target && limit !== target) {
+                if (event == null) {
+                    if (event = target.getAttribute('data-event')) {
+                        if (typeof obj['setTarget'] === 'function')
+                            obj['setTarget'](target);
+                        else
+                            obj.target = target;
+                    }
+                }
+                // target 자체를
+                if (v = target.getAttribute('data-self')) {
+                    // set{Value}()가 있으면 거기에 넣어준다.
+                    if (typeof (fn = obj['set' + v[0].toUpperCase() + v.slice(1)]) === 'function')
+                        fn(target);
+                    else
+                        obj[v] = target;
+                }
+                // property 이름
+                if (v = target.getAttribute('data-property')) {
+                    // 값
+                    if (vv = target.getAttribute('data-value')) {
+                        // set{Value}()가 있으면 거기에 넣어준다.
+                        if (typeof (fn = obj['set' + v[0].toUpperCase() + v.slice(1)]) === 'function')
+                            fn(primitive(vv));
+                        else
+                            obj[v] = primitive(vv);
+                    }
+                }
+                target = target.parentElement;
+            }
+            return event;
+        }
+        // 데이터가 있을때만
+        function propertyMap(target, type, handlers, factory) {
+            return new Events(target, type, function (e) {
+                var obj = factory ? new factory(e) : {}, p = read(e.target, target, obj);
+                handlers[p] && handlers[p](obj, e);
+            });
+        }
+        Events.propertyMap = propertyMap;
     })(Events = exports.Events || (exports.Events = {}));
     exports.Events = Events;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -994,10 +1335,254 @@ var __extends = (this && this.__extends) || (function () {
 
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, dom_1, arrays_1, strings_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Created by hellofunc on 2017-05-06.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, access_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var hasOwn = {}.hasOwnProperty, hasOwnProperty = function (obj, value) { return hasOwn.call(obj, value); }, r_url = /(https?:\/\/.*?\/)?([^\?]+)\??([^#]+)?#?(.*)/;
+    var Search = /** @class */ (function () {
+        function Search() {
+        }
+        Search.prototype.reset = function (search) {
+            if (search === void 0) { search = location.search; }
+            return this.extend(Search.toObject(search));
+        };
+        Search.prototype.extend = function (obj) {
+            var p;
+            for (p in obj) {
+                this[p] = obj[p];
+            }
+            return this;
+        };
+        Search.prototype.hash = function () {
+            location.hash = this.toString();
+            return this;
+        };
+        Search.prototype.queryString = function (obj) {
+            if (obj)
+                obj = core_1.$extend(core_1.$extend({}, obj), this);
+            else
+                obj = this;
+            return Search.toSearch(obj);
+        };
+        Search.prototype.toString = function () {
+            return Search.toSearch(this);
+        };
+        return Search;
+    }());
+    exports.Search = Search;
+    (function (Search) {
+        var primitive = access_1.Access.primitive;
+        var r_n = /&/;
+        function create() {
+            return new Search().reset();
+        }
+        Search.create = create;
+        /*
+         *  쿼리 문자열 비교.
+         *  순서만 다르고 같은 값으로 이루어진 쿼리의 경우 true가 된다.
+         */
+        function equals(a, b) {
+            if (a === b)
+                return true;
+            if (a == null || b == null)
+                return false;
+            if (a.length != b.length)
+                return false;
+            var an = a.split(r_n), bn = b.split(r_n), len = an.length;
+            while (len-- > 0)
+                if (bn.indexOf(an[len]) === -1)
+                    return false;
+            return true;
+        }
+        Search.equals = equals;
+        // Object  ====>  querystring
+        function toSearch(obj, prefix) {
+            if (prefix === void 0) { prefix = ''; }
+            if (core_1.isEmptyObject(obj))
+                return '';
+            var array = [], value;
+            var _loop_1 = function (key) {
+                value = obj[key];
+                if (key[0] === '_' || key[0] === '$' || value == null || typeof value === 'function' || !hasOwnProperty(obj, key))
+                    return "continue";
+                if (core_1.isPlainObject(value)) {
+                    array.push(toSearch(value, prefix + key + '.'));
+                }
+                else if (Array.isArray(value)) {
+                    array = array.concat(value.map(function (v) { return key + '=' + encodeURIComponent(v); }));
+                }
+                else
+                    array.push(prefix + key + '=' + encodeURIComponent(value));
+            };
+            for (var key in obj) {
+                _loop_1(key);
+            }
+            return array.join("&");
+        }
+        Search.toSearch = toSearch;
+        // querystring  ====>  Object
+        function toObject(query, obj) {
+            if (obj === void 0) { obj = {}; }
+            if (query[0] === '?')
+                query = query.slice(1);
+            query.split(/&/)
+                .filter(function (a) { return a && a.indexOf('=') !== -1; })
+                .forEach(function (v) {
+                var _a = v.split(/=/), key = _a[0], _value = _a[1], value = access_1.Access.access(obj, key);
+                // decoding
+                _value = primitive(decodeURIComponent(_value));
+                // key가 같은 경우 array로
+                if (value) {
+                    if (!Array.isArray(value))
+                        value = [value];
+                    value.push(_value);
+                }
+                else
+                    value = _value;
+                access_1.Access.access(obj, key, value, true);
+            });
+            return obj;
+        }
+        Search.toObject = toObject;
+    })(Search = exports.Search || (exports.Search = {}));
+    exports.Search = Search;
+    var URLManager = /** @class */ (function () {
+        function URLManager(fullURL) {
+            this.fullURL = fullURL;
+            this.host = '';
+            this.pathname = '';
+            this.search = '';
+            this.hash = '';
+            var exec = r_url.exec(fullURL);
+            if (exec) {
+                this.host = exec[1] || '';
+                // 앞의 /는 삭제한다.
+                this.pathname = (exec[2] || '').replace(/^\//, '');
+                this.search = exec[3] || '';
+                this.hash = exec[4] || '';
+            }
+        }
+        URLManager.prototype.paths = function () {
+            return this.path || (this.path = this.pathname.split(/\//));
+        };
+        URLManager.prototype.equals = function (v) {
+            if (v == null)
+                return false;
+            if (typeof v === 'string')
+                v = new URLManager(v);
+            if (v.fullURL === this.fullURL)
+                return true;
+            if (v.host !== this.host)
+                return false;
+            if (v.pathname !== this.pathname)
+                return false;
+            if (!Search.equals(v.search, this.search))
+                return false;
+            if (v.hash !== this.hash)
+                return false;
+            return true;
+        };
+        return URLManager;
+    }());
+    exports.URLManager = URLManager;
+    (function (URLManager) {
+        function create(url) {
+            return new URLManager(url);
+        }
+        URLManager.create = create;
+        // /admin/:name?music=:audio, {name: '고정철', audio: '네임'}  ===>   /admin/고정철?music=네임
+        // 해당값이 없을시  키워드 부분을 삭제해버린다.
+        function queryExp(str, obj) {
+            var _a = str.split(/\?/), url = _a[0], query = _a[1], URL = url.split(/\//).reduce(function (r, v) {
+                if (v[0] === ':' && (v = v.slice(1))) {
+                    var value = access_1.Access.access(obj, v);
+                    value != null && r.push(value);
+                }
+                else
+                    r.push(v);
+                return r;
+            }, []).join('/'), QUERY;
+            // 쿼리 문자열이 있으면?
+            if (query) {
+                QUERY = query.split(/&/).reduce(function (r, v) {
+                    var _a = v.split(/\=/), prop = _a[0], value = _a[1];
+                    if (value[0] === ':' && (value = value.slice(1))) {
+                        var u = access_1.Access.access(obj, value);
+                        u != null && r.push(prop + '=' + u);
+                    }
+                    else
+                        r.push(v);
+                    return r;
+                }, []).join('&');
+            }
+            return QUERY ? URL + '?' + QUERY : URL;
+        }
+        URLManager.queryExp = queryExp;
+    })(URLManager = exports.URLManager || (exports.URLManager = {}));
+    exports.URLManager = URLManager;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var NameMap = /** @class */ (function () {
+        function NameMap() {
+            this.map = {};
+            this.datas = []; // 중복방지를 위한 리스트
+        }
+        NameMap.prototype.get = function (name) {
+            if (typeof name !== 'string')
+                return this.datas;
+            var map = this.map, _a = name.split(/\./), key = _a[0], args = _a.slice(1), list = map[key];
+            if (!list)
+                return [];
+            return list.filter(function (v) { return arrays_1.Arrays.startWith(args, v.names); }).map(function (v) { return v.data; });
+        };
+        NameMap.prototype.add = function (name, data) {
+            if (this.datas.indexOf(data) === -1) {
+                var map = this.map, _a = name.split(/\./), key = _a[0], args = _a.slice(1);
+                (map[key] || (map[key] = [])).push({ names: args, data: data });
+                this.datas.push(data);
+            }
+            return this;
+        };
+        NameMap.prototype.remove = function (name) {
+            var _a = this, map = _a.map, datas = _a.datas, _b = name.split(/\./), key = _b[0], args = _b.slice(1), list = map[key];
+            if (list) {
+                map[key] = list.filter(function (v) {
+                    if (arrays_1.Arrays.startWith(args, v.names)) {
+                        datas.splice(datas.indexOf(v.data), 1);
+                        return false;
+                    }
+                    return true;
+                });
+            }
+            return this;
+        };
+        return NameMap;
+    }());
+    exports.NameMap = NameMap;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, dom_1, arrays_1, html_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function $snapshot(data, names) {
@@ -1089,7 +1674,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
     exports.Template = Template;
     (function (Template) {
-        var unCamelCase = strings_1.Strings.unCamelCase;
+        var unCamelCase = html_1.HTML.unCamelCase;
         var PRIVATE_KEY = "_____object_____";
         Template.default_directive = {};
         //*********************** ▼ INNER CLASS ▼ ***********************//
@@ -1259,79 +1844,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Strings;
-    (function (Strings) {
-        Strings.unCamelCase = (function (r_data, r_up, fn) {
-            return function (s) { return s.replace(r_data, '').replace(r_up, fn); };
-        })(/^data-/, /-([^-])/g, function (_, i) { return i.toUpperCase(); });
-        var r = /{{(.*?)}}/g;
-        function replaceHTML(str, obj) {
-            return str.replace(r, function (_, p) {
-                return obj[p] == null ? '' : obj[p];
-            });
-        }
-        Strings.replaceHTML = replaceHTML;
-    })(Strings = exports.Strings || (exports.Strings = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var NameMap = /** @class */ (function () {
-        function NameMap() {
-            this.map = {};
-            this.datas = []; // 중복방지를 위한 리스트
-        }
-        NameMap.prototype.get = function (name) {
-            if (typeof name !== 'string')
-                return this.datas;
-            var map = this.map, _a = name.split(/\./), key = _a[0], args = _a.slice(1), list = map[key];
-            if (!list)
-                return [];
-            return list.filter(function (v) { return arrays_1.Arrays.startWith(args, v.names); }).map(function (v) { return v.data; });
-        };
-        NameMap.prototype.add = function (name, data) {
-            if (this.datas.indexOf(data) === -1) {
-                var map = this.map, _a = name.split(/\./), key = _a[0], args = _a.slice(1);
-                (map[key] || (map[key] = [])).push({ names: args, data: data });
-                this.datas.push(data);
-            }
-            return this;
-        };
-        NameMap.prototype.remove = function (name) {
-            var _a = this, map = _a.map, datas = _a.datas, _b = name.split(/\./), key = _b[0], args = _b.slice(1), list = map[key];
-            if (list) {
-                map[key] = list.filter(function (v) {
-                    if (arrays_1.Arrays.startWith(args, v.names)) {
-                        datas.splice(datas.indexOf(v.data), 1);
-                        return false;
-                    }
-                    return true;
-                });
-            }
-            return this;
-        };
-        return NameMap;
-    }());
-    exports.NameMap = NameMap;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -1385,265 +1898,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Created by hellofunc on 2017-05-06.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(9), __webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1, core_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var hasOwn = {}.hasOwnProperty, hasOwnProperty = function (obj, value) { return hasOwn.call(obj, value); }, r_url = /(https?:\/\/.*?\/)?([^\?]+)\??([^#]+)?#?(.*)/;
-    var Search = /** @class */ (function () {
-        function Search() {
-        }
-        Search.prototype.reset = function (search) {
-            if (search === void 0) { search = location.search; }
-            return this.extend(Search.toObject(search));
-        };
-        Search.prototype.extend = function (obj) {
-            var p;
-            for (p in obj) {
-                this[p] = obj[p];
-            }
-            return this;
-        };
-        Search.prototype.hash = function () {
-            location.hash = this.toString();
-            return this;
-        };
-        Search.prototype.queryString = function (obj) {
-            if (obj)
-                obj = core_1.$extend(core_1.$extend({}, obj), this);
-            else
-                obj = this;
-            return Search.toSearch(obj);
-        };
-        Search.prototype.toString = function () {
-            return Search.toSearch(this);
-        };
-        return Search;
-    }());
-    exports.Search = Search;
-    (function (Search) {
-        var r_n = /&/;
-        function create() {
-            return new Search().reset();
-        }
-        Search.create = create;
-        /*
-         *  쿼리 문자열 비교.
-         *  순서만 다르고 같은 값으로 이루어진 쿼리의 경우 true가 된다.
-         */
-        function equals(a, b) {
-            if (a === b)
-                return true;
-            if (a == null || b == null)
-                return false;
-            if (a.length != b.length)
-                return false;
-            var an = a.split(r_n), bn = b.split(r_n), len = an.length;
-            while (len-- > 0)
-                if (bn.indexOf(an[len]) === -1)
-                    return false;
-            return true;
-        }
-        Search.equals = equals;
-        // Object  ====>  querystring
-        function toSearch(obj, prefix) {
-            if (prefix === void 0) { prefix = ''; }
-            if (core_1.isEmptyObject(obj))
-                return '';
-            var array = [], value;
-            var _loop_1 = function (key) {
-                value = obj[key];
-                if (key[0] === '_' || key[0] === '$' || value == null || typeof value === 'function' || !hasOwnProperty(obj, key))
-                    return "continue";
-                if (core_1.isPlainObject(value)) {
-                    array.push(toSearch(value, prefix + key + '.'));
-                }
-                else if (Array.isArray(value)) {
-                    array = array.concat(value.map(function (v) { return key + '=' + encodeURIComponent(v); }));
-                }
-                else
-                    array.push(prefix + key + '=' + encodeURIComponent(value));
-            };
-            for (var key in obj) {
-                _loop_1(key);
-            }
-            return array.join("&");
-        }
-        Search.toSearch = toSearch;
-        // querystring  ====>  Object
-        function toObject(query, obj) {
-            if (obj === void 0) { obj = {}; }
-            if (query[0] === '?')
-                query = query.slice(1);
-            query.split(/&/)
-                .filter(function (a) { return a && a.indexOf('=') !== -1; })
-                .forEach(function (v) {
-                var _a = v.split(/=/), key = _a[0], _value = _a[1], value = access_1._access(obj, key);
-                // decoding
-                _value = access_1._primitive(decodeURIComponent(_value));
-                // key가 같은 경우 array로
-                if (value) {
-                    if (!Array.isArray(value))
-                        value = [value];
-                    value.push(_value);
-                }
-                else
-                    value = _value;
-                access_1._access(obj, key, value, true);
-            });
-            return obj;
-        }
-        Search.toObject = toObject;
-    })(Search = exports.Search || (exports.Search = {}));
-    exports.Search = Search;
-    var URLManager = /** @class */ (function () {
-        function URLManager(fullURL) {
-            this.fullURL = fullURL;
-            this.host = '';
-            this.pathname = '';
-            this.search = '';
-            this.hash = '';
-            var exec = r_url.exec(fullURL);
-            if (exec) {
-                this.host = exec[1] || '';
-                // 앞의 /는 삭제한다.
-                this.pathname = (exec[2] || '').replace(/^\//, '');
-                this.search = exec[3] || '';
-                this.hash = exec[4] || '';
-            }
-        }
-        URLManager.prototype.paths = function () {
-            return this.path || (this.path = this.pathname.split(/\//));
-        };
-        URLManager.prototype.equals = function (v) {
-            if (v == null)
-                return false;
-            if (typeof v === 'string')
-                v = new URLManager(v);
-            if (v.fullURL === this.fullURL)
-                return true;
-            if (v.host !== this.host)
-                return false;
-            if (v.pathname !== this.pathname)
-                return false;
-            if (!Search.equals(v.search, this.search))
-                return false;
-            if (v.hash !== this.hash)
-                return false;
-            return true;
-        };
-        return URLManager;
-    }());
-    exports.URLManager = URLManager;
-    (function (URLManager) {
-        function create(url) {
-            return new URLManager(url);
-        }
-        URLManager.create = create;
-        // /admin/:name?music=:audio, {name: '고정철', audio: '네임'}  ===>   /admin/고정철?music=네임
-        // 해당값이 없을시  키워드 부분을 삭제해버린다.
-        function queryExp(str, obj) {
-            var _a = str.split(/\?/), url = _a[0], query = _a[1], URL = url.split(/\//).reduce(function (r, v) {
-                if (v[0] === ':' && (v = v.slice(1))) {
-                    var value = access_1._access(obj, v);
-                    value != null && r.push(value);
-                }
-                else
-                    r.push(v);
-                return r;
-            }, []).join('/'), QUERY;
-            // 쿼리 문자열이 있으면?
-            if (query) {
-                QUERY = query.split(/&/).reduce(function (r, v) {
-                    var _a = v.split(/\=/), prop = _a[0], value = _a[1];
-                    if (value[0] === ':' && (value = value.slice(1))) {
-                        var u = access_1._access(obj, value);
-                        u != null && r.push(prop + '=' + u);
-                    }
-                    else
-                        r.push(v);
-                    return r;
-                }, []).join('&');
-            }
-            return QUERY ? URL + '?' + QUERY : URL;
-        }
-        URLManager.queryExp = queryExp;
-    })(URLManager = exports.URLManager || (exports.URLManager = {}));
-    exports.URLManager = URLManager;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Created by hellofunc on 2017-03-01.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    // dot으로 구분된 프로퍼티 읽어오기
-    exports._read = (function () {
-        function ___read(prop, data) {
-            var value = data[prop];
-            return typeof value === 'function' ? value.call(data) : value;
-        }
-        return function (prop, data, nullSafeVal) {
-            if (nullSafeVal === void 0) { nullSafeVal = null; }
-            var props = prop.split(/\./), i = 0, l = props.length, result = data;
-            for (; i < l; i++) {
-                result = ___read(props[i], result);
-                if (result == null)
-                    return nullSafeVal;
-            }
-            return exports._primitive(result);
-        };
-    })();
-    exports._primitive = (function () {
-        var r_number = /^\d+$/, r_boolean = /^true$|^false$/, r_string = /^['"][^"']+['"]$/, r_date = /^\d{4}-\d{2}-\d{2}$|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/, r_string_replace = /["']/g;
-        return function (val) {
-            if (typeof val === 'string' && val.length > 0) {
-                if (r_number.test(val))
-                    return parseInt(val);
-                if (r_boolean.test(val))
-                    return val === 'true';
-                if (r_string.test(val))
-                    return val.replace(r_string_replace, '');
-                if (r_date.test(val))
-                    return new Date(val);
-            }
-            return val;
-        };
-    })();
-    function _access(target, _props, val, force) {
-        var props = _props.split(/\./), len = props.length - 1, obj = target, temp, i = 0;
-        for (; obj != null && i < len; i++) {
-            temp = obj[props[i]];
-            if (temp == null && force)
-                temp = obj[props[i]] = {};
-            obj = temp;
-        }
-        // [1] getter
-        if (arguments.length === 2)
-            return obj != null ? obj[props[i]] : obj;
-        // [2] setter
-        obj != null && (obj[props[i]] = val);
-        return target;
-    }
-    exports._access = _access;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 10 */
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = (this && this.__extends) || (function () {
@@ -1656,7 +1914,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, calcurator_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, calcurator_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var MediaElement = /** @class */ (function () {
@@ -1765,10 +2023,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
 
 
 /***/ }),
-/* 11 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, events_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, events_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var MediaController = /** @class */ (function () {
@@ -1833,7 +2091,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 12 */
+/* 15 */,
+/* 16 */,
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = (this && this.__extends) || (function () {
@@ -1855,7 +2115,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13), __webpack_require__(3), __webpack_require__(1), __webpack_require__(4), __webpack_require__(10), __webpack_require__(11), __webpack_require__(8), __webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Tree_1, events_1, dom_1, template_1, MediaElement_1, MediaController_1, location_1, core_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(18), __webpack_require__(5), __webpack_require__(1), __webpack_require__(8), __webpack_require__(13), __webpack_require__(14), __webpack_require__(6), __webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Tree_1, events_1, dom_1, template_1, MediaElement_1, MediaController_1, location_1, core_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var className = dom_1.DOM.className;
@@ -2090,7 +2350,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 /***/ }),
-/* 13 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -2102,7 +2362,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __decorate =
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(4), __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, template_1, dom_1, events_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(8), __webpack_require__(1), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, template_1, dom_1, events_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var r_anchor = /a/i, c_active = ['active'], c_open = ['open'];

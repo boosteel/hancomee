@@ -1,0 +1,64 @@
+#total-info, #total-info .numbers, #total-info .numbers > li {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -o-flex;
+  display: flex; }
+
+nav .title {
+  margin-right: 10px;
+  padding-right: 10px;
+  font-size: 12px; }
+
+nav .sort {
+  display: flex;
+  align-items: center;
+  margin-right: auto; }
+  nav .sort > span {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    height: 49px;
+    border-left: 1px solid gainsboro;
+    font-size: 14px;
+    cursor: pointer; }
+    nav .sort > span:last-child {
+      border-right: 1px solid gainsboro; }
+    nav .sort > span > i {
+      font-size: 20px; }
+    nav .sort > span:hover > i {
+      color: red; }
+
+#total-info {
+  justify-content: space-between;
+  border-bottom: 1px solid gainsboro;
+  background-color: #f9f9f9; }
+  #total-info > * {
+    flex-grow: 1; }
+  #total-info .numbers {
+    justify-content: space-evenly;
+    padding: 0;
+    margin: 0;
+    list-style: none; }
+    #total-info .numbers > li {
+      overflow: hidden;
+      flex-grow: 1;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 10px;
+      width: 1%;
+      border-left: 1px solid gainsboro; }
+      #total-info .numbers > li > * {
+        display: block;
+        width: 100%;
+        line-height: 1;
+        color: #666; }
+      #total-info .numbers > li > i {
+        align-self: flex-start;
+        font-size: 14px; }
+      #total-info .numbers > li > b {
+        font-size: 45px;
+        align-self: flex-end; }
+      #total-info .numbers > li > span {
+        align-self: flex-end;
+        font-size: 14px; }

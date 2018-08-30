@@ -5,8 +5,8 @@ import {DOM} from "../lib/core/dom";
 import className = DOM.className;
 import {Events} from "../lib/core/events";
 import {Branch} from "../lib/core/support/Branch";
-import {Strings} from "../lib/core/strings";
-import replaceHTML = Strings.replaceHTML;
+import {HTML} from "../lib/core/html";
+import replaceHTML = HTML.replaceHTML;
 
 type NormalizeValues = { [index: string]: DATA[] }
 

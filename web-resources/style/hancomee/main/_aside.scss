@@ -1,0 +1,42 @@
+@import "../variables";
+
+// 접혔을때
+aside {
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: $aside-width-thumb;
+
+  background-color: #333;
+  transition: .3s ease width;
+
+  .menu {
+    list-style: none;
+    padding: 0;
+
+    > li {
+      > a {
+        display: block;
+        color: #888;
+        text-align: center;
+        > i {
+          display: block;
+          font-size: 38px;
+        }
+        &:hover {
+          color: #eee;
+        }
+      }
+
+      background-color: #232323;
+    }
+  }
+
+}
+
+
+// 열렸을때
+aside:hover {
+}
