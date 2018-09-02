@@ -3,7 +3,7 @@ import {Calendar, Month} from "../../../lib/core/calendar";
 import {Search} from "../../../lib/core/location";
 import {DOM} from "../../../lib/core/dom";
 import {Events} from "../../../lib/core/events";
-import {Branch} from "../../../lib/core/support/Branch";
+import {Branch} from "../../../lib/core/component/Branch";
 import {HTML} from "../../../lib/core/html";
 import className = DOM.className;
 import replaceHTML = HTML.replaceHTML;

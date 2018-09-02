@@ -73,6 +73,8 @@ class Data {
     private loading = false;
     private _resolve = $$resolve
 
+    private timeout = 1000;
+
     checks: string[] = []
     values: DATA[] = [];
 
@@ -97,6 +99,9 @@ class Data {
                         this.apply();
                         this.loading = false;
                         this.checks = this.values.map(s => s.url)
+                    }
+                    else {
+                        this.xhr = new XMLHttpRequest();
                     }
                     o();
                 }
@@ -158,7 +163,6 @@ $ready(() => {
             naverCafe('하이파이코리아', 'hifikorea', 23218064, 48),
             naverCafe('헝그리오디오', 'hungrya', 25678061, 14),
             naverCafe('두두오 일반', 'audiodudu', 28248719, 46),
-            naverCafe('신길카오디오', 'junggocaraudio', 20672804, 19),
             naverCafe('두두오 고급', 'audiodudu', 28248719, 53),
             {
                 name: '실용오디오',

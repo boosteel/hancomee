@@ -7,3 +7,7 @@ declare module '*.html' {
 }
 
 declare function require(source: string);
+
+interface iCompile {
+    (obj: any): string
+}

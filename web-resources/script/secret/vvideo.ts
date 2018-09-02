@@ -6,7 +6,7 @@ import {HTML} from "../../lib/core/html";
 import compile = HTML.compile;
 import {Search} from "../../lib/core/location";
 import {Pager, PagerTable} from "../../lib/core/pager";
-import "../../lib/core/support/toggle";
+import "../../lib/core/component/toggle";
 import {Selector} from "../../lib/core/dom/selector";
 import select = Selector.select;
 

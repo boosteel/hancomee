@@ -47,15 +47,15 @@ public class twitter extends AbstractSpy {
     public void run() throws Exception {
 
         //  3ZBzD5cPmRZtaVu
-        tour();
-        //run("jungyeon03");
+        //tour();
+        run("doxes_69 sexsexhj You20161216 loQ1EEFxdiLhMCK");
 
     }
 
 
     // 이미 받았던 것들 순회
     public void tour() throws Exception {
-
+        int total = 0;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(twitterROOT)) {
 
             try {
@@ -63,7 +63,9 @@ public class twitter extends AbstractSpy {
                     if (Files.isDirectory(dir)) {
                         try {
                             run(dir.getFileName().toString());
+                            total += count;
                         } catch (Exception e) {
+                            out(e.getMessage());
                         }
                     }
 
@@ -72,6 +74,8 @@ public class twitter extends AbstractSpy {
                 e.printStackTrace();
             }
         }
+
+        out("총 받은 갯 수 : " + total);
 
     }
 

@@ -1,5 +1,5 @@
 import {$ready} from "../../lib/core/core";
-import "../../lib/core/support/toggle";
+import "../../lib/core/component/toggle";
 import {Search} from "../../lib/core/location";
 import {Pager, PagerTable} from "../../lib/core/pager";
 import {DOM} from "../../lib/core/dom";

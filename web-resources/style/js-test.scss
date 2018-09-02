@@ -1,103 +1,59 @@
 
-@import "./lib/animation/fade-page";
-@import "../../node_modules/bootstrap/scss/bootstrap";
+* {
+  box-sizing: border-box;
+}
 
-table {
-  border-collapse: collapse;
-  > tbody {
-    > tr {
-      >td {
-        border: 1px solid black;
+.c-selectCalendar {
+
+  position: absolute;
+
+  .ctrl {
+    background-color: #888;
+  }
+
+  .sel {
+    position: relative;
+    text-align: center;
+
+    .move {
+      position: absolute;
+      top: 10px;
+      font-size: 12px;
+
+      &.prev {
+        left: 10px;
+      }
+      &.next {
+        right: 10px;
       }
     }
-  }
-}
-
-.line {
-  width: 500px;
-  height: 0.2mm;
-  background-color: black;
-}
-
-.dot {
-  width: 500px;
-  height: 1px;
-  background: {
-    image: url("../img/dot_12.png");
-    repeat: repeat-x;
-  }
-}
-
-
-.test {
-  position: absolute;
-  width: 800px;
-  height: 1200px;
-}
-
-.test1 {
-  background-color: orange;
-}
-.test2{
-  background-color: purple;
-}
-
-.page-in {
-  @extend %page-in;
-}
-
-.page-out {
-  @extend %page-out;
-}
-
-@media print{
-
-  -webkit-print-color-adjust: exact;
-
-  @page {
-    width: 21cm;
-    height: 29.7cm;
-
+    .current {
+      font-size: 24px;
+    }
   }
 
-  body {
-    margin: 2cm;
-  }
-  table {
+  > table {
+    width: 100%;
     border-collapse: collapse;
     > tbody {
       > tr {
-        >td {
-          width: 100mm;
-          height: 100mm;
-          border:  0.12mm solid black;
+        > td {
+          border: 1px solid #ddd;
+          > span {
+            display: block;
+            padding-top: 9px;
+            width: 35px;
+            height: 35px;
+            font-size: 14px;
+            text-align: center;
+
+            cursor: pointer;
+            &:hover {
+              background-color: #f5f5f5;
+            }
+          }
         }
       }
-    }
-  }
-}
-
-
-ul {
-
-  padding: 0;
-  margin: 0;
-
-  &, li {
-    display: flex;
-    list-style: none;
-  }
-
-  li {
-    overflow: hidden;
-    flex-direction: column;
-    flex-grow: 1;
-    flex-basis: 100px;
-    background-color: #ddd;
-    border: 1px solid #aaa;
-
-    > span {
-      border: 1px solid #999;
     }
   }
 }

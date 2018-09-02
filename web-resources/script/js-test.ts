@@ -1,13 +1,9 @@
 import {HTML} from "../lib/core/html";
 import createFragment = HTML.createFragment;
+import htmlParser = HTML.htmlParser;
+import {SelectCalendar} from "../lib/core/component/SelectCalendar";
+import {$ready} from "../lib/core/core";
 
-const d: string = require("./js-test.html");
-
-
-
-let r = /5/;
-
-console.log(r.test('123412345'))
-
-
-
+$ready(() => {
+    document.body.innerHTML = SelectCalendar.create(2018, 8);
+})

@@ -1,4 +1,4 @@
-import {Tree} from "../../lib/core/support/Tree";
+import {Tree} from "../../lib/core/component/Tree";
 import {Events, EventsGroup} from "../../lib/core/events";
 import {DOM} from "../../lib/core/dom";
 import {Directive, Template, Watcher} from "../../lib/core/template";

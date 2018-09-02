@@ -1,7 +1,7 @@
 import {Browser, iBrowserConfig, MediaContainer, MediaSeach} from "../web-browser/Browser";
 import {Template} from "../../lib/core/template";
 import {$ready} from "../../lib/core/core";
-import "../../lib/core/support/toggle";
+import "../../lib/core/component/toggle";
 import {PagerTable, Pager} from "../../lib/core/pager";
 import {Events} from "../../lib/core/events";
 import {DOM} from "../../lib/core/dom";
