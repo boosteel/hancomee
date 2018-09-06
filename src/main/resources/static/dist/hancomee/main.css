@@ -6297,23 +6297,32 @@ aside {
       background-color: #232323; }
       aside .menu > li > a {
         display: block;
+        padding: 10px 0;
+        border-bottom: 1px solid black;
         color: #888;
+        text-shadow: -1px -1px 1px black;
         text-align: center; }
         aside .menu > li > a > i {
           display: block;
           font-size: 38px; }
         aside .menu > li > a:hover {
-          color: #eee; }
+          color: #eee;
+          background-color: #1f1f1f; }
+      aside .menu > li.active > a {
+        color: #de9b1d;
+        background-color: #1f1f1f; }
+      aside .menu > li + li > a {
+        border-top: 1px solid #2f2f2f; }
 
-main > div.page-in, main > div.page-out {
+body > main > div.page-in, body > main > div.page-out {
   animation-duration: .3s; }
 
-main > div.page-in {
+body > main > div.page-in {
   opacity: 0;
   animation-name: page-in;
   animation-delay: .3s; }
 
-main > div.page-out {
+body > main > div.page-out {
   animation-name: page-out; }
 
 @keyframes page-in {
@@ -6337,6 +6346,9 @@ a {
   a:hover, a:visited, a:active {
     text-decoration: none; }
 
+html, html body, html body > main, html body > main > div {
+  height: 100%; }
+
 body {
   overflow-x: hidden;
   padding-left: 80px;
@@ -6352,24 +6364,24 @@ aside {
   z-index: 1041;
   background-color: #222; }
 
-main {
+body > main {
   position: relative; }
-  main.load {
+  body > main.load {
     opacity: .4; }
-  main > div, main > nav {
+  body > main > div, body > main > nav {
     top: 0;
     right: 0;
     left: 0; }
-  main > div {
+  body > main > div {
     display: none;
     position: absolute; }
-    main > div.page-in, main > div.page-out, main > div.on {
+    body > main > div.page-in, body > main > div.page-out, body > main > div.on {
       display: block; }
-    main > div.page-in nav {
+    body > main > div.page-in nav {
       left: 0; }
-    main > div > div {
+    body > main > div > div {
       padding-top: 50px; }
-  main nav {
+  body > main nav {
     display: flex;
     align-items: center;
     position: fixed;

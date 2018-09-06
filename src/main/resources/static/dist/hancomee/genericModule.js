@@ -424,6 +424,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    function log(a) {
+        console.log(a);
+        return a;
+    }
     var HTML;
     (function (HTML) {
         HTML.unCamelCase = (function (r_data, r_up, fn) {
@@ -606,7 +610,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          *  사용방법은 아래 코드를 참조하자.
          *
          */
-        var r_replace_name = /:(:)?([^>]+)>$/, r_eraser = /\s+::?[^>]+>/g;
+        var r_replace_name = /:(:)?([^>\s]+)>$/, r_eraser = /\s+::?[^>\s]+>/g;
         /*
          *  템플릿 가운데 치환자로 변환할 위치를 설정하는 클래스
          *  하위 엘리먼트부터 상위로 올라가므로 시작 index는 점점 작은 숫자가 들어온다고 보면 된다.

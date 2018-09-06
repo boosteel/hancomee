@@ -350,441 +350,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var DOM;
-    (function (DOM) {
-        var doc = document;
-        function closest(target, handler, limit) {
-            if (limit === void 0) { limit = null; }
-            var index = 0;
-            do {
-                if (handler(target, index++))
-                    return target;
-            } while ((target = target.parentElement) && target !== limit);
-            return target;
-        }
-        DOM.closest = closest;
-        function offset(e, parent, extend) {
-            if (parent === void 0) { parent = document.body; }
-            if (extend === void 0) { extend = false; }
-            var l = 0, t = 0, target = e;
-            do {
-                t += target.offsetTop - target.scrollTop;
-                l += target.offsetLeft - target.scrollLeft;
-            } while ((target = target.offsetParent) && target !== parent);
-            var result = { left: l, top: t };
-            if (extend === true) {
-                var w = e.offsetWidth, h = e.offsetHeight;
-                result['width'] = w;
-                result['height'] = h;
-                result['right'] = w + l;
-                result['bottom'] = t + h;
-            }
-            return result;
-        }
-        DOM.offset = offset;
-        function isAssignableFrom(target, parent) {
-            do {
-                if (target === parent)
-                    return true;
-            } while (target = target.parentElement);
-            return false;
-        }
-        DOM.isAssignableFrom = isAssignableFrom;
-        function selector(selector, parent) {
-            if (parent === void 0) { parent = document; }
-            return toArray(parent.querySelectorAll(selector));
-        }
-        DOM.selector = selector;
-        // NodeList등을 array로!!
-        function toArray(elements, result) {
-            if (result === void 0) { result = []; }
-            var len = elements['length'];
-            if (typeof len === 'number') {
-                for (var i = 0; i < len; i++) {
-                    result.push(elements[i]);
-                }
-            }
-            else
-                result.push(elements);
-            return result;
-        }
-        DOM.toArray = toArray;
-        // obj는 인터폴레이터용
-        function stringToDOM(str, obj) {
-            var v, div = document.createElement('div');
-            if (obj) {
-                str = str.replace(/{{(.+?)}}/g, function (_, p) {
-                    if ((v = obj[p]) != null) {
-                        if (typeof v === 'function')
-                            return v.call(obj);
-                        return v;
-                    }
-                    return '';
-                });
-            }
-            div.innerHTML = str;
-            return toArray(div.children);
-        }
-        DOM.stringToDOM = stringToDOM;
-        function hasClass(element, name) {
-            var className = element.className.split(c_r), names = Array.isArray(name) ? name : [name];
-            return names.every(function (v) { return className.indexOf(v) !== -1; });
-        }
-        DOM.hasClass = hasClass;
-        /*
-         *  isAdd가 null이면 toggleClass로 작동한다.
-         */
-        var c_r = /\s+/, uuid = 1;
-        /*
-         *  2018-01-20
-         *  원래는 <div> 하나의 객체를 만들어서 재활용하는 형태로 사용했었다.
-         *  하지만 그렇게 할 경우 ie에서 버그가 생긴다.
-         */
-        DOM.createHTML = (function () {
-            var r = /^<([^\s>]+)/i;
-            function get(parent, html, tag) {
-                var index;
-                switch (tag) {
-                    case 'option':
-                        index = 2;
-                        parent.innerHTML = '<select>' + html + '</select>';
-                        break;
-                    case 'thead':
-                    case 'tbody':
-                    case 'tfoot':
-                    case 'colgroup':
-                    case 'caption':
-                        index = 2;
-                        parent.innerHTML = '<table>' + html + '</table>';
-                        break;
-                    case 'col':
-                        index = 3;
-                        parent.innerHTML = '<table><colgroup>' + html + '</colgroup></table>';
-                        break;
-                    case 'tr':
-                        index = 3;
-                        parent.innerHTML = '<table><tbody>' + html + '</tbody></table>';
-                        break;
-                    case 'td':
-                    case 'th':
-                        index = 4;
-                        parent.innerHTML = '<table><tbody><tr>' + html + '</tr></tbody></table>';
-                        break;
-                    default:
-                        parent.innerHTML = html;
-                        return parent.firstElementChild;
-                }
-                while (index-- > 0)
-                    parent = parent.firstElementChild;
-                return parent;
-            }
-            return function (html) {
-                html = html.trim();
-                return get(document.createElement('div'), html, r.exec(html)[1]);
-            };
-        })();
-        function className(element, value, isAdd) {
-            if (element == null)
-                return element;
-            var className = element.className.trim(), array = className ? className.split(c_r) : [], result;
-            if (typeof value === 'function') {
-                result = value.call(element, array, element);
-            }
-            else {
-                var values = Array.isArray(value) ? value : [value];
-                // ① ['a', 'u']  ==> ['!a', 'b']  ====>  ['u', 'b'];
-                if (isAdd == null)
-                    result = __toggleClass(array, values);
-                else if (isAdd === true)
-                    result = __addClass(array, values);
-                else
-                    result = __removeClass(array, values);
-            }
-            element.className = result.join(' ');
-            return element;
-        }
-        DOM.className = className;
-        function __addClass(array, target) {
-            var i = 0, l = target.length;
-            for (; i < l; i++) {
-                array.indexOf(target[i]) === -1 && array.push(target[i]);
-            }
-            return array;
-        }
-        function __removeClass(array, target) {
-            var i = 0, l = array.length, result = [], pos = 0;
-            for (; i < l; i++) {
-                target.indexOf(array[i]) === -1 && (result[pos++] = array[i]);
-            }
-            return result;
-        }
-        function __toggleClass(array, values) {
-            var l = values.length, i = 0, pos = -1, result = [], v, removal;
-            for (; i < l; i++) {
-                if (removal = (v = values[i])[0] === '!') {
-                    if ((pos = array.indexOf(v.slice(1))) !== -1)
-                        array.splice(pos, 1);
-                }
-                else {
-                    if ((pos = array.indexOf(v)) === -1)
-                        result.push(v);
-                }
-            }
-            return array.concat(result);
-        }
-        function eachAttrs(ele, handler) {
-            var attributes = ele.attributes, length = ele.attributes.length;
-            while (length-- > 0)
-                if (handler.call(ele, attributes[length].name, attributes[length].value) === false)
-                    return;
-        }
-        DOM.eachAttrs = eachAttrs;
-        DOM.attrMap = (function (r_data, r_up, fn) {
-            var rename = function (s) { return s.replace(r_data, '').replace(r_up, fn); };
-            return function (element) {
-                var attributes = element.attributes, length = attributes.length, attr, result = {};
-                while (length-- > 0) {
-                    attr = attributes[length];
-                    result[rename(attr.name)] = attr.value;
-                }
-                return result;
-            };
-        })(/^data-/, /-([^-])/g, function (_, i) { return i.toUpperCase(); });
-    })(DOM = exports.DOM || (exports.DOM = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
+/* 1 */,
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Arrays;
-    (function (Arrays) {
-        // 배열을 테이블화 시켜서 순회한다. 행이 존재함
-        // 콜백함수 (원소, 전체인덱스, 열넘버, 행넘버) ==>  false 반환시 루프 멈춤
-        function cols(array, col, callback) {
-            var limit = array.length, i = 0, colNum, row = -1;
-            if (col < 1)
-                throw new Error('열 수는 1 이상이어야  합니다 :: input Value ==> ' + col);
-            for (; i < limit; i++) {
-                if ((colNum = i % col) === 0)
-                    row++;
-                if (callback.call(array, array[i], i, i % col, row) === false)
-                    return;
-            }
-        }
-        Arrays.cols = cols;
-        /*
-         *  DataTransferItemList 때문에 만든 함수
-         *  map을 이용함에 있어, 비동기식 콜백으로 값을 받아야 하는 지연값이 있을 경우에 쓴다.
-         *  *사용법은 로직 참고
-         */
-        function promiseMap(array, handler) {
-            return new Promise(function (resolve, _) {
-                var check, len = check = array.length, result = [];
-                var _loop_1 = function () {
-                    var index = len;
-                    handler(array[index], function (d) {
-                        result[index] = d;
-                        --check === 0 && resolve(result);
-                    });
-                };
-                while (len-- > 0) {
-                    _loop_1();
-                }
-            });
-        }
-        Arrays.promiseMap = promiseMap;
-        // 숫자배열을 만들어준다.
-        // 시작넘버부터 객수
-        function rangeBySize(start, size) {
-            var array = [];
-            for (var l = start + size; start < l; start++) {
-                array.push(start);
-            }
-            return array;
-        }
-        Arrays.rangeBySize = rangeBySize;
-        // 시작숫자부터 마지막 숫자를 포함한 배열을 반환
-        function range_atob(start, lastNum) {
-            var reverse = start > lastNum ? true : false, array = [];
-            /*
-             *  start와 lastNum이 반대로 들어오면 ?    (5, 1)   ==>  [5,4,3,2,1]
-             *  일단 뒤짚어서 배열을 만든 후, 내보낼때 reserve()한다.
-             */
-            if (reverse) {
-                var temp = start;
-                start = lastNum;
-                lastNum = temp;
-            }
-            for (var i = 0, l = lastNum - start + 1; i < l; i++) {
-                array.push(i + start);
-            }
-            return reverse ? array.reverse() : array;
-        }
-        Arrays.range_atob = range_atob;
-        // drive 배열의 원소만큼 루프를 돌린다.
-        // callback함수는  1) drive 배열의 원소와  2) driven배얼, 3) 인덱스를 제공받는다.
-        function _with(drive, driven, callback) {
-            if (drive == null)
-                return;
-            for (var i = 0; i < drive.length; i++) {
-                callback.call(drive, drive[i], driven, i);
-            }
-        }
-        Arrays._with = _with;
-        function fill(length, v) {
-            if (v === void 0) { v = null; }
-            var i = 0, array = [], handler = v;
-            if (typeof v !== 'function')
-                handler = function () { return v; };
-            for (; i < length; i++) {
-                array[i] = handler.call(array, i);
-            }
-            return array;
-        }
-        Arrays.fill = fill;
-        // 배열을 length의 갯수만큼 나눈다.
-        // [1,2,3,4,5,6], 3  ==>  [1,2,3], [4,5,6]
-        function split(target, length) {
-            var result = [], temp, pos;
-            for (var i = 0, l = target.length; i < l; i++) {
-                pos = i % length;
-                if (!pos)
-                    result.push(temp = []);
-                temp[pos] = target[i];
-            }
-            return result;
-        }
-        Arrays.split = split;
-        // target의 앞부터 다 맞으면 오케이
-        function startWith(key, target) {
-            var i = 0, l = key.length;
-            if (target.length < l)
-                return false;
-            for (; i < l; i++) {
-                if (key[i] !== target[i])
-                    return false;
-            }
-            return true;
-        }
-        Arrays.startWith = startWith;
-        function endWith(key, target) {
-            var i = 0, l = key.length, r = target.length - l;
-            if (r < 0)
-                return false;
-            for (; i < l; i++, r++) {
-                if (key[i] !== target[r])
-                    return false;
-            }
-            return true;
-        }
-        Arrays.endWith = endWith;
-        // 값 비교
-        function equals(a, b) {
-            if (a === b)
-                return true;
-            if (a == null || b == null)
-                return false;
-            if (a.length != b.length)
-                return false;
-            // If you don't care about the order of the elements inside
-            // the array, you should sort both arrays here.
-            for (var i = 0, l = a.length; i < l; i++) {
-                if (a[i] !== b[i])
-                    return false;
-            }
-            return true;
-        }
-        Arrays.equals = equals;
-    })(Arrays = exports.Arrays || (exports.Arrays = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Created by hellofunc on 2017-03-01.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Access;
-    (function (Access) {
-        // dot으로 구분된 프로퍼티 읽어오기
-        Access.read = (function () {
-            function ___read(prop, data) {
-                var value = data[prop];
-                return typeof value === 'function' ? value.call(data) : value;
-            }
-            return function (prop, data, nullSafeVal) {
-                if (nullSafeVal === void 0) { nullSafeVal = null; }
-                var props = prop.split(/\./), i = 0, l = props.length, result = data;
-                for (; i < l; i++) {
-                    result = ___read(props[i], result);
-                    if (result == null)
-                        return nullSafeVal;
-                }
-                return Access.primitive(result);
-            };
-        })();
-        Access.primitive = (function () {
-            var r_number = /^\d+$/, r_boolean = /^true$|^false$/, r_string = /^['"][^"']+['"]$/, r_date = /^\d{4}-\d{2}-\d{2}$|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/, r_string_replace = /["']/g;
-            return function (val) {
-                if (typeof val === 'string' && val.length > 0) {
-                    if (r_number.test(val))
-                        return parseInt(val);
-                    if (r_boolean.test(val))
-                        return val === 'true';
-                    if (r_string.test(val))
-                        return val.replace(r_string_replace, '');
-                    if (r_date.test(val))
-                        return new Date(val);
-                }
-                return val;
-            };
-        })();
-        function access(target, _props, val, force) {
-            var props = _props.split(/\./), len = props.length - 1, obj = target, temp, i = 0;
-            for (; obj != null && i < len; i++) {
-                temp = obj[props[i]];
-                if (temp == null && force)
-                    temp = obj[props[i]] = {};
-                obj = temp;
-            }
-            // [1] getter
-            if (arguments.length === 2)
-                return obj != null ? obj[props[i]] : obj;
-            // [2] setter
-            obj != null && (obj[props[i]] = val);
-            return target;
-        }
-        Access.access = access;
-    })(Access = exports.Access || (exports.Access = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+    function log(a) {
+        console.log(a);
+        return a;
+    }
     var HTML;
     (function (HTML) {
         HTML.unCamelCase = (function (r_data, r_up, fn) {
@@ -967,54 +543,65 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          *  사용방법은 아래 코드를 참조하자.
          *
          */
-        var r_replace_name = /:(:)?([^>]+)>$/, r_eraser = /\s+::?[^>]+>/g;
+        var r_replace_name = /:(:)?([^>\s]+)>$/, r_eraser = /\s+::?[^>\s]+>/g;
         /*
          *  템플릿 가운데 치환자로 변환할 위치를 설정하는 클래스
          *  하위 엘리먼트부터 상위로 올라가므로 시작 index는 점점 작은 숫자가 들어온다고 보면 된다.
          */
         var ParseIndex = /** @class */ (function () {
-            function ParseIndex() {
+            function ParseIndex(html) {
+                this.html = html;
                 this.values = [];
+                this.result = {};
             }
-            ParseIndex.prototype.setVal = function (s, end, name) {
-                var _a = this, values = _a.values, length = _a.values.length, i = 0, v, nVal = [], nI = 0;
-                while (length-- > 0) {
-                    v = values[length];
-                    if (s < v.start && v.end < end)
+            // 저장되지 않는 단순 마커(:value)를 위한 추가메서드
+            ParseIndex.prototype.remove = function (s, e) {
+                var _a = this, values = _a.values, l = _a.values.length, i = 0, newValues = [], ni = 0;
+                for (; i < l; i++) {
+                    // 매치된건 없앤다.
+                    if (values[i].start > s && values[i].end < e)
                         void 0;
                     else
-                        nVal[nI++] = v;
+                        newValues[ni++] = values[i];
                 }
-                nVal.push({ start: s, end: end, name: name });
-                this.values = nVal;
+                this.values = newValues;
+            };
+            // 저장되는 마커(::value)를 위한 메서드
+            ParseIndex.prototype.loop = function (s, e) {
+                var _a = this, html = _a.html, values = _a.values, l = _a.values.length, buf = new StringBuffer_1.StringBuffer(), pos = s, i = 0, newValues = [], ni = 0;
+                for (; i < l; i++) {
+                    // 매치된건 없앤다.
+                    if (values[i].start > s && values[i].end < e) {
+                        buf.append(html.substring(pos, values[i].start))
+                            .append('{{').append(values[i].name).append('}}');
+                        pos = values[i].end;
+                    }
+                    else {
+                        newValues[ni++] = values[i];
+                    }
+                }
+                if (pos < e)
+                    buf.append(html.substring(pos, e));
+                this.values = newValues;
+                return buf.toString().replace(r_eraser, '>');
+            };
+            // new
+            ParseIndex.prototype.setV = function (s, e, name, save) {
+                if (save)
+                    this.result[name] = compile(this.loop(s, e));
+                else
+                    this.remove(s, e);
+                this.values.push({ start: s, end: e, name: name });
                 return this;
             };
-            ParseIndex.prototype.replace = function (html) {
-                var list = this.values.sort(function (a, b) { return a.start - b.start; }), v, pos = 0, l = list.length, i = 0, result = [], index = 0;
-                for (; i < l; i++) {
-                    v = list[i];
-                    result[index++] = html.substring(pos, v.start);
-                    result[index++] = v.name == null ? '' : '{{' + v.name + '}}';
-                    pos = v.end;
-                }
-                if (html.length > pos)
-                    result[index++] = html.substring(pos);
-                return result.join('');
+            // new
+            ParseIndex.prototype.getResult = function () {
+                return [compile(this.loop(0, this.html.length)), this.result];
             };
             return ParseIndex;
         }());
-        /*
-         *  html 문자열을 파싱한다.
-         *
-         *  ① 여는 태그를 순회하며 위치정보와 메타정보를 스택에 저장한다.
-         *  ② 닫는 태그가 나오면 스택에 저장된 것들을 차례로 꺼내어
-         *     파싱 로직을 실행한다.
-         *
-         *  간단한 접근법이지만, html문서를 파싱하는데 매우 강력한 기법이다.
-         *
-         */
-        function htmlParser(html) {
-            var parseIndex = new ParseIndex(), result = {}, pos = 0, tagNames = [], startPos = [], lines = [], index = 0;
+        function htmlParser(html, handler) {
+            var parseIndex = new ParseIndex(html), pos = 0, tagNames = [], startPos = [], lines = [], index = 0;
             while ((pos = html.indexOf('<', pos)) !== -1) {
                 var l = html.indexOf('>', pos) + 1; // <...>
                 // ① 시작 태그
@@ -1052,9 +639,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                         //
                         if (match) {
                             var save = match[1], name_1 = match[2];
-                            if (save)
-                                result[name_1] = compile(html.substring(startIndex, endIndex).replace(r_eraser, '>'));
-                            parseIndex.setVal(startIndex, endIndex, name_1);
+                            parseIndex.setV(startIndex, endIndex, name_1, !!save);
                         }
                         if (own)
                             break;
@@ -1067,7 +652,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             /*
              *  let [create, {val1, val2}] = htmlParse()
              */
-            return [compile(parseIndex.replace(html)), result];
+            var _a = parseIndex.getResult(), $c = _a[0], result = _a[1];
+            parseIndex = null;
+            return handler ? handler($c, result) : [$c, result];
         }
         HTML.htmlParser = htmlParser;
     })(HTML = exports.HTML || (exports.HTML = {}));
@@ -1076,350 +663,126 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 5 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Created by hellofunc on 2017-02-28.
- */
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(7), __webpack_require__(2), __webpack_require__(0), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, NameMap_1, arrays_1, core_1, access_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Events = /** @class */ (function () {
-        function Events(target, type, handler) {
-            this.target = target;
-            this.type = type;
-            this.handler = handler;
-            this.isActive = false;
-            this.on();
+    var StringBuffer = /** @class */ (function () {
+        function StringBuffer(init) {
+            this.array = [];
+            this.i = 0;
+            if (init)
+                this.append(init);
         }
-        Events.prototype.setTarget = function (t) {
-            var _a = this, target = _a.target, isActive = _a.isActive;
-            if (t === target)
-                return this;
-            if (isActive)
-                this.off();
-            this.target = t;
-            if (isActive)
-                this.on();
+        StringBuffer.prototype.reset = function () {
+            this.array = [];
+            this.i = 0;
             return this;
         };
-        Events.prototype.on = function () {
-            if (!this.isActive) {
-                this.target.addEventListener(this.type, this.handler);
-                this.isActive = true;
-            }
+        StringBuffer.prototype.prepend = function (v) {
+            this.array.unshift(v);
+            this.i++;
             return this;
         };
-        Events.prototype.off = function () {
-            if (this.isActive) {
-                this.target.removeEventListener(this.type, this.handler);
-                this.isActive = false;
-            }
-            return this;
-        };
-        return Events;
-    }());
-    exports.Events = Events;
-    var EventsGroup = /** @class */ (function () {
-        function EventsGroup() {
-            this.isActive = true;
-            this.map = new NameMap_1.NameMap();
-        }
-        EventsGroup.prototype.register = function (element, type, handler) {
-            if (typeof type === 'string') {
-                var e = new Events(element, type.split(/\./)[0], handler);
-                if (!this.isActive)
-                    e.off();
-                this.map.add(type, e);
-            }
+        StringBuffer.prototype.append = function (v) {
+            var array = this.array;
+            if (!Array.isArray(v))
+                array[this.i++] = v;
             else {
-                if (!this.isActive)
-                    element.off();
-                this.map.add(element.type, element);
+                var i = 0, u = this.i, l = v.length;
+                while (i < l)
+                    array[u++] = v[i++];
+                this.i = u;
             }
             return this;
         };
-        EventsGroup.prototype.on = function (n) {
-            if (!this.isActive) {
-                this.map.get(n).forEach(function (v) { return v.on(); });
-                this.isActive = true;
-            }
-            return this;
+        StringBuffer.prototype.toString = function () {
+            return this.array.join('');
         };
-        EventsGroup.prototype.off = function (n) {
-            if (this.isActive) {
-                this.map.get(n).forEach(function (v) { return v.off(); });
-                this.isActive = false;
-            }
-            return this;
-        };
-        return EventsGroup;
+        return StringBuffer;
     }());
-    exports.EventsGroup = EventsGroup;
-    var TargetEvent = /** @class */ (function () {
-        function TargetEvent() {
-            this.isActive = false;
-            this.events = [];
-        }
-        TargetEvent.prototype.register = function (type, handler) {
-            this.events.push({ type: type, handler: handler });
-            return this;
-        };
-        TargetEvent.prototype.on = function (own) {
-            var target = this.target;
-            if (target) {
-                if (target === own)
-                    return this;
-                this.off();
-            }
-            this.events.forEach(function (v) { return own.addEventListener(v.type, v.handler); });
-            this.target = own;
-            this.isActive = true;
-            return this;
-        };
-        TargetEvent.prototype.off = function () {
-            var target = this.target;
-            if (target) {
-                this.events.forEach(function (v) { return target.removeEventListener(v.type, v.handler); });
-                this.isActive = false;
-                this.target = null;
-            }
-            return this;
-        };
-        return TargetEvent;
-    }());
-    exports.TargetEvent = TargetEvent;
-    (function (Events) {
-        var primitive = access_1.Access.primitive;
-        function closest(target, selector, ele) {
-            var list = target.querySelectorAll(selector), l = list.length;
-            while (l-- > 0)
-                if (list[l]['contains'](ele))
-                    return list[l];
-            return null;
-        }
-        function mine(target, type, handler) {
-            return new Events(target, type, function (e) {
-                if (e.target === target)
-                    return handler.call(this, e);
-            });
-        }
-        Events.mine = mine;
-        function bind(target, type, selector, handler) {
-            if (handler)
-                return new Events(target, type, function (e) {
-                    var t = closest(target, selector, e.target);
-                    if (t)
-                        return handler.call(target, e, t);
-                });
-            else
-                return new Events(target, type, selector);
-        }
-        Events.bind = bind;
-        function map(target, map) {
-            var group = new EventsGroup(), p;
-            for (p in map)
-                typeof map[p] === 'function' && group.register(target, p, map[p].bind(map));
-            return group;
-        }
-        Events.map = map;
-        /*
-         *  키 입력에 따라 핸들러 호출
-         */
-        Events.keyDown = (function () {
-            var KeyEvents = /** @class */ (function (_super) {
-                __extends(KeyEvents, _super);
-                function KeyEvents(element, keys, handler) {
-                    var _this = _super.call(this, element, 'keyevent', handler) || this;
-                    _this.keys = keys;
-                    _this.on();
-                    return _this;
-                }
-                KeyEvents.prototype.on = function () {
-                    if (keyListener.indexOf(this) === -1) {
-                        keyListener.push(this);
-                        KEY_LISTEN.on();
-                        this.isActive = true;
-                    }
-                    return this;
-                };
-                KeyEvents.prototype.off = function () {
-                    var i = keyListener.indexOf(this);
-                    if (i !== -1) {
-                        keyListener.splice(i, 1);
-                        keyListener.length || KEY_LISTEN.off();
-                        this.isActive = false;
-                    }
-                    return this;
-                };
-                return KeyEvents;
-            }(Events));
-            var keyListener = [], 
-            /*
-             *  ① document가 키 입력을 다 받는다.
-             *  ② 등록된 element위에 마우스가 위치할때, 해당 키 입력에 따라 handler를 호출한다.
-             */
-            KEY_LISTEN = (function () {
-                var keys = [];
-                // 키 이벤트를 받는 그룹
-                return new EventsGroup()
-                    .register(document, 'keydown', function (e) {
-                    var keyCode = e.keyCode, hovers = core_1.__makeArray(document.querySelectorAll(':hover'));
-                    if (keys.indexOf(keyCode) === -1)
-                        keys.push(keyCode);
-                    keyListener.forEach(function (v) {
-                        if (hovers.indexOf(v.target) !== -1 && arrays_1.Arrays.equals(v.keys, keys))
-                            v.handler();
-                    });
-                })
-                    .register(document, 'keyup', function (e) {
-                    var i = keys.indexOf(e.keyCode);
-                    if (i !== -1)
-                        keys.splice(i, 1);
-                }).off();
-            })();
-            // on/off 컨트롤러를 반환한다.
-            return function keyDown(element, keys, handler) {
-                return new KeyEvents(element, keys, handler);
-            };
-        })();
-        // 해당 횟수만큼 이벤트를 리스닝한다.
-        function count(element, type, handler, count) {
-            if (count === void 0) { count = 1; }
-            if (count < 1)
-                return;
-            var dispatcher = function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i] = arguments[_i];
-                }
-                count--;
-                var rv = handler.apply(element, args);
-                count < 1 && element.removeEventListener(type, dispatcher);
-                return rv;
-            };
-            element.addEventListener(type, dispatcher);
-        }
-        Events.count = count;
-        function listener(element, type, handler) {
-            return new Events(element, type, handler);
-        }
-        Events.listener = listener;
-        function listenGroup() {
-            return new EventsGroup();
-        }
-        Events.listenGroup = listenGroup;
-        function trigger(target, type, bubbles, cancelable) {
-            if (bubbles === void 0) { bubbles = true; }
-            if (cancelable === void 0) { cancelable = true; }
-            if (typeof target[type] === 'function')
-                target[type]();
-            else {
-                var e_1 = document.createEvent('Events');
-                e_1.initEvent(type, bubbles, cancelable);
-                // 이미 진행중인 이벤트가 있다면 버블링 후에 동작하도록
-                setTimeout(function () { return target.dispatchEvent(e_1); }, 0);
-            }
-        }
-        Events.trigger = trigger;
-        function custom(target, type, detail, bubbles, cancelable) {
-            if (bubbles === void 0) { bubbles = true; }
-            if (cancelable === void 0) { cancelable = true; }
-            var e = document.createEvent('CustomEvent');
-            e.initCustomEvent(type, bubbles, cancelable, detail);
-            setTimeout(function () { return target.dispatchEvent(e); }, 0);
-        }
-        Events.custom = custom;
-        function eventWorks(element, type, handlers, attrName) {
-            if (attrName === void 0) { attrName = 'data-handler'; }
-            var target, vName = attrName + '-value', isFun = typeof handlers === 'function' ? handlers : null;
-            return new Events(element, type, function (e) {
-                target = e.target;
-                while (target && target !== element) {
-                    if (target.hasAttribute(attrName)) {
-                        var prop = target.getAttribute(attrName), val = target.getAttribute(vName);
-                        if (isFun)
-                            return isFun(prop, val, target, e);
-                        else if (handlers[prop])
-                            handlers[prop](target.getAttribute(vName), target, e);
-                        return;
-                    }
-                    target = target.parentElement;
-                }
-            });
-        }
-        Events.eventWorks = eventWorks;
-        /*
-         *  event가 발생하면 target 엘리먼트부터 상위엘리먼트로 올라가면서
-         *  어트리뷰트를 읽어 데이터맵을 만들어준다.
-         */
-        function read(target, limit, obj) {
-            var event, n, v, vv, fn;
-            while (target && limit !== target) {
-                if (event == null) {
-                    if (event = target.getAttribute('data-event')) {
-                        if (typeof obj['setTarget'] === 'function')
-                            obj['setTarget'](target);
-                        else
-                            obj.target = target;
-                    }
-                }
-                // target 자체를
-                if (v = target.getAttribute('data-self')) {
-                    // set{Value}()가 있으면 거기에 넣어준다.
-                    if (typeof (fn = obj['set' + v[0].toUpperCase() + v.slice(1)]) === 'function')
-                        fn(target);
-                    else
-                        obj[v] = target;
-                }
-                // property 이름
-                if (v = target.getAttribute('data-property')) {
-                    // 값
-                    if (vv = target.getAttribute('data-value')) {
-                        // set{Value}()가 있으면 거기에 넣어준다.
-                        if (typeof (fn = obj['set' + v[0].toUpperCase() + v.slice(1)]) === 'function')
-                            fn(primitive(vv));
-                        else
-                            obj[v] = primitive(vv);
-                    }
-                }
-                target = target.parentElement;
-            }
-            return event;
-        }
-        // 데이터가 있을때만
-        function propertyMap(target, type, handlers, factory) {
-            return new Events(target, type, function (e) {
-                var obj = factory ? new factory(e) : {}, p = read(e.target, target, obj);
-                handlers[p] && handlers[p](obj, e);
-            });
-        }
-        Events.propertyMap = propertyMap;
-    })(Events = exports.Events || (exports.Events = {}));
-    exports.Events = Events;
+    exports.StringBuffer = StringBuffer;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Created by hellofunc on 2017-03-01.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Access;
+    (function (Access) {
+        // dot으로 구분된 프로퍼티 읽어오기
+        Access.read = (function () {
+            function ___read(prop, data) {
+                var value = data[prop];
+                return typeof value === 'function' ? value.call(data) : value;
+            }
+            return function (prop, data, nullSafeVal) {
+                if (nullSafeVal === void 0) { nullSafeVal = null; }
+                var props = prop.split(/\./), i = 0, l = props.length, result = data;
+                for (; i < l; i++) {
+                    result = ___read(props[i], result);
+                    if (result == null)
+                        return nullSafeVal;
+                }
+                return Access.primitive(result);
+            };
+        })();
+        Access.primitive = (function () {
+            var r_number = /^\d+$/, r_boolean = /^true$|^false$/, r_string = /^['"][^"']+['"]$/, r_date = /^\d{4}-\d{2}-\d{2}$|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/, r_string_replace = /["']/g;
+            return function (val) {
+                if (typeof val === 'string' && val.length > 0) {
+                    if (r_number.test(val))
+                        return parseInt(val);
+                    if (r_boolean.test(val))
+                        return val === 'true';
+                    if (r_string.test(val))
+                        return val.replace(r_string_replace, '');
+                    if (r_date.test(val))
+                        return new Date(val);
+                }
+                return val;
+            };
+        })();
+        function access(target, _props, val, force) {
+            var props = _props.split(/\./), len = props.length - 1, obj = target, temp, i = 0;
+            for (; obj != null && i < len; i++) {
+                temp = obj[props[i]];
+                if (temp == null && force)
+                    temp = obj[props[i]] = {};
+                obj = temp;
+            }
+            // [1] getter
+            if (arguments.length === 2)
+                return obj != null ? obj[props[i]] : obj;
+            // [2] setter
+            obj != null && (obj[props[i]] = val);
+            return target;
+        }
+        Access.access = access;
+    })(Access = exports.Access || (exports.Access = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 5 */,
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * Created by hellofunc on 2017-05-06.
  */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, access_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, access_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var hasOwn = {}.hasOwnProperty, hasOwnProperty = function (obj, value) { return hasOwn.call(obj, value); }, r_url = /(https?:\/\/.*?\/)?([^\?]+)\??([^#]+)?#?(.*)/;
@@ -1505,8 +868,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
         Search.toSearch = toSearch;
         // querystring  ====>  Object
-        function toObject(query, obj) {
-            if (obj === void 0) { obj = {}; }
+        function toObject(query, dest) {
+            var obj = {};
             if (query[0] === '?')
                 query = query.slice(1);
             query.split(/&/)
@@ -1525,6 +888,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     value = _value;
                 access_1.Access.access(obj, key, value, true);
             });
+            if (dest)
+                obj = core_1.$extend(dest, obj);
             return obj;
         }
         Search.toObject = toObject;
@@ -1609,93 +974,45 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var NameMap = /** @class */ (function () {
-        function NameMap() {
-            this.map = {};
-            this.datas = []; // 중복방지를 위한 리스트
-        }
-        NameMap.prototype.get = function (name) {
-            if (typeof name !== 'string')
-                return this.datas;
-            var map = this.map, _a = name.split(/\./), key = _a[0], args = _a.slice(1), list = map[key];
-            if (!list)
-                return [];
-            return list.filter(function (v) { return arrays_1.Arrays.startWith(args, v.names); }).map(function (v) { return v.data; });
-        };
-        NameMap.prototype.add = function (name, data) {
-            if (this.datas.indexOf(data) === -1) {
-                var map = this.map, _a = name.split(/\./), key = _a[0], args = _a.slice(1);
-                (map[key] || (map[key] = [])).push({ names: args, data: data });
-                this.datas.push(data);
-            }
-            return this;
-        };
-        NameMap.prototype.remove = function (name) {
-            var _a = this, map = _a.map, datas = _a.datas, _b = name.split(/\./), key = _b[0], args = _b.slice(1), list = map[key];
-            if (list) {
-                map[key] = list.filter(function (v) {
-                    if (arrays_1.Arrays.startWith(args, v.names)) {
-                        datas.splice(datas.indexOf(v.data), 1);
-                        return false;
-                    }
-                    return true;
-                });
-            }
-            return this;
-        };
-        return NameMap;
-    }());
-    exports.NameMap = NameMap;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
+/* 7 */,
 /* 8 */,
 /* 9 */,
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, spa_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var GenericModule = /** @class */ (function () {
-        function GenericModule(id) {
-            var _this = this;
-            var div = document.createElement('div');
-            div.id = id;
-            this.element = div;
-            this._resolve = Promise.all([
-                spa_1.SPA.getStyle('/dist/hancomee/src/' + id + '.css'),
-                spa_1.SPA.getElement('hancomee/src/' + id)
-            ]).then(function (_a) {
-                var style = _a[0], frag = _a[1];
-                div.appendChild(style);
-                _this.$init(div, frag);
-                return div;
-            });
-        }
-        GenericModule.prototype.init = function (param) {
-            return this._resolve;
-        };
-        return GenericModule;
-    }());
-    exports.GenericModule = GenericModule;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
+/* 10 */,
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(0), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, location_1, core_1, html_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Selector;
+    (function (Selector) {
+        function select(ele, handler) {
+            var arg = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                arg[_i - 2] = arguments[_i];
+            }
+            var element = typeof ele === 'string' ? document.querySelector(ele) : ele, args = [], i = 0, l = arg.length;
+            for (; i < l; i++) {
+                args[i] = typeof arg[i] === 'string' ? element.querySelector(arg[i]) : arg[i];
+            }
+            return handler.apply(element, args);
+        }
+        Selector.select = select;
+        ;
+        function byId(s) {
+            return document.getElementById(s);
+        }
+        Selector.byId = byId;
+    })(Selector = exports.Selector || (exports.Selector = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(0), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, location_1, core_1, html_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var RESOLVE = Promise.resolve();
@@ -1704,23 +1021,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         function Provider(path, f) {
             this.path = path;
             if (typeof f !== 'function')
-                this.module = f;
+                this._module = f;
             else
-                this.factory = f;
+                this._factory = f;
         }
         Provider.prototype.param = function (p) {
-            var module = this.getModule(), defaultParam = module.defaultParam, param = core_1._extend({}, typeof defaultParam === 'function' ? new defaultParam : defaultParam);
+            var param = this.module.getParam();
             if (p)
                 param = core_1._extend(p, param);
             return param;
         };
-        Provider.prototype.init = function (param) {
+        Provider.prototype.init = function () {
             var _this = this;
-            return this.getModule().init(param).then(function (ele) { return _this.element = ele; });
+            return this.module.init().then(function (ele) { return _this.element = ele; });
         };
-        Provider.prototype.getModule = function () {
-            return this.module || (this.module = new this.factory());
-        };
+        Object.defineProperty(Provider.prototype, "module", {
+            get: function () {
+                return this._module || (this._module = new this._factory());
+            },
+            enumerable: true,
+            configurable: true
+        });
         return Provider;
     }());
     var SPA = /** @class */ (function () {
@@ -1757,11 +1078,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                         .then(function () { return config_1.before && config_1.before(pathname, param_1, _index_1, index_1); })
                         .then(function () { return Promise.all([
                         $active && $active.module.close(),
-                        provider_1.init(param_1)
+                        provider_1.init()
                     ]); })
                         .then(function (_a) {
                         var html = _a[1];
-                        return RESOLVE.then(function () { return provider_1.module.load(param_1); })
+                        return RESOLVE.then(function () { return provider_1.module.load(param_1, search); })
                             .then(function () { return config_1.onChange(provider_1.element, $active && $active.element); });
                     })
                         .then(function () { return config_1.after && config_1.after(pathname, param_1, _index_1, index_1); });
@@ -1770,14 +1091,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             // ② 모듈 재로딩
             else if ($active && !location_1.Search.equals(url.search, search)) {
                 this._queue = this._queue.then(function () {
-                    return $active.module.load(location_1.Search.toObject(search, $active.param()));
+                    return $active.module.load(location_1.Search.toObject(search, $active.param()), search);
                 });
             }
             return this._queue;
         };
         SPA.prototype.onHash = function () {
+            var _this = this;
             if (!this.isHash) {
-                SPA.onHash(this);
+                var handler = function () {
+                    location.hash && _this.run(location.hash.slice(1));
+                };
+                window.addEventListener('hashchange', handler);
+                handler();
                 this.isHash = true;
             }
             return this;
@@ -1787,15 +1113,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     exports.SPA = SPA;
     (function (SPA) {
         var createFragment = html_1.HTML.createFragment;
-        function onHash(spa) {
-            var handler = function () {
-                location.hash && spa.run(location.hash.slice(1));
-            };
-            window.addEventListener('hashchange', handler);
-            handler();
-            return spa;
-        }
-        SPA.onHash = onHash;
         function get(url) {
             return new Promise(function (o, x) {
                 var xhr = new XMLHttpRequest();
@@ -1835,38 +1152,63 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, spa_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Selector;
-    (function (Selector) {
-        function select(ele, handler) {
-            var arg = [];
-            for (var _i = 2; _i < arguments.length; _i++) {
-                arg[_i - 2] = arguments[_i];
-            }
-            var element = typeof ele === 'string' ? document.querySelector(ele) : ele, args = [], i = 0, l = arg.length;
-            for (; i < l; i++) {
-                args[i] = typeof arg[i] === 'string' ? element.querySelector(arg[i]) : arg[i];
-            }
-            return handler.apply(element, args);
+    var GenericModule = /** @class */ (function () {
+        function GenericModule(id, param) {
+            var _this = this;
+            this.param = param;
+            /*
+             *   이미 로드된 상황 (초기화)이고
+             *   쿼리없이 그대로 요청이 들어오면 기존에 작업중이던 화면을 그대로 내보내준다.
+             */
+            this.isLoad = false;
+            var div = document.createElement('div');
+            div.id = id;
+            this.element = div;
+            this._resolve = Promise.all([
+                spa_1.SPA.getStyle('/dist/hancomee/src/' + id + '.css'),
+                spa_1.SPA.getElement('hancomee/src/' + id)
+            ]).then(function (_a) {
+                var style = _a[0], frag = _a[1];
+                div.appendChild(style);
+                var templates = {};
+                Array.prototype.forEach.call(frag.querySelectorAll('script[type="text/html"]'), function (v) {
+                    frag.removeChild(v);
+                    v.id && (templates[v.id] = v.innerHTML);
+                });
+                _this.$init(div, frag, templates);
+                return div;
+            });
         }
-        Selector.select = select;
-        ;
-        function byId(s) {
-            return document.getElementById(s);
-        }
-        Selector.byId = byId;
-    })(Selector = exports.Selector || (exports.Selector = {}));
+        GenericModule.prototype.init = function () {
+            return this._resolve;
+        };
+        GenericModule.prototype.load = function (param, search) {
+            // 이미 로드된 상태에서 쿼리없이 주소요청만 들어오면 기존 작업상태를 그대로 보낸다.
+            if (!this.isLoad || search) {
+                this.isLoad = true;
+                return this.$load(param);
+            }
+        };
+        GenericModule.prototype.getParam = function () {
+            return new this.param();
+        };
+        return GenericModule;
+    }());
+    exports.GenericModule = GenericModule;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-/* 13 */
+/* 14 */,
+/* 15 */,
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -2222,48 +1564,6 @@ exports.daysOfMonth = daysOfMonth;*/
 
 
 /***/ }),
-/* 14 */,
-/* 15 */,
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Branch = /** @class */ (function () {
-        function Branch(element) {
-            this.element = element;
-            Branch.$tour(element, this);
-        }
-        return Branch;
-    }());
-    exports.Branch = Branch;
-    (function (Branch) {
-        function _tour(element, obj, prop) {
-            if (element.nodeType !== 1)
-                return obj;
-            var children = element.children, length = element.children.length;
-            while (length-- > 0)
-                _tour(children[length], obj, prop);
-            if (element.hasAttribute(prop))
-                obj[element.getAttribute(prop)] = element;
-            return obj;
-        }
-        function $tour(element, obj, prop) {
-            if (prop === void 0) { prop = 'id'; }
-            var children = element.children, length = element.children.length;
-            while (length-- > 0)
-                _tour(children[length], obj, prop);
-            return obj;
-        }
-        Branch.$tour = $tour;
-    })(Branch = exports.Branch || (exports.Branch = {}));
-    exports.Branch = Branch;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
 /* 17 */,
 /* 18 */,
 /* 19 */,
@@ -2282,18 +1582,23 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, genericModule_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, genericModule_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var Search = /** @class */ (function () {
+        function Search() {
+        }
+        return Search;
+    }());
     var List = /** @class */ (function (_super) {
         __extends(List, _super);
         function List() {
-            return _super.call(this, 'list') || this;
+            return _super.call(this, 'list', Search) || this;
         }
         List.prototype.$init = function (container, frag) {
             container.appendChild(frag);
         };
-        List.prototype.load = function (param) {
+        List.prototype.$load = function (param) {
         };
         List.prototype.close = function () {
         };
@@ -2318,14 +1623,45 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(13), __webpack_require__(6), __webpack_require__(1), __webpack_require__(5), __webpack_require__(16), __webpack_require__(4), __webpack_require__(10), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, calendar_1, location_1, dom_1, events_1, Branch_1, html_1, genericModule_1, selector_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2), __webpack_require__(13), __webpack_require__(16), __webpack_require__(0), __webpack_require__(3), __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, html_1, genericModule_1, calendar_1, core_1, StringBuffer_1, selector_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var className = dom_1.DOM.className;
+    var htmlParser = html_1.HTML.htmlParser;
     var select = selector_1.Selector.select;
-    var templateMap = html_1.HTML.templateMap;
-    var frag = templateMap(__webpack_require__(24));
-    var dummyArray = [], format = calendar_1.Calendar.format, isodate = calendar_1.Calendar.isodate, TYPES = ['알림', '작업', '메모'], html = frag.com;
+    var dummyArray = [], format = calendar_1.Calendar.format, isodate = calendar_1.Calendar.isodate, TYPES = ['알림', '작업', '메모'];
+    var CalSearch = /** @class */ (function () {
+        function CalSearch() {
+            this.$today = new calendar_1.Calendar();
+        }
+        Object.defineProperty(CalSearch.prototype, "y", {
+            get: function () {
+                this.check();
+                return this._y;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(CalSearch.prototype, "m", {
+            get: function () {
+                this.check();
+                return this._m;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        CalSearch.prototype.check = function () {
+            if (!this.date) {
+                var date = new Date();
+                this.date = date.getFullYear() + '-' + (date.getMonth() + 1);
+            }
+            if (!this._y) {
+                var _a = this.date.split('-'), y = _a[0], m = _a[1];
+                this._y = parseInt(y);
+                this._m = parseInt(m) - 1;
+            }
+        };
+        return CalSearch;
+    }());
     /*
      *  데이터 빈이자 CURD를 담당한다.
      */
@@ -2376,10 +1712,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                 xhr.send(null);
             });
         };
-        // 각 DATA의 타이틀 html
-        DATA.prototype.html = function () {
-            return html.data(this);
-        };
         DATA.prototype.json = function () {
             return core_1.$extend({}, this, DATA.json);
         };
@@ -2409,11 +1741,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
     /*
      *  데이터를 관리하는 DataMap
      */
-    var CalendarData = /** @class */ (function () {
-        function CalendarData() {
+    var CalendarManager = /** @class */ (function () {
+        function CalendarManager($com) {
+            this.$com = $com;
+            this._idMap = {};
+            this._dateMap = {};
         }
         // 목록을 받아서 ①id ②date 로 각각 구분해 자료구조화 한다.
-        CalendarData.prototype.setValues = function (values) {
+        CalendarManager.prototype.setValues = function (values) {
             var dateMap = this._dateMap = {}, idMap = this._idMap = {}, v, l = values.length, key, array;
             while (l-- > 0) {
                 v = values[l];
@@ -2424,7 +1759,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
             }
             return this;
         };
-        CalendarData.prototype.add = function (data) {
+        CalendarManager.prototype.add = function (data) {
             if (!this._idMap[data.id]) {
                 var iso = isodate(data.date), array = this._dateMap[iso] || (this._dateMap[iso] = []);
                 array.push(data);
@@ -2432,267 +1767,105 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
             }
             return this;
         };
-        CalendarData.prototype.remove = function (data) {
+        CalendarManager.prototype.remove = function (data) {
             var iso = isodate(data.date), array = this._dateMap[iso];
             array.splice(array.indexOf(data), 1);
             delete this._idMap[data.id];
             return this;
         };
-        CalendarData.prototype.byId = function (id) {
+        CalendarManager.prototype.byId = function (id) {
             return this._idMap[id];
         };
-        CalendarData.prototype.byDate = function (isodate) {
+        CalendarManager.prototype.byDate = function (isodate) {
             return this._dateMap[isodate] || dummyArray;
         };
-        CalendarData.prototype.createLines = function (isodate) {
-            var a = this._dateMap[isodate];
-            return a ? a.map(function (v) { return v.html(); }).join('') : '';
-        };
-        CalendarData.prototype.refresh = function (v) {
+        CalendarManager.prototype.refresh = function (v) {
             var iso = typeof v === 'string' ? v : isodate(v);
-            document.getElementById('date-' + iso).innerHTML = this.createLines(iso);
+            document.getElementById('date-' + iso).innerHTML = this.contents(iso);
             return this;
         };
-        // 시작일과 마지막일을 기준로 여기서 ajax가 진행된다.
         // 달력을 그린다.
-        CalendarData.prototype.render = function (array, y, m, today) {
+        CalendarManager.prototype.table = function (array, y, m, today) {
             var _this = this;
-            var tM = today.getMonth(), tD = today.getDate();
+            var _a = this.$com, $table = _a[0], td = _a[1].td, tM = today.month, tD = today.date, buf = new StringBuffer_1.StringBuffer();
             // ① 해당 월에 대한 array을 받아와서
-            return array.map(function (month) {
-                // ② 일주일마다 한 줄씩 정렬해서
-                return '<div class="calendar-row">' +
-                    // ③ 각 일마다 데이터를 겅리한다.
-                    month.map(function (day, i) {
-                        var isodate = day.isodate, month = day.month, date = day.date, isCurrnet = month === m, c = isCurrnet ? ' current' : '';
-                        if (tM === month && tD === date)
-                            c += ' today';
-                        return html.cell({
-                            index: i,
-                            class: c,
-                            isodate: isodate,
-                            num: isCurrnet ? date : (month + 1) + '/' + date,
-                            html: _this.createLines(isodate)
-                        });
-                    }).join('') + '</div>';
-            }).join('');
+            array.forEach(function (row) {
+                buf.append('<tr>');
+                buf.append(row.map(function (day, i) {
+                    var isodate = day.isodate, month = day.month, date = day.date, isCurrent = month === m, c = isCurrent ? ' current' : '';
+                    if (tM === month && tD === date)
+                        c += ' today';
+                    return td({
+                        index: i,
+                        className: c,
+                        isodate: isodate,
+                        num: isCurrent ? date : (month + 1) + '/' + date,
+                        contents: _this.contents(isodate)
+                    });
+                }));
+                buf.append('</tr>');
+            });
+            return $table({ tr: buf.toString() });
         };
-        return CalendarData;
+        CalendarManager.prototype.contents = function (isodate) {
+            var _a = this.$com, contents = _a[1].contents, buf = new StringBuffer_1.StringBuffer();
+            this.byDate(isodate).forEach(function (v) { return buf.append(contents(v)); });
+            console.log(buf.toString());
+            return buf.toString();
+        };
+        return CalendarManager;
     }());
-    var CalendarForm = /** @class */ (function (_super) {
-        __extends(CalendarForm, _super);
-        function CalendarForm(screen) {
-            var _this = _super.call(this) || this;
-            _this.screen = screen;
-            // ① 엘리먼트의 id를 key로 잡아서 property로 등록
-            Branch_1.Branch.$tour(screen, _this);
-            var _a = _this, ctrl = _a.ctrl, title = _a.title, body = _a.body, types = _a.types, writeTime = _a.writeTime, content = _a.content, handlers = {
-                modify: function () {
-                    _this.form(true);
-                },
-                cancel: function () {
-                    // 등록하는 상황이면, 취소버튼을 누르면 그냥 screen을 닫는다.
-                    if (_this.data.id == null)
-                        _this.off();
-                    else
-                        _this.form(false);
-                },
-                remove: function () {
-                    var _a = _this, data = _a.data, date = _a.data.date;
-                    if (confirm(data.title + '\n\n정말 삭제하시겠습니까?')) {
-                        var xhr_1 = new XMLHttpRequest();
-                        xhr_1.onreadystatechange = function () {
-                            if (xhr_1.readyState === 4 && xhr_1.status === 200) {
-                                _this.remove(data);
-                                _this.refresh(date);
-                                _this.off();
-                            }
-                        };
-                        xhr_1.open('DELETE', 'calendar/' + data.id, true);
-                        xhr_1.send(null);
-                    }
-                },
-                submit: function () {
-                    if (!_this._submit)
-                        return;
-                    var data = _this.data;
-                    data.type = _this.getType();
-                    data.title = title.value;
-                    data.body = body.value;
-                    data.writeTime = new Date();
-                    var xhr = new XMLHttpRequest();
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            data.id = parseInt(xhr.responseText);
-                            _this.add(data).refresh(data.date).off();
-                        }
-                    };
-                    xhr.open('PUT', 'calendar', true);
-                    xhr.setRequestHeader('Content-Type', 'application/json');
-                    xhr.send(JSON.stringify(data.json()));
-                }
-            }, 
-            /*
-             *   ① 데이터가 빠짐 없이 기입
-             *   ② 데이터가 변경되었을때
-             *
-             *   위 조건이 성립할때만 isSubmit 클래스를 붙여준다.
-             */
-            valid = function () {
-                var data = _this.data, type = _this.getType(), tVal = title.value.trim(), bVal = body.value.trim();
-                if (!tVal || type === -1)
-                    return _this.isSubmit(false);
-                if (data) {
-                    _this.isSubmit(data.title !== tVal || data.body !== bVal || data.type !== type);
-                }
-            };
-            // 끄기
-            screen.addEventListener('click', function (e) {
-                if (e.target === screen)
-                    _this.off();
-            });
-            ctrl.addEventListener('click', function (e) {
-                var val = handlers[e.target.getAttribute('data-ctrl')];
-                val && val();
-            });
-            // <input type="radio"> types 설정
-            types.innerHTML = TYPES.map(function (t, i) { return html.type({ i: i, name: t }); })
-                .join('');
-            _this.typesEle = core_1.__makeArray(types.querySelectorAll('input'));
-            types.addEventListener('change', valid);
-            title.addEventListener('keyup', valid);
-            body.addEventListener('keyup', valid);
-            return _this;
-        }
-        CalendarForm.prototype.form = function (flag) {
-            var _a = this, content = _a.content, title = _a.title, body = _a.body;
-            this.isModify(flag);
-            if (flag) {
-                title.removeAttribute('disabled');
-                body.removeAttribute('disabled');
-            }
-            else {
-                title.setAttribute('disabled', '');
-                body.setAttribute('disabled', '');
-            }
-        };
-        CalendarForm.prototype.on = function (data) {
-            var _a = this, title = _a.title, body = _a.body;
-            this.data = data;
-            this.date = isodate(data.date);
-            this.datetime.textContent = format(data.date, 'yyyy-MM-dd (E)');
-            this.writeTime.textContent = data.writeTime ? format(data.writeTime, 'yyyy-MM-dd(E) HH:mm:ss') : '';
-            title.value = data.title;
-            body.value = data.body;
-            this.setType(data.type);
-            this.isNew(data.id == null);
-            this.form(data.id == null);
-            this.isSubmit(false);
-            className(this.screen, 'on', true);
-        };
-        CalendarForm.prototype.off = function () {
-            className(this.screen, 'on', false);
-        };
-        CalendarForm.prototype.setType = function (v) {
-            this.typesEle.forEach(function (t, i) { return t.checked = v === i; });
-            return this;
-        };
-        CalendarForm.prototype.getType = function () {
-            var _a = this, typesEle = _a.typesEle, length = _a.typesEle.length;
-            while (length-- > 0)
-                if (typesEle[length].checked)
-                    return length;
-            return -1;
-        };
-        CalendarForm.prototype.isModify = function (flag) {
-            if (flag === void 0) { flag = true; }
-            className(this.screen, 'form', flag);
-        };
-        CalendarForm.prototype.isNew = function (flag) {
-            if (flag === void 0) { flag = true; }
-            className(this.screen, 'isNew', flag);
-        };
-        CalendarForm.prototype.isSubmit = function (flag) {
-            if (flag === void 0) { flag = true; }
-            className(this.screen, 'isSubmit', this._submit = flag);
-        };
-        return CalendarForm;
-    }(CalendarData));
-    var CalSearch = /** @class */ (function (_super) {
-        __extends(CalSearch, _super);
-        function CalSearch() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        return CalSearch;
-    }(location_1.Search));
     var CModule = /** @class */ (function (_super) {
         __extends(CModule, _super);
         function CModule() {
-            var _this = _super.call(this, 'calendar') || this;
-            _this.defaultParam = CalSearch;
+            var _this = _super.call(this, 'calendar', CalSearch) || this;
+            _this.handlers = [];
             return _this;
         }
-        CModule.prototype.$init = function (container, frag) {
-            select(frag, function (main, _screen, refreshBtn, prev, current, next) {
-                var screen = new CalendarForm(_screen), 
-                // click event handler
-                handler = {
-                    view: function (v) {
-                        screen.on(screen.byId(v));
-                    },
-                    add: function (v) {
-                        screen.on(new DATA(new Date(v)));
-                    }
-                }, 
-                // 해시값에 따라 달력 갱신
-                run = function () {
-                    /*
-                                        // #yyyy-M
-                                        let
-                                            today = new Date(),
-                                            key = location.hash.slice(1) || Calendar.format(new Date(), 'yyyy-M'),
-
-                                            [_y, _m] = key.split(/[^\d]/),
-                                            month = new Month(parseInt(_y), parseInt(_m) - 1),
-                                            array = month.toArray(), l = array.length - 1,
-                                            query = 'sd=' + array[0][0].isodate + '&ed=' + array[l][6].isodate,
-                                            xhr = new XMLHttpRequest();
-
-
-                                        // today버튼 갱신
-                                        refreshBtn.innerText = format(today, 'yyyy-MM-dd (E)');
-                                        refreshBtn.href = '#' + format(today, 'yyyy-M');
-
-                                        xhr.onreadystatechange = () => {
-                                            if (xhr.readyState === 4 && xhr.status === 200) {
-
-                                                // 버튼 갱신
-                                                prev.href = '#' + month.move(-1).toString();
-                                                current.textContent = month.toString();
-                                                next.href = '#' + month.move(1).toString();
-
-                                                // 서버에서 받아온 데이터 변환
-                                                screen.setValues(
-                                                    JSON.parse(xhr.responseText || '[]')
-                                                        .map(v => new DATA(v))
-                                                );
-
-                                                // 새로운 달력 html 주입
-                                                main.innerHTML = screen.render(array, month.year, month.month, today);
-
-                                            }
-                                        }
-                                        xhr.open('GET', '/calendar/get?' + query, true);
-                                        xhr.send(null);*/
+        CModule.prototype.$init = function (container, frag, templates) {
+            var handlers = this.handlers, l = handlers.length;
+            // 표그리기
+            handlers[l++] = select(frag, function (main) {
+                var render = new CalendarManager(htmlParser(templates.table));
+                return function (param) {
+                    var y = param.y, m = param.m, array = calendar_1.Calendar.toArray(y, m), sd = array[0][0].isodate, ed = array[array.length - 1][6].isodate;
+                    return new Promise(function (o, x) {
+                        var xhr = new XMLHttpRequest();
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4) {
+                                if (xhr.status === 200) {
+                                    var json = JSON.parse(xhr.responseText || '[]');
+                                    main.innerHTML = render
+                                        .setValues(json.map(function (v) { return new DATA(v); }))
+                                        .table(array, y, m, param.$today);
+                                    o();
+                                }
+                            }
+                        };
+                        xhr.open('GET', '/calendar/get?sd=' + sd + '&ed=' + ed, true);
+                        xhr.send(null);
+                    });
                 };
-                events_1.Events.eventWorks(main, 'click', handler);
-                window.addEventListener('hashchange', run);
-                run();
-            }, 'main', '#screen', '#refresh-btn', '#date-prev', '#date-current', '#date-next');
+            }, 'main');
+            // nav 업데이트
+            handlers[l++] = select(frag.querySelector('nav'), function (r, c) {
+                var temp;
+                this.addEventListener('click', function (e) {
+                    var target = e.target;
+                    if (target.hasAttribute('data-move')) {
+                        location.hash = 'calendar?date=' + temp.move(parseInt(target.getAttribute('data-move'))).toString();
+                    }
+                });
+                return function (param) {
+                    r.textContent = param.$today.isodate;
+                    temp = new calendar_1.Month(param.y, param.m);
+                    c.textContent = temp.toString();
+                };
+            }, '#refresh-btn', '#date-current');
             container.appendChild(frag);
         };
-        CModule.prototype.load = function (param) {
-            console.log(param);
+        CModule.prototype.$load = function (param) {
+            return Promise.all(this.handlers.map(function (h) { return h(param); }));
         };
         CModule.prototype.close = function () {
         };
@@ -2704,23 +1877,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
 
 
 /***/ }),
-/* 24 */
-/***/ (function(module, exports) {
-
-module.exports = "<script id=\"data\" type=\"text/html\">\r\n    <div class=\"content\">\r\n        <div class=\"type type-{{type}}\">{{typeName}}</div>\r\n        <div class=\"title\">\r\n            <span data-handler=\"view\" data-handler-value=\"{{id}}\">{{title}}</span>\r\n        </div>\r\n    </div>\r\n</script>\r\n\r\n<script id=\"cell\" type=\"text/html\">\r\n    <div class=\"calendar-cell{{class}}\" data-col=\"{{index}}\">\r\n        <span class=\"number\" data-handler=\"add\" data-handler-value=\"{{isodate}}\">{{num}}</span>\r\n        <div id=\"date-{{isodate}}\" class=\"contents\">{{html}}</div>\r\n    </div>\r\n</script>\r\n\r\n\r\n<script id=\"type\" type=\"text/html\">\r\n    <input type=\"radio\" name=\"type\" class=\"form-check-input\" id=\"type-{{i}}\">\r\n    <label class=\"form-check-label\" for=\"type-{{i}}\">{{name}}</label>\r\n</script>";
-
-/***/ }),
+/* 24 */,
 /* 25 */,
 /* 26 */,
 /* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(12), __webpack_require__(11), __webpack_require__(22), __webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, selector_1, spa_1, list_1, calendar_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(11), __webpack_require__(12), __webpack_require__(22), __webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, selector_1, spa_1, list_1, calendar_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var select = selector_1.Selector.select;
+    var _a = Array.prototype, forEach = _a.forEach, map = _a.map, reduce = _a.reduce;
     core_1.$ready(function () {
-        selector_1.Selector.select(document.body, function (aside, main) {
-            var swap = (function (ele1, ele2) {
+        select(document.body, function (aside, main) {
+            var 
+            // 페이지
+            transfort = (function (ele1, ele2) {
                 var current = ele1, wait = ele2, temp;
                 main.appendChild(ele1);
                 main.appendChild(ele2);
@@ -2740,13 +1912,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     wait = current;
                     return current = temp;
                 };
-            })(document.createElement('div'), document.createElement('div')), spa = new spa_1.SPA({
-                before: function () {
-                    console.log('before');
+            })(document.createElement('div'), document.createElement('div')), 
+            // 사이드 메뉴 불켜기
+            asideMenu = (function (list) {
+                var names = map.call(list, function (li) { return li.firstElementChild.getAttribute('href').slice(1); }), len = names.length;
+                return function (url) {
+                    var i = 0;
+                    for (; i < len; i++) {
+                        if (names[i] === url)
+                            list[i].className = 'active';
+                        else
+                            list[i].className = '';
+                    }
+                };
+            })(aside.querySelectorAll('li')), spa = new spa_1.SPA({
+                before: function (pathname) {
+                    asideMenu(pathname);
                     main.className = 'load';
                 },
                 onChange: function (ele, e) {
-                    swap(ele);
+                    transfort(ele);
                 },
                 after: function () {
                     main.className = '';

@@ -10,7 +10,7 @@ let hasOwn = {}.hasOwnProperty,
     r_url = /(https?:\/\/.*?\/)?([^\?]+)\??([^#]+)?#?(.*)/;
 
 
-export class Search {
+export class Search implements iLocation.iSearch{
 
     reset(search = location.search) {
         return this.extend(Search.toObject(search))
@@ -91,7 +91,10 @@ export namespace Search {
     }
 
     // querystring  ====>  Object
-    export function toObject(query: string, obj = {}) {
+    export function toObject(query: string, dest?) {
+
+        let obj = {};
+
         if (query[0] === '?') query = query.slice(1);
 
         query.split(/&/)
@@ -110,7 +113,10 @@ export namespace Search {
                 } else value = _value;
 
                 Access.access(obj, key, value, true);
-            })
+            });
+
+        if (dest)
+            obj = $extend(dest, obj);
 
         return obj;
     }

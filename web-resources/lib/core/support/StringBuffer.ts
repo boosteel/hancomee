@@ -4,9 +4,9 @@ export class StringBuffer {
     private i = 0;
 
     constructor(init?: string) {
-        if(init) this.append(init);
+        if (init) this.append(init);
     }
-    
+
     reset() {
         this.array = [];
         this.i = 0;
@@ -19,8 +19,17 @@ export class StringBuffer {
         return this;
     }
 
+    append(v: string[])
+    append(v: any)
     append(v) {
-        this.array[this.i++] = v;
+        let {array} = this;
+        if (!Array.isArray(v))
+            array[this.i++] = v;
+        else {
+            let i = 0, u = this.i, l = v.length;
+            while (i < l) array[u++] = v[i++];
+            this.i = u;
+        }
         return this;
     }
 

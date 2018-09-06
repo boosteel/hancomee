@@ -1,18 +1,38 @@
 
+<script id="table" type="text/html">
+    <table>
+        <tbody>
+        <tr :tr>
+            <td class="{{className}}" ::td>
+                <span class="num">{{num}}</span>
+                <div class="contents" id="date-{{isodate}}">
+                    <div class="content" ::contents>
+                        <div class="type type-{{type}}">{{typeName}}</div>
+                        <div class="title">
+                            <span data-handler="view" data-handler-value="{{id}}">{{title}}</span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+
 <nav>
     <div class="today">
         <span>today</span>
-        <a id="refresh-btn" href=""></a>
+        <span id="refresh-btn"></span>
     </div>
     <div class="btn-group">
-        <a id="date-prev" class="btn btn-light" href="">◀</a>
+        <span data-move="-1" class="btn btn-light">◀</span>
         <button id="date-current" class="btn btn-secondary"></button>
-        <a id="date-next" class="btn btn-light" href="">▶</a>
+        <span data-move="1" class="btn btn-light">▶</span>
     </div>
 </nav>
 
-<main class="table-type">
-</main>
+<main></main>
 
 <div id="screen">
 

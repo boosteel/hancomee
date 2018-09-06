@@ -112,7 +112,7 @@ public abstract class AbstractSpy {
         $push(targetPath);
     }
 
-    protected void $push(String path) throws Exception {
+    protected int $push(String path) throws Exception {
 
         int ignore = 0;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -151,6 +151,7 @@ public abstract class AbstractSpy {
 
         out("무시된 갯 수 : " + ignore);
         out("저장된 갯 수 : " + result.size());
+        return result.size();
 
     }
 

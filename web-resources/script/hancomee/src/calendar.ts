@@ -1,27 +1,53 @@
-import {$extend, $ready, __makeArray} from "../../../lib/core/core";
-import {Calendar, Month} from "../../../lib/core/calendar";
-import {Search} from "../../../lib/core/location";
-import {DOM} from "../../../lib/core/dom";
-import {Events} from "../../../lib/core/events";
-import {Branch} from "../../../lib/core/component/Branch";
 import {HTML} from "../../../lib/core/html";
-import className = DOM.className;
-import replaceHTML = HTML.replaceHTML;
-import {GenericModule} from "../genericModule";
+import {GenericModule} from "./genericModule";
+import htmlParser = HTML.htmlParser;
+import {Calendar, Month} from "../../../lib/core/calendar";
+import {$extend} from "../../../lib/core/core";
+import {Pager} from "../../../lib/core/pager";
+import {StringBuffer} from "../../../lib/core/support/StringBuffer";
+import {Search} from "../../../lib/core/location";
 import {Selector} from "../../../lib/core/dom/selector";
 import select = Selector.select;
-import createFragment = HTML.createFragment;
-import templateMap = HTML.templateMap;
 
 type NormalizeValues = { [index: string]: DATA[] }
-
-const frag = templateMap(require("./calendar.html"));
 
 let
     dummyArray = [],
     {format, isodate} = Calendar,
-    TYPES = ['알림', '작업', '메모'],
-    html = frag.com;
+    TYPES = ['알림', '작업', '메모'];
+
+
+class CalSearch {
+
+    $today = new Calendar()
+    date: string
+    private _y: number
+    private _m: number
+
+    get y() {
+        this.check();
+        return this._y;
+    }
+
+    get m() {
+        this.check();
+        return this._m;
+    }
+
+
+    private check() {
+        if (!this.date) {
+            let date = new Date();
+            this.date = date.getFullYear() + '-' + (date.getMonth() + 1)
+        }
+        if (!this._y) {
+            let [y, m] = this.date.split('-');
+            this._y = parseInt(y);
+            this._m = parseInt(m) - 1;
+        }
+    }
+}
+
 
 interface DATA {
     id: number
@@ -82,11 +108,6 @@ class DATA {
         });
     }
 
-    // 각 DATA의 타이틀 html
-    html() {
-        return html.data(this);
-    }
-
     json() {
         return $extend({}, this, DATA.json);
     }
@@ -120,11 +141,14 @@ namespace DATA {
 /*
  *  데이터를 관리하는 DataMap
  */
-class CalendarData {
+class CalendarManager {
 
+    private _idMap: { [index: string]: DATA } = {}
+    private _dateMap: { [index: string]: DATA[] } = {}
 
-    private _idMap: { [index: string]: DATA }
-    private _dateMap: { [index: string]: DATA[] }
+    constructor(private $com: iParseResult) {
+
+    }
 
     // 목록을 받아서 ①id ②date 로 각각 구분해 자료구조화 한다.
     setValues(values: DATA[]) {
@@ -170,319 +194,128 @@ class CalendarData {
         return this._dateMap[isodate] || dummyArray;
     }
 
-    createLines(isodate): string {
-        let a = this._dateMap[isodate];
-        return a ? a.map(v => v.html()).join('') : '';
-    }
-
     // 해당 달력의 칸을 갱신한다. ex) 추가/수정
     refresh(data: Date)
     refresh(isodate: string)
     refresh(v) {
         let iso = typeof v === 'string' ? v : isodate(v);
-        document.getElementById('date-' + iso).innerHTML = this.createLines(iso);
+        document.getElementById('date-' + iso).innerHTML = this.contents(iso);
         return this;
     }
 
-    // 시작일과 마지막일을 기준로 여기서 ajax가 진행된다.
-    // 달력을 그린다.
-    render(array: Calendar[][], y: number, m: number, today: Date) {
 
-        let tM = today.getMonth(), tD = today.getDate();
+    // 달력을 그린다.
+    table(array: Calendar[][], y: number, m: number, today: Calendar) {
+        let
+            [$table, {td}] = this.$com,
+            {month: tM, date: tD} = today,
+            buf = new StringBuffer();
 
         // ① 해당 월에 대한 array을 받아와서
-        return array.map(month => {
+        array.forEach(row => {
 
-            // ② 일주일마다 한 줄씩 정렬해서
-            return '<div class="calendar-row">' +
+            buf.append('<tr>');
 
-                // ③ 각 일마다 데이터를 겅리한다.
-                month.map((day: Calendar, i) => {
+            buf.append(
+                row.map((day: Calendar, i) => {
 
                     let
                         {isodate, month, date} = day,
-                        isCurrnet = month === m,
-                        c = isCurrnet ? ' current' : '';
+                        isCurrent = month === m,
+                        c = isCurrent ? ' current' : '';
 
                     if (tM === month && tD === date) c += ' today';
 
-                    return html.cell({
+                    return td({
                         index: i,
-                        class: c,
+                        className: c,
                         isodate: isodate,
-                        num: isCurrnet ? date : (month + 1) + '/' + date,
-                        html: this.createLines(isodate)
+                        num: isCurrent ? date : (month + 1) + '/' + date,
+                        contents: this.contents(isodate)
                     })
+                }));
 
-                }).join('') + '</div>';
-
-        }).join('')
-    }
-}
-
-class CalendarForm extends CalendarData {
-
-    date: string
-    data: DATA
-
-    _submit: boolean
-
-    types: HTMLElement
-    typesEle: HTMLInputElement[]
-
-    content: HTMLElement
-    ctrl: HTMLElement
-    title: HTMLInputElement
-    body: HTMLTextAreaElement
-    datetime: HTMLElement
-    writeTime: HTMLElement
-
-    constructor(public screen: HTMLElement) {
-
-        super();
-
-        // ① 엘리먼트의 id를 key로 잡아서 property로 등록
-        Branch.$tour(screen, this);
-
-        let
-            {ctrl, title, body, types, writeTime, content} = this,
-            handlers = {
-                modify: () => {
-                    this.form(true);
-                },
-                cancel: () => {
-                    // 등록하는 상황이면, 취소버튼을 누르면 그냥 screen을 닫는다.
-                    if (this.data.id == null) this.off();
-                    else this.form(false);
-                },
-                remove: () => {
-
-                    let {data, data: {date}} = this;
-
-                    if (confirm(data.title + '\n\n정말 삭제하시겠습니까?')) {
-                        let xhr = new XMLHttpRequest();
-                        xhr.onreadystatechange = () => {
-                            if (xhr.readyState === 4 && xhr.status === 200) {
-                                this.remove(data);
-                                this.refresh(date);
-                                this.off();
-                            }
-                        };
-                        xhr.open('DELETE', 'calendar/' + data.id, true);
-                        xhr.send(null);
-                    }
-
-                },
-                submit: () => {
-
-                    if (!this._submit) return;
-
-                    let {data} = this;
-
-                    data.type = this.getType();
-                    data.title = title.value;
-                    data.body = body.value;
-                    data.writeTime = new Date();
-
-                    let xhr = new XMLHttpRequest();
-                    xhr.onreadystatechange = () => {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            data.id = parseInt(xhr.responseText);
-                            this.add(data).refresh(data.date).off();
-                        }
-                    };
-                    xhr.open('PUT', 'calendar', true);
-                    xhr.setRequestHeader('Content-Type', 'application/json')
-                    xhr.send(JSON.stringify(data.json()));
-                }
-            },
-
-            /*
-             *   ① 데이터가 빠짐 없이 기입
-             *   ② 데이터가 변경되었을때
-             *
-             *   위 조건이 성립할때만 isSubmit 클래스를 붙여준다.
-             */
-            valid = () => {
-                let {data} = this,
-                    type = this.getType(),
-                    tVal = title.value.trim(), bVal = body.value.trim();
-
-                if (!tVal || type === -1)
-                    return this.isSubmit(false)
-
-                if (data) {
-                    this.isSubmit(data.title !== tVal || data.body !== bVal || data.type !== type)
-                }
-            };
-
-        // 끄기
-        screen.addEventListener('click', (e) => {
-            if (e.target === screen) this.off();
-        })
-
-        ctrl.addEventListener('click', (e) => {
-            let val = handlers[(<HTMLElement>e.target).getAttribute('data-ctrl')];
-            val && val();
+            buf.append('</tr>');
         });
 
-        // <input type="radio"> types 설정
-        types.innerHTML = TYPES.map((t, i) => html.type({i: i, name: t}))
-            .join('');
-        this.typesEle = __makeArray(types.querySelectorAll('input'));
-
-        types.addEventListener('change', valid)
-        title.addEventListener('keyup', valid);
-        body.addEventListener('keyup', valid);
+        return $table({tr: buf.toString()});
     }
 
-    form(flag: boolean) {
-        let {content, title, body} = this;
-
-        this.isModify(flag);
-
-        if (flag) {
-            title.removeAttribute('disabled');
-            body.removeAttribute('disabled');
-        } else {
-            title.setAttribute('disabled', '');
-            body.setAttribute('disabled', '');
-        }
+    contents(isodate: string) {
+        let [, {contents}] = this.$com, buf = new StringBuffer();
+        this.byDate(isodate).forEach(v => buf.append(contents(v)));
+        return buf.toString();
     }
-
-    on(data: DATA) {
-        let {title, body} = this;
-
-        this.data = data;
-        this.date = isodate(data.date);
-        this.datetime.textContent = format(data.date, 'yyyy-MM-dd (E)');
-        this.writeTime.textContent = data.writeTime ? format(data.writeTime, 'yyyy-MM-dd(E) HH:mm:ss') : '';
-
-        title.value = data.title;
-        body.value = data.body;
-
-        this.setType(data.type);
-        this.isNew(data.id == null);
-        this.form(data.id == null);
-        this.isSubmit(false);
-        className(this.screen, 'on', true);
-    }
-
-    off() {
-        className(this.screen, 'on', false);
-    }
-
-    setType(v: number) {
-        this.typesEle.forEach((t, i) => t.checked = v === i);
-        return this;
-    }
-
-    getType() {
-        let {typesEle, typesEle: {length}} = this;
-        while (length-- > 0)
-            if (typesEle[length].checked) return length;
-        return -1;
-    }
-
-    isModify(flag = true) {
-        className(this.screen, 'form', flag);
-    }
-
-    isNew(flag = true) {
-        className(this.screen, 'isNew', flag);
-    }
-
-    isSubmit(flag = true) {
-        className(this.screen, 'isSubmit', this._submit = flag);
-    }
-
-}
-
-
-class CalSearch extends Search {
-    name: string
 }
 
 
 export class CModule extends GenericModule<CalSearch> {
 
-    defaultParam = CalSearch
+    handlers: Array<(param: CalSearch) => Promise<any> | void> = []
 
     constructor() {
-        super('calendar');
+        super('calendar', CalSearch);
     }
 
-    $init(container, frag) {
+    $init(container, frag, templates) {
 
-        select(frag, (main, _screen, refreshBtn: HTMLAnchorElement,
-                      prev: HTMLAnchorElement, current, next: HTMLAnchorElement) => {
+        let {handlers} = this, l = handlers.length;
 
-            let screen = new CalendarForm(_screen),
+        // 표그리기
+        handlers[l++] = select(frag, (main) => {
 
-                // click event handler
-                handler = {
-                    view(v) {
-                        screen.on(screen.byId(v));
-                    },
-                    add(v) {
-                        screen.on(new DATA(new Date(v)));
+            let render = new CalendarManager(htmlParser(templates.table));
+
+            return (param: CalSearch) => {
+                let {y, m} = param,
+                    array = Calendar.toArray(y, m),
+                    sd = array[0][0].isodate, ed = array[array.length - 1][6].isodate;
+
+                return new Promise((o, x) => {
+                    let xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200) {
+                                let json = <any[]>JSON.parse(xhr.responseText || '[]');
+                                main.innerHTML = render
+                                    .setValues(json.map(v => new DATA(v)))
+                                    .table(array, y, m, param.$today);
+                                o();
+                            }
+                        }
                     }
-                },
+                    xhr.open('GET', '/calendar/get?sd=' + sd + '&ed=' + ed, true);
+                    xhr.send(null);
+                });
+            };
+        }, 'main');
 
-                // 해시값에 따라 달력 갱신
-                run = () => {
-                    /*
-                                        // #yyyy-M
-                                        let
-                                            today = new Date(),
-                                            key = location.hash.slice(1) || Calendar.format(new Date(), 'yyyy-M'),
+        // nav 업데이트
+        handlers[l++] = select(frag.querySelector('nav'), function (r, c) {
+            let temp: Month;
 
-                                            [_y, _m] = key.split(/[^\d]/),
-                                            month = new Month(parseInt(_y), parseInt(_m) - 1),
-                                            array = month.toArray(), l = array.length - 1,
-                                            query = 'sd=' + array[0][0].isodate + '&ed=' + array[l][6].isodate,
-                                            xhr = new XMLHttpRequest();
-
-
-                                        // today버튼 갱신
-                                        refreshBtn.innerText = format(today, 'yyyy-MM-dd (E)');
-                                        refreshBtn.href = '#' + format(today, 'yyyy-M');
-
-                                        xhr.onreadystatechange = () => {
-                                            if (xhr.readyState === 4 && xhr.status === 200) {
-
-                                                // 버튼 갱신
-                                                prev.href = '#' + month.move(-1).toString();
-                                                current.textContent = month.toString();
-                                                next.href = '#' + month.move(1).toString();
-
-                                                // 서버에서 받아온 데이터 변환
-                                                screen.setValues(
-                                                    JSON.parse(xhr.responseText || '[]')
-                                                        .map(v => new DATA(v))
-                                                );
-
-                                                // 새로운 달력 html 주입
-                                                main.innerHTML = screen.render(array, month.year, month.month, today);
-
-                                            }
-                                        }
-                                        xhr.open('GET', '/calendar/get?' + query, true);
-                                        xhr.send(null);*/
+            this.addEventListener('click', (e) => {
+                let target = <HTMLElement>e.target;
+                if (target.hasAttribute('data-move')) {
+                    location.hash = 'calendar?date=' + temp.move(
+                        parseInt(target.getAttribute('data-move'))
+                    ).toString();
                 }
+            });
 
-            Events.eventWorks(main, 'click', handler);
+            return (param: CalSearch) => {
+                r.textContent = param.$today.isodate;
+                temp = new Month(param.y, param.m);
+                c.textContent = temp.toString();
 
-            window.addEventListener('hashchange', run);
-            run();
-
-        }, 'main', '#screen', '#refresh-btn', '#date-prev', '#date-current', '#date-next');
+            };
+        }, '#refresh-btn', '#date-current');
 
         container.appendChild(frag);
     }
 
-    load(param) {
-        console.log(param);
+    $load(param: CalSearch) {
+        return Promise.all(this.handlers.map(h => h(param)));
     }
 
     close() {

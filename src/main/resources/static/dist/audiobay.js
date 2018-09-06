@@ -60,12 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 25);
+/******/ 	return __webpack_require__(__webpack_require__.s = 24);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -351,8 +350,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-
-/***/ 1:
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -564,417 +562,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-
-/***/ 2:
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Arrays;
-    (function (Arrays) {
-        // 배열을 테이블화 시켜서 순회한다. 행이 존재함
-        // 콜백함수 (원소, 전체인덱스, 열넘버, 행넘버) ==>  false 반환시 루프 멈춤
-        function cols(array, col, callback) {
-            var limit = array.length, i = 0, colNum, row = -1;
-            if (col < 1)
-                throw new Error('열 수는 1 이상이어야  합니다 :: input Value ==> ' + col);
-            for (; i < limit; i++) {
-                if ((colNum = i % col) === 0)
-                    row++;
-                if (callback.call(array, array[i], i, i % col, row) === false)
-                    return;
-            }
-        }
-        Arrays.cols = cols;
-        /*
-         *  DataTransferItemList 때문에 만든 함수
-         *  map을 이용함에 있어, 비동기식 콜백으로 값을 받아야 하는 지연값이 있을 경우에 쓴다.
-         *  *사용법은 로직 참고
-         */
-        function promiseMap(array, handler) {
-            return new Promise(function (resolve, _) {
-                var check, len = check = array.length, result = [];
-                var _loop_1 = function () {
-                    var index = len;
-                    handler(array[index], function (d) {
-                        result[index] = d;
-                        --check === 0 && resolve(result);
-                    });
-                };
-                while (len-- > 0) {
-                    _loop_1();
-                }
-            });
-        }
-        Arrays.promiseMap = promiseMap;
-        // 숫자배열을 만들어준다.
-        // 시작넘버부터 객수
-        function rangeBySize(start, size) {
-            var array = [];
-            for (var l = start + size; start < l; start++) {
-                array.push(start);
-            }
-            return array;
-        }
-        Arrays.rangeBySize = rangeBySize;
-        // 시작숫자부터 마지막 숫자를 포함한 배열을 반환
-        function range_atob(start, lastNum) {
-            var reverse = start > lastNum ? true : false, array = [];
-            /*
-             *  start와 lastNum이 반대로 들어오면 ?    (5, 1)   ==>  [5,4,3,2,1]
-             *  일단 뒤짚어서 배열을 만든 후, 내보낼때 reserve()한다.
-             */
-            if (reverse) {
-                var temp = start;
-                start = lastNum;
-                lastNum = temp;
-            }
-            for (var i = 0, l = lastNum - start + 1; i < l; i++) {
-                array.push(i + start);
-            }
-            return reverse ? array.reverse() : array;
-        }
-        Arrays.range_atob = range_atob;
-        // drive 배열의 원소만큼 루프를 돌린다.
-        // callback함수는  1) drive 배열의 원소와  2) driven배얼, 3) 인덱스를 제공받는다.
-        function _with(drive, driven, callback) {
-            if (drive == null)
-                return;
-            for (var i = 0; i < drive.length; i++) {
-                callback.call(drive, drive[i], driven, i);
-            }
-        }
-        Arrays._with = _with;
-        function fill(length, v) {
-            if (v === void 0) { v = null; }
-            var i = 0, array = [], handler = v;
-            if (typeof v !== 'function')
-                handler = function () { return v; };
-            for (; i < length; i++) {
-                array[i] = handler.call(array, i);
-            }
-            return array;
-        }
-        Arrays.fill = fill;
-        // 배열을 length의 갯수만큼 나눈다.
-        // [1,2,3,4,5,6], 3  ==>  [1,2,3], [4,5,6]
-        function split(target, length) {
-            var result = [], temp, pos;
-            for (var i = 0, l = target.length; i < l; i++) {
-                pos = i % length;
-                if (!pos)
-                    result.push(temp = []);
-                temp[pos] = target[i];
-            }
-            return result;
-        }
-        Arrays.split = split;
-        // target의 앞부터 다 맞으면 오케이
-        function startWith(key, target) {
-            var i = 0, l = key.length;
-            if (target.length < l)
-                return false;
-            for (; i < l; i++) {
-                if (key[i] !== target[i])
-                    return false;
-            }
-            return true;
-        }
-        Arrays.startWith = startWith;
-        function endWith(key, target) {
-            var i = 0, l = key.length, r = target.length - l;
-            if (r < 0)
-                return false;
-            for (; i < l; i++, r++) {
-                if (key[i] !== target[r])
-                    return false;
-            }
-            return true;
-        }
-        Arrays.endWith = endWith;
-        // 값 비교
-        function equals(a, b) {
-            if (a === b)
-                return true;
-            if (a == null || b == null)
-                return false;
-            if (a.length != b.length)
-                return false;
-            // If you don't care about the order of the elements inside
-            // the array, you should sort both arrays here.
-            for (var i = 0, l = a.length; i < l; i++) {
-                if (a[i] !== b[i])
-                    return false;
-            }
-            return true;
-        }
-        Arrays.equals = equals;
-    })(Arrays = exports.Arrays || (exports.Arrays = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 21:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var CountLoop = /** @class */ (function () {
-        function CountLoop(time, handler) {
-            var _this = this;
-            this.time = time;
-            this.handler = handler;
-            this._isActive = false;
-            this._count = 0;
-            this._handler = function () { return _this.run(); };
-        }
-        CountLoop.prototype.start = function () {
-            if (!this._isActive) {
-                this._index = setTimeout(this._handler, this.time);
-                this._isActive = true;
-            }
-            return this;
-        };
-        CountLoop.prototype.stop = function () {
-            if (this._isActive) {
-                clearTimeout(this._index);
-                this._isActive = false;
-            }
-            this._count = 0;
-            return this;
-        };
-        CountLoop.prototype.run = function () {
-            this.handler(++this._count, this);
-            // handler중에 stop()이 호출됐을수도 있다.
-            if (this._isActive)
-                this._index = setTimeout(this._handler, this.time);
-        };
-        return CountLoop;
-    }());
-    exports.CountLoop = CountLoop;
-    /*
-     *  setTimeout()
-     */
-    var Loop;
-    (function (Loop) {
-        function _timeloop(handler, time) {
-            var count = 1, index = -1, dispatcher = function () {
-                if (handler(count++) === false)
-                    clearTimeout(index);
-                else
-                    loop();
-            }, loop = function () { return index = setTimeout(dispatcher, time); };
-            loop();
-        }
-        function countLoop(handler, time, count) {
-        }
-        Loop.countLoop = countLoop;
-    })(Loop = exports.Loop || (exports.Loop = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 25:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(21), __webpack_require__(8), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, loop_1, template_1, dom_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var className = dom_1.DOM.className;
-    var $$resolve = Promise.resolve(), filter = (function (key) {
-        return key ? new RegExp(key, 'gi') : null;
-    })(decodeURIComponent(location.search.replace(/^\?/, '')));
-    var Data = /** @class */ (function () {
-        function Data(config) {
-            this.config = config;
-            this.xhr = new XMLHttpRequest();
-            this.loading = false;
-            this._resolve = $$resolve;
-            this.timeout = 1000;
-            this.checks = [];
-            this.values = [];
-        }
-        Data.prototype.refresh = function () {
-            var _this = this;
-            if (this.loading)
-                return this._resolve;
-            className(this.$template, ['loading'], true);
-            return this._resolve = new Promise(function (o, x) {
-                var xhr = _this.xhr;
-                _this.loading = true;
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4) {
-                        if (xhr.status == 200) {
-                            _this.values = JSON.parse(xhr.responseText);
-                            className(_this.$template, ['loading'], false);
-                            _this.apply();
-                            _this.loading = false;
-                            _this.checks = _this.values.map(function (s) { return s.url; });
-                        }
-                        else {
-                            _this.xhr = new XMLHttpRequest();
-                        }
-                        o();
-                    }
-                };
-                xhr.open('GET', _this.config.url, true);
-                xhr.send(null);
-            });
-        };
-        Data.prototype.apply = function () {
-            return this;
-        };
-        Data = __decorate([
-            template_1.Template({
-                ul: function (ele, attrs, data) {
-                    return function () {
-                        var values = data.values, checks = data.checks, v, title, html = [], i = 0, l = 20;
-                        for (; i < l; i++) {
-                            if (v = values[i]) {
-                                var classes = [], ii = 0;
-                                if (v.soldout)
-                                    classes[ii++] = 'sold-out';
-                                if (checks.length && checks.indexOf(v.url) === -1)
-                                    classes[ii++] = 'new';
-                                if (filter && filter.test(v.title)) {
-                                    title = '<span class="catch"><a href="' + v.url + '" target="_blank">' +
-                                        v.title.replace(filter, function (a) { return '<b>' + a + '</b>'; }) +
-                                        '</a></span></li>';
-                                }
-                                else {
-                                    title = '<span><a href="' + v.url + '" target="_blank">' + v.title + '</a></span></li>';
-                                }
-                                html[i] = '<li' + (classes.length ? ' class="' + classes.join(' ') + '"' : '') + '>' +
-                                    (v.count > 200 ? '<i class="hit">' + v.count + '</i>' : '<i>' + v.count + '</i>') +
-                                    title;
-                            }
-                            else
-                                html[i] = '<li><i></i><a></a></li>';
-                        }
-                        ele.innerHTML = html.join('');
-                    };
-                },
-                a: function (ele, attrs, data) {
-                    ele.href = data.config.link;
-                    ele.textContent = data.config.name;
-                }
-            }),
-            __metadata("design:paramtypes", [Object])
-        ], Data);
-        return Data;
-    }());
-    core_1.$ready(function () {
-        var container = document.querySelector('.row'), t = document.querySelector('.time-count'), 
-        //   https://cafe.naver.com/hungrya?iframe_url=/ArticleList.nhn%3Fsearch.clubid=25678061%26userDisplay=50%26search.boardtype=L%26search.specialmenutype=%26search.questionTab=A%26search.totalCount=501%26search.page=2
-        naverCafe = function (kr, name, cId, mId) {
-            return {
-                name: kr,
-                link: 'https://cafe.naver.com/' + name + '?' +
-                    'iframe_url=/ArticleList.nhn%3F' +
-                    'search.clubid=' + cId + '%26' +
-                    'search.menuid=' + mId + '%26' +
-                    'userDisplay=50%26' +
-                    'search.boardtype=L%26' +
-                    'search.specialmenutype=%26' +
-                    'search.questionTab=A%26' +
-                    'search.totalCount=501%26' +
-                    'search.page=1',
-                url: '/audiobay/naver?page=1&clubId=' + cId + '&name=' + name + '&menuId=' + mId
-            };
-        }, list = [
-            {
-                name: '와싸다닷컴',
-                link: 'http://www.wassada.com/bbs_list.php?tb=board_uusell',
-                url: '/audiobay/wassada?page=1',
-            },
-            {
-                name: '하이파이클럽',
-                link: 'https://www.hificlub.co.kr/web10/jmkt/jmkt_list_n16.asp?jmkt_gb=1',
-                url: '/audiobay/hificlub?page=1',
-            },
-            naverCafe('피씨파이카페', 'cyrus7', 15058188, 59),
-            naverCafe('중고나라', 'joonggonara', 10050146, 411),
-            naverCafe('하이파이코리아', 'hifikorea', 23218064, 48),
-            naverCafe('헝그리오디오', 'hungrya', 25678061, 14),
-            naverCafe('두두오 일반', 'audiodudu', 28248719, 46),
-            naverCafe('두두오 고급', 'audiodudu', 28248719, 53),
-            {
-                name: '실용오디오',
-                link: 'https://www.enjoyaudio.com/zbxe/index.php?mid=audiosell',
-                url: '/audiobay/enjoyaudio?page=1',
-            },
-            naverCafe('깡통소리', 'hiend', 25469486, 48),
-            naverCafe('네임오디오 카페', 'naimaudiokorea', 26214223, 86),
-        ]
-            .map(function (r) {
-            var d = new Data(r);
-            container.appendChild(d.$template);
-            return d;
-        }), loop = new loop_1.CountLoop(1000, function (count, loop) {
-            t.textContent = (30 - count).toString();
-            if (count == 30) {
-                loop.stop();
-                $refresh();
-            }
-        }), $refresh = function () { return Promise.all(list.map(function (l) { return l.refresh(); })).then(function () { return loop.start(); }); };
-        template_1.Template.each(document.body, {
-            input: function (ele, attrs) {
-                /*
-                 *  url값으로 filter를 셋팅한다.
-                 */
-                var value = decodeURIComponent(location.search.replace(/^\?/, ''));
-                if (value) {
-                    filter = new RegExp(value.replace(/\s+/g, '|'), 'gi');
-                    ele.value = value;
-                }
-                ele.addEventListener('keypress', function (e) {
-                    if (e.keyCode === 13) {
-                        var keyword = ele.value.trim();
-                        if (keyword && keyword !== value) {
-                            try {
-                                filter = new RegExp(keyword.replace(/\s+/g, '|'), 'gi');
-                            }
-                            catch (e) {
-                                filter = null;
-                            }
-                        }
-                        else {
-                            filter = null;
-                        }
-                        list.forEach(function (l) { return l.apply(); });
-                    }
-                });
-            }
-        });
-        $refresh();
-    });
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 4:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+    function log(a) {
+        console.log(a);
+        return a;
+    }
     var HTML;
     (function (HTML) {
         HTML.unCamelCase = (function (r_data, r_up, fn) {
@@ -1157,54 +754,65 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          *  사용방법은 아래 코드를 참조하자.
          *
          */
-        var r_replace_name = /:(:)?([^>]+)>$/, r_eraser = /\s+::?[^>]+>/g;
+        var r_replace_name = /:(:)?([^>\s]+)>$/, r_eraser = /\s+::?[^>\s]+>/g;
         /*
          *  템플릿 가운데 치환자로 변환할 위치를 설정하는 클래스
          *  하위 엘리먼트부터 상위로 올라가므로 시작 index는 점점 작은 숫자가 들어온다고 보면 된다.
          */
         var ParseIndex = /** @class */ (function () {
-            function ParseIndex() {
+            function ParseIndex(html) {
+                this.html = html;
                 this.values = [];
+                this.result = {};
             }
-            ParseIndex.prototype.setVal = function (s, end, name) {
-                var _a = this, values = _a.values, length = _a.values.length, i = 0, v, nVal = [], nI = 0;
-                while (length-- > 0) {
-                    v = values[length];
-                    if (s < v.start && v.end < end)
+            // 저장되지 않는 단순 마커(:value)를 위한 추가메서드
+            ParseIndex.prototype.remove = function (s, e) {
+                var _a = this, values = _a.values, l = _a.values.length, i = 0, newValues = [], ni = 0;
+                for (; i < l; i++) {
+                    // 매치된건 없앤다.
+                    if (values[i].start > s && values[i].end < e)
                         void 0;
                     else
-                        nVal[nI++] = v;
+                        newValues[ni++] = values[i];
                 }
-                nVal.push({ start: s, end: end, name: name });
-                this.values = nVal;
+                this.values = newValues;
+            };
+            // 저장되는 마커(::value)를 위한 메서드
+            ParseIndex.prototype.loop = function (s, e) {
+                var _a = this, html = _a.html, values = _a.values, l = _a.values.length, buf = new StringBuffer_1.StringBuffer(), pos = s, i = 0, newValues = [], ni = 0;
+                for (; i < l; i++) {
+                    // 매치된건 없앤다.
+                    if (values[i].start > s && values[i].end < e) {
+                        buf.append(html.substring(pos, values[i].start))
+                            .append('{{').append(values[i].name).append('}}');
+                        pos = values[i].end;
+                    }
+                    else {
+                        newValues[ni++] = values[i];
+                    }
+                }
+                if (pos < e)
+                    buf.append(html.substring(pos, e));
+                this.values = newValues;
+                return buf.toString().replace(r_eraser, '>');
+            };
+            // new
+            ParseIndex.prototype.setV = function (s, e, name, save) {
+                if (save)
+                    this.result[name] = compile(this.loop(s, e));
+                else
+                    this.remove(s, e);
+                this.values.push({ start: s, end: e, name: name });
                 return this;
             };
-            ParseIndex.prototype.replace = function (html) {
-                var list = this.values.sort(function (a, b) { return a.start - b.start; }), v, pos = 0, l = list.length, i = 0, result = [], index = 0;
-                for (; i < l; i++) {
-                    v = list[i];
-                    result[index++] = html.substring(pos, v.start);
-                    result[index++] = v.name == null ? '' : '{{' + v.name + '}}';
-                    pos = v.end;
-                }
-                if (html.length > pos)
-                    result[index++] = html.substring(pos);
-                return result.join('');
+            // new
+            ParseIndex.prototype.getResult = function () {
+                return [compile(this.loop(0, this.html.length)), this.result];
             };
             return ParseIndex;
         }());
-        /*
-         *  html 문자열을 파싱한다.
-         *
-         *  ① 여는 태그를 순회하며 위치정보와 메타정보를 스택에 저장한다.
-         *  ② 닫는 태그가 나오면 스택에 저장된 것들을 차례로 꺼내어
-         *     파싱 로직을 실행한다.
-         *
-         *  간단한 접근법이지만, html문서를 파싱하는데 매우 강력한 기법이다.
-         *
-         */
-        function htmlParser(html) {
-            var parseIndex = new ParseIndex(), result = {}, pos = 0, tagNames = [], startPos = [], lines = [], index = 0;
+        function htmlParser(html, handler) {
+            var parseIndex = new ParseIndex(html), pos = 0, tagNames = [], startPos = [], lines = [], index = 0;
             while ((pos = html.indexOf('<', pos)) !== -1) {
                 var l = html.indexOf('>', pos) + 1; // <...>
                 // ① 시작 태그
@@ -1242,9 +850,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                         //
                         if (match) {
                             var save = match[1], name_1 = match[2];
-                            if (save)
-                                result[name_1] = compile(html.substring(startIndex, endIndex).replace(r_eraser, '>'));
-                            parseIndex.setVal(startIndex, endIndex, name_1);
+                            parseIndex.setV(startIndex, endIndex, name_1, !!save);
                         }
                         if (own)
                             break;
@@ -1257,7 +863,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             /*
              *  let [create, {val1, val2}] = htmlParse()
              */
-            return [compile(parseIndex.replace(html)), result];
+            var _a = parseIndex.getResult(), $c = _a[0], result = _a[1];
+            parseIndex = null;
+            return handler ? handler($c, result) : [$c, result];
         }
         HTML.htmlParser = htmlParser;
     })(HTML = exports.HTML || (exports.HTML = {}));
@@ -1266,11 +874,210 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-
-/***/ 8:
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, dom_1, arrays_1, html_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var StringBuffer = /** @class */ (function () {
+        function StringBuffer(init) {
+            this.array = [];
+            this.i = 0;
+            if (init)
+                this.append(init);
+        }
+        StringBuffer.prototype.reset = function () {
+            this.array = [];
+            this.i = 0;
+            return this;
+        };
+        StringBuffer.prototype.prepend = function (v) {
+            this.array.unshift(v);
+            this.i++;
+            return this;
+        };
+        StringBuffer.prototype.append = function (v) {
+            var array = this.array;
+            if (!Array.isArray(v))
+                array[this.i++] = v;
+            else {
+                var i = 0, u = this.i, l = v.length;
+                while (i < l)
+                    array[u++] = v[i++];
+                this.i = u;
+            }
+            return this;
+        };
+        StringBuffer.prototype.toString = function () {
+            return this.array.join('');
+        };
+        return StringBuffer;
+    }());
+    exports.StringBuffer = StringBuffer;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 4 */,
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Arrays;
+    (function (Arrays) {
+        // 배열을 테이블화 시켜서 순회한다. 행이 존재함
+        // 콜백함수 (원소, 전체인덱스, 열넘버, 행넘버) ==>  false 반환시 루프 멈춤
+        function cols(array, col, callback) {
+            var limit = array.length, i = 0, colNum, row = -1;
+            if (col < 1)
+                throw new Error('열 수는 1 이상이어야  합니다 :: input Value ==> ' + col);
+            for (; i < limit; i++) {
+                if ((colNum = i % col) === 0)
+                    row++;
+                if (callback.call(array, array[i], i, i % col, row) === false)
+                    return;
+            }
+        }
+        Arrays.cols = cols;
+        /*
+         *  DataTransferItemList 때문에 만든 함수
+         *  map을 이용함에 있어, 비동기식 콜백으로 값을 받아야 하는 지연값이 있을 경우에 쓴다.
+         *  *사용법은 로직 참고
+         */
+        function promiseMap(array, handler) {
+            return new Promise(function (resolve, _) {
+                var check, len = check = array.length, result = [];
+                var _loop_1 = function () {
+                    var index = len;
+                    handler(array[index], function (d) {
+                        result[index] = d;
+                        --check === 0 && resolve(result);
+                    });
+                };
+                while (len-- > 0) {
+                    _loop_1();
+                }
+            });
+        }
+        Arrays.promiseMap = promiseMap;
+        // 숫자배열을 만들어준다.
+        // 시작넘버부터 객수
+        function rangeBySize(start, size) {
+            var array = [];
+            for (var l = start + size; start < l; start++) {
+                array.push(start);
+            }
+            return array;
+        }
+        Arrays.rangeBySize = rangeBySize;
+        // 시작숫자부터 마지막 숫자를 포함한 배열을 반환
+        function range_atob(start, lastNum) {
+            var reverse = start > lastNum ? true : false, array = [];
+            /*
+             *  start와 lastNum이 반대로 들어오면 ?    (5, 1)   ==>  [5,4,3,2,1]
+             *  일단 뒤짚어서 배열을 만든 후, 내보낼때 reserve()한다.
+             */
+            if (reverse) {
+                var temp = start;
+                start = lastNum;
+                lastNum = temp;
+            }
+            for (var i = 0, l = lastNum - start + 1; i < l; i++) {
+                array.push(i + start);
+            }
+            return reverse ? array.reverse() : array;
+        }
+        Arrays.range_atob = range_atob;
+        // drive 배열의 원소만큼 루프를 돌린다.
+        // callback함수는  1) drive 배열의 원소와  2) driven배얼, 3) 인덱스를 제공받는다.
+        function _with(drive, driven, callback) {
+            if (drive == null)
+                return;
+            for (var i = 0; i < drive.length; i++) {
+                callback.call(drive, drive[i], driven, i);
+            }
+        }
+        Arrays._with = _with;
+        function fill(length, v) {
+            if (v === void 0) { v = null; }
+            var i = 0, array = [], handler = v;
+            if (typeof v !== 'function')
+                handler = function () { return v; };
+            for (; i < length; i++) {
+                array[i] = handler.call(array, i);
+            }
+            return array;
+        }
+        Arrays.fill = fill;
+        // 배열을 length의 갯수만큼 나눈다.
+        // [1,2,3,4,5,6], 3  ==>  [1,2,3], [4,5,6]
+        function split(target, length) {
+            var result = [], temp, pos;
+            for (var i = 0, l = target.length; i < l; i++) {
+                pos = i % length;
+                if (!pos)
+                    result.push(temp = []);
+                temp[pos] = target[i];
+            }
+            return result;
+        }
+        Arrays.split = split;
+        // target의 앞부터 다 맞으면 오케이
+        function startWith(key, target) {
+            var i = 0, l = key.length;
+            if (target.length < l)
+                return false;
+            for (; i < l; i++) {
+                if (key[i] !== target[i])
+                    return false;
+            }
+            return true;
+        }
+        Arrays.startWith = startWith;
+        function endWith(key, target) {
+            var i = 0, l = key.length, r = target.length - l;
+            if (r < 0)
+                return false;
+            for (; i < l; i++, r++) {
+                if (key[i] !== target[r])
+                    return false;
+            }
+            return true;
+        }
+        Arrays.endWith = endWith;
+        // 값 비교
+        function equals(a, b) {
+            if (a === b)
+                return true;
+            if (a == null || b == null)
+                return false;
+            if (a.length != b.length)
+                return false;
+            // If you don't care about the order of the elements inside
+            // the array, you should sort both arrays here.
+            for (var i = 0, l = a.length; i < l; i++) {
+                if (a[i] !== b[i])
+                    return false;
+            }
+            return true;
+        }
+        Arrays.equals = equals;
+    })(Arrays = exports.Arrays || (exports.Arrays = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 6 */,
+/* 7 */,
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(5), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, dom_1, arrays_1, html_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function $snapshot(data, names) {
@@ -1531,6 +1338,266 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ })
+/***/ }),
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/******/ });
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var CountLoop = /** @class */ (function () {
+        function CountLoop(time, handler) {
+            var _this = this;
+            this.time = time;
+            this.handler = handler;
+            this._isActive = false;
+            this._count = 0;
+            this._handler = function () { return _this.run(); };
+        }
+        CountLoop.prototype.start = function () {
+            if (!this._isActive) {
+                this._index = setTimeout(this._handler, this.time);
+                this._isActive = true;
+            }
+            return this;
+        };
+        CountLoop.prototype.stop = function () {
+            if (this._isActive) {
+                clearTimeout(this._index);
+                this._isActive = false;
+            }
+            this._count = 0;
+            return this;
+        };
+        CountLoop.prototype.run = function () {
+            this.handler(++this._count, this);
+            // handler중에 stop()이 호출됐을수도 있다.
+            if (this._isActive)
+                this._index = setTimeout(this._handler, this.time);
+        };
+        return CountLoop;
+    }());
+    exports.CountLoop = CountLoop;
+    /*
+     *  setTimeout()
+     */
+    var Loop;
+    (function (Loop) {
+        function _timeloop(handler, time) {
+            var count = 1, index = -1, dispatcher = function () {
+                if (handler(count++) === false)
+                    clearTimeout(index);
+                else
+                    loop();
+            }, loop = function () { return index = setTimeout(dispatcher, time); };
+            loop();
+        }
+        function countLoop(handler, time, count) {
+        }
+        Loop.countLoop = countLoop;
+    })(Loop = exports.Loop || (exports.Loop = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 22 */,
+/* 23 */,
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(21), __webpack_require__(8), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, loop_1, template_1, dom_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var className = dom_1.DOM.className;
+    var $$resolve = Promise.resolve(), filter = (function (key) {
+        return key ? new RegExp(key, 'gi') : null;
+    })(decodeURIComponent(location.search.replace(/^\?/, '')));
+    var Data = /** @class */ (function () {
+        function Data(config) {
+            this.config = config;
+            this.xhr = new XMLHttpRequest();
+            this.loading = false;
+            this._resolve = $$resolve;
+            this.timeout = 1000;
+            this.checks = [];
+            this.values = [];
+        }
+        Data.prototype.refresh = function () {
+            var _this = this;
+            if (this.loading)
+                return this._resolve;
+            className(this.$template, ['loading'], true);
+            return this._resolve = new Promise(function (o, x) {
+                var xhr = _this.xhr;
+                _this.loading = true;
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) {
+                        if (xhr.status == 200) {
+                            _this.values = JSON.parse(xhr.responseText);
+                            _this.checks = _this.values.map(function (s) { return s.url; });
+                            _this.apply();
+                        }
+                        className(_this.$template, ['loading'], false);
+                        _this.loading = false;
+                        o();
+                    }
+                };
+                xhr.open('GET', _this.config.url, true);
+                xhr.send(null);
+            });
+        };
+        Data.prototype.apply = function () {
+            return this;
+        };
+        Data = __decorate([
+            template_1.Template({
+                ul: function (ele, attrs, data) {
+                    return function () {
+                        var values = data.values, checks = data.checks, v, title, html = [], i = 0, l = 20;
+                        for (; i < l; i++) {
+                            if (v = values[i]) {
+                                var classes = [], ii = 0;
+                                if (v.soldout)
+                                    classes[ii++] = 'sold-out';
+                                if (checks.length && checks.indexOf(v.url) === -1)
+                                    classes[ii++] = 'new';
+                                if (filter && filter.test(v.title)) {
+                                    title = '<span class="catch"><a href="' + v.url + '" target="_blank">' +
+                                        v.title.replace(filter, function (a) { return '<b>' + a + '</b>'; }) +
+                                        '</a></span></li>';
+                                }
+                                else {
+                                    title = '<span><a href="' + v.url + '" target="_blank">' + v.title + '</a></span></li>';
+                                }
+                                html[i] = '<li' + (classes.length ? ' class="' + classes.join(' ') + '"' : '') + '>' +
+                                    (v.count > 200 ? '<i class="hit">' + v.count + '</i>' : '<i>' + v.count + '</i>') +
+                                    title;
+                            }
+                            else
+                                html[i] = '<li><i></i><a></a></li>';
+                        }
+                        ele.innerHTML = html.join('');
+                    };
+                },
+                a: function (ele, attrs, data) {
+                    ele.href = data.config.link;
+                    ele.textContent = data.config.name;
+                }
+            }),
+            __metadata("design:paramtypes", [Object])
+        ], Data);
+        return Data;
+    }());
+    core_1.$ready(function () {
+        var container = document.querySelector('.row'), t = document.querySelector('.time-count'), 
+        //   https://cafe.naver.com/hungrya?iframe_url=/ArticleList.nhn%3Fsearch.clubid=25678061%26userDisplay=50%26search.boardtype=L%26search.specialmenutype=%26search.questionTab=A%26search.totalCount=501%26search.page=2
+        naverCafe = function (kr, name, cId, mId) {
+            return {
+                name: kr,
+                link: 'https://cafe.naver.com/' + name + '?' +
+                    'iframe_url=/ArticleList.nhn%3F' +
+                    'search.clubid=' + cId + '%26' +
+                    'search.menuid=' + mId + '%26' +
+                    'userDisplay=50%26' +
+                    'search.boardtype=L%26' +
+                    'search.specialmenutype=%26' +
+                    'search.questionTab=A%26' +
+                    'search.totalCount=501%26' +
+                    'search.page=1',
+                url: '/audiobay/naver?page=1&clubId=' + cId + '&name=' + name + '&menuId=' + mId
+            };
+        }, list = [
+            {
+                name: '와싸다닷컴',
+                link: 'http://www.wassada.com/bbs_list.php?tb=board_uusell',
+                url: '/audiobay/wassada?page=1',
+            },
+            {
+                name: '하이파이클럽',
+                link: 'https://www.hificlub.co.kr/web10/jmkt/jmkt_list_n16.asp?jmkt_gb=1',
+                url: '/audiobay/hificlub?page=1',
+            },
+            naverCafe('피씨파이카페', 'cyrus7', 15058188, 59),
+            naverCafe('중고나라', 'joonggonara', 10050146, 411),
+            naverCafe('하이파이코리아', 'hifikorea', 23218064, 48),
+            naverCafe('헝그리오디오', 'hungrya', 25678061, 14),
+            naverCafe('두두오 일반', 'audiodudu', 28248719, 46),
+            naverCafe('두두오 고급', 'audiodudu', 28248719, 53),
+            {
+                name: '실용오디오',
+                link: 'https://www.enjoyaudio.com/zbxe/index.php?mid=audiosell',
+                url: '/audiobay/enjoyaudio?page=1',
+            },
+            naverCafe('깡통소리', 'hiend', 25469486, 48),
+            naverCafe('네임오디오 카페', 'naimaudiokorea', 26214223, 86),
+        ]
+            .map(function (r) {
+            var d = new Data(r);
+            container.appendChild(d.$template);
+            return d;
+        }), loop = new loop_1.CountLoop(1000, function (count, loop) {
+            t.textContent = (30 - count).toString();
+            if (count == 30) {
+                loop.stop();
+                $refresh();
+            }
+        }), $refresh = function () { return Promise.all(list.map(function (l) { return l.refresh(); })).then(function () { return loop.start(); }); };
+        template_1.Template.each(document.body, {
+            input: function (ele, attrs) {
+                /*
+                 *  url값으로 filter를 셋팅한다.
+                 */
+                var value = decodeURIComponent(location.search.replace(/^\?/, ''));
+                if (value) {
+                    filter = new RegExp(value.replace(/[\s,]+/g, '|'), 'gi');
+                    ele.value = value;
+                }
+                ele.addEventListener('keypress', function (e) {
+                    if (e.keyCode === 13) {
+                        var keyword = ele.value.trim();
+                        if (keyword && keyword !== value) {
+                            try {
+                                filter = new RegExp(keyword.replace(/[\s,]+/g, '|'), 'gi');
+                            }
+                            catch (e) {
+                                filter = null;
+                            }
+                        }
+                        else {
+                            filter = null;
+                        }
+                        list.forEach(function (l) { return l.apply(); });
+                    }
+                });
+            }
+        });
+        $refresh();
+    });
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ })
+/******/ ]);

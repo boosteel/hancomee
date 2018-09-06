@@ -1,135 +1,144 @@
-nav .today > span {
-  color: #ddd; }
+#calendar, #calendar > main {
+  height: 100%; }
 
-nav .today > a {
-  color: #ffc02d;
-  font-weight: bold;
-  font-size: 20px; }
+#calendar nav {
+  background-color: #777; }
+  #calendar nav .today > span {
+    color: #ddd; }
+  #calendar nav .today > a {
+    color: #ffc02d;
+    font-weight: bold;
+    font-size: 20px; }
+  #calendar nav.navbar {
+    position: fixed; }
 
-nav.navbar {
-  position: fixed; }
+#calendar main > table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  height: 100%; }
 
-main {
-  padding-top: 50px; }
-  main .calendar-row .calendar-cell {
-    position: relative;
-    border-top: 1px solid #ddd;
-    background-color: #f4f4f4; }
-    main .calendar-row .calendar-cell .number {
-      position: absolute;
-      top: 0;
-      left: 0;
-      padding-top: 4px;
-      padding-left: 10px;
-      color: #9e9e9e;
-      text-align: center;
-      transition: .3s ease color;
+#calendar main tr:first-child > td {
+  border-top: 0; }
+
+#calendar main tr:last-child > td {
+  border-bottom: 0; }
+
+#calendar main tr td {
+  position: relative;
+  display: table-cell;
+  padding: 35px 10px 10px;
+  width: 14.28571%;
+  border: 1px solid #ddd;
+  background-color: #fbfbfb; }
+  #calendar main tr td .content + .content {
+    margin-top: 5px; }
+  #calendar main tr td .content .type {
+    float: left;
+    margin-right: 4px;
+    margin-top: 2px;
+    font-size: 12px;
+    padding: 0 5px 1px;
+    border-radius: 3px;
+    vertical-align: middle; }
+  #calendar main tr td .content .title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    white-space: nowrap; }
+    #calendar main tr td .content .title > span {
+      transition: .1s ease color;
       cursor: pointer; }
-      main .calendar-row .calendar-cell .number:hover {
+    #calendar main tr td .content .title:hover > span {
+      color: #d02121; }
+  #calendar main tr td .num {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-top: 4px;
+    padding-left: 10px;
+    color: #d2d2d2;
+    text-align: center;
+    transition: .3s ease color;
+    cursor: pointer;
+    font-size: 14px; }
+    #calendar main tr td .num:hover {
+      color: #555; }
+  #calendar main tr td.current {
+    background-color: white; }
+    #calendar main tr td.current .num {
+      font-size: 16px;
+      color: #888; }
+      #calendar main tr td.current .num:hover {
         color: #222; }
-    main .calendar-row .calendar-cell.current {
-      background-color: white; }
-      main .calendar-row .calendar-cell.current:hover {
-        background-color: #f6f8fd; }
-      main .calendar-row .calendar-cell.current.today {
-        background-color: #e9f0f9 !important; }
-    main .calendar-row .calendar-cell.current:first-child .number {
-      font-weight: bold;
-      color: #d00e0e; }
-    main .calendar-row .calendar-cell.current:last-child .number {
-      font-weight: bold;
-      color: #1d95de; }
-    main .calendar-row .calendar-cell .content .type {
-      color: white; }
-      main .calendar-row .calendar-cell .content .type.type-0 {
-        background-color: #fd9418; }
-      main .calendar-row .calendar-cell .content .type.type-1 {
-        background-color: #f51515; }
-      main .calendar-row .calendar-cell .content .type.type-2 {
-        background-color: #42da0e; }
-  main.table-type {
-    table-layout: fixed;
-    display: table;
-    width: 100%;
-    height: 100%; }
-    main.table-type .calendar-row {
-      display: table-row; }
-      main.table-type .calendar-row .calendar-cell {
-        display: table-cell;
-        padding: 35px 10px 10px;
-        width: 14.28571%;
-        border-left: 1px solid #ddd; }
-        main.table-type .calendar-row .calendar-cell:first-child {
-          border-left: 0; }
-        main.table-type .calendar-row .calendar-cell .content + .content {
-          margin-top: 5px; }
-        main.table-type .calendar-row .calendar-cell .content .type {
-          float: left;
-          margin-right: 4px;
-          margin-top: 2px;
-          font-size: 12px;
-          padding: 0 5px 1px;
-          border-radius: 3px;
-          vertical-align: middle; }
-        main.table-type .calendar-row .calendar-cell .content .title {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          font-size: 14px;
-          white-space: nowrap; }
-          main.table-type .calendar-row .calendar-cell .content .title > span {
-            transition: .1s ease color;
-            cursor: pointer; }
-          main.table-type .calendar-row .calendar-cell .content .title:hover > span {
-            color: #d02121; }
-      main.table-type .calendar-row:first-child .calendar-cell {
-        border-top: 0; }
+    #calendar main tr td.current:hover {
+      background-color: #f6f8fd; }
+    #calendar main tr td.current.today {
+      background-color: #e9f0f9 !important; }
+  #calendar main tr td.current:first-child .num {
+    font-weight: bold;
+    color: #d00e0e; }
+  #calendar main tr td.current:last-child .num {
+    font-weight: bold;
+    color: #1d95de; }
+  #calendar main tr td .content .type {
+    color: white; }
+    #calendar main tr td .content .type.type-0 {
+      background-color: #fd9418; }
+    #calendar main tr td .content .type.type-1 {
+      background-color: #f51515; }
+    #calendar main tr td .content .type.type-2 {
+      background-color: #42da0e; }
 
-#input-btn {
+#calendar main tr:first-child .calendar-cell {
+  border-top: 0; }
+
+#calendar #input-btn {
   background-color: darkred; }
-  #input-btn.on {
+  #calendar #input-btn.on {
     background-color: #28a745; }
 
-#input:focus {
+#calendar #input:focus {
   background-color: #34ce57; }
 
-#screen {
+#calendar #screen {
   display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: fixed; }
-  #screen.on {
+  #calendar #screen.on {
     display: flex; }
-  #screen:before {
+  #calendar #screen:before {
     display: block;
     position: absolute;
     content: '';
     background-color: black;
     opacity: .85; }
-  #screen, #screen:before {
+  #calendar #screen, #calendar #screen:before {
     top: 0;
     left: 0;
     right: 0;
     bottom: 0; }
-  #screen .content {
+  #calendar #screen .content {
     position: relative;
     z-index: 1;
     padding: 35px;
     width: 40%;
     background-color: #f3f3f3;
     border-radius: 5px; }
-    #screen .content > div + div {
+    #calendar #screen .content > div + div {
       margin-top: 15px; }
-    #screen .content .ctrl {
+    #calendar #screen .content .ctrl {
       position: absolute;
       right: 20px;
       top: 20px; }
-    #screen .content .date {
+    #calendar #screen .content .date {
       font-family: tahoma;
       font-weight: bold;
       font-size: 28px;
       color: #656565; }
-    #screen .content .types label {
+    #calendar #screen .content .types label {
       float: left;
       padding: 5px 13px;
       border: 1px solid #c3c3c3;
@@ -137,26 +146,26 @@ main {
       color: #aaa;
       cursor: pointer;
       background-color: white; }
-    #screen .content .types input {
+    #calendar #screen .content .types input {
       display: none; }
-      #screen .content .types input + label {
+      #calendar #screen .content .types input + label {
         display: none; }
-      #screen .content .types input:checked + label {
+      #calendar #screen .content .types input:checked + label {
         display: block;
         color: #333;
         background-color: #e6e6e6; }
-    #screen .content input, #screen .content textarea {
+    #calendar #screen .content input, #calendar #screen .content textarea {
       width: 100%;
       padding: 10px 10px;
       border: 1px solid transparent;
       border-radius: 5px; }
-      #screen .content input:focus, #screen .content textarea:focus {
+      #calendar #screen .content input:focus, #calendar #screen .content textarea:focus {
         outline: 0; }
-      #screen .content input[disabled], #screen .content textarea[disabled] {
+      #calendar #screen .content input[disabled], #calendar #screen .content textarea[disabled] {
         background-color: white; }
-    #screen .content textarea {
+    #calendar #screen .content textarea {
       min-height: 200px; }
-  #screen .ctrl-btn {
+  #calendar #screen .ctrl-btn {
     float: left;
     padding: 4px 8px;
     margin-left: -1px;
@@ -164,18 +173,18 @@ main {
     background-color: white;
     font-size: 14px;
     cursor: pointer; }
-  #screen .submit, #screen .cancel {
+  #calendar #screen .submit, #calendar #screen .cancel {
     display: none; }
-  #screen .submit {
+  #calendar #screen .submit {
     color: #ddd; }
-  #screen.form .submit, #screen.form .cancel {
+  #calendar #screen.form .submit, #calendar #screen.form .cancel {
     display: block; }
-  #screen.form .modify, #screen.form .remove {
+  #calendar #screen.form .modify, #calendar #screen.form .remove {
     display: none; }
-  #screen.form.isSubmit .submit {
+  #calendar #screen.form.isSubmit .submit {
     color: #222;
     cursor: pointer; }
-  #screen.form .types input + label {
+  #calendar #screen.form .types input + label {
     display: block; }
-  #screen.form input, #screen.form textarea {
+  #calendar #screen.form input, #calendar #screen.form textarea {
     border: 1px solid #ddd; }

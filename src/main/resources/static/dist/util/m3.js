@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 38);
+/******/ 	return __webpack_require__(__webpack_require__.s = 36);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -565,7 +565,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 12:
+/***/ 11:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -597,280 +597,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 3:
+/***/ 2:
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Created by hellofunc on 2017-03-01.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Access;
-    (function (Access) {
-        // dot으로 구분된 프로퍼티 읽어오기
-        Access.read = (function () {
-            function ___read(prop, data) {
-                var value = data[prop];
-                return typeof value === 'function' ? value.call(data) : value;
-            }
-            return function (prop, data, nullSafeVal) {
-                if (nullSafeVal === void 0) { nullSafeVal = null; }
-                var props = prop.split(/\./), i = 0, l = props.length, result = data;
-                for (; i < l; i++) {
-                    result = ___read(props[i], result);
-                    if (result == null)
-                        return nullSafeVal;
-                }
-                return Access.primitive(result);
-            };
-        })();
-        Access.primitive = (function () {
-            var r_number = /^\d+$/, r_boolean = /^true$|^false$/, r_string = /^['"][^"']+['"]$/, r_date = /^\d{4}-\d{2}-\d{2}$|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/, r_string_replace = /["']/g;
-            return function (val) {
-                if (typeof val === 'string' && val.length > 0) {
-                    if (r_number.test(val))
-                        return parseInt(val);
-                    if (r_boolean.test(val))
-                        return val === 'true';
-                    if (r_string.test(val))
-                        return val.replace(r_string_replace, '');
-                    if (r_date.test(val))
-                        return new Date(val);
-                }
-                return val;
-            };
-        })();
-        function access(target, _props, val, force) {
-            var props = _props.split(/\./), len = props.length - 1, obj = target, temp, i = 0;
-            for (; obj != null && i < len; i++) {
-                temp = obj[props[i]];
-                if (temp == null && force)
-                    temp = obj[props[i]] = {};
-                obj = temp;
-            }
-            // [1] getter
-            if (arguments.length === 2)
-                return obj != null ? obj[props[i]] : obj;
-            // [2] setter
-            obj != null && (obj[props[i]] = val);
-            return target;
-        }
-        Access.access = access;
-    })(Access = exports.Access || (exports.Access = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 38:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(39), __webpack_require__(4), __webpack_require__(12), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, format_1, html_1, selector_1, dom_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var number = format_1.Formats.number;
-    var createHTML = dom_1.DOM.createHTML;
-    var select = selector_1.Selector.select;
-    var byId = selector_1.Selector.byId;
-    var compile = html_1.HTML.compile;
-    core_1.$ready(function () {
-        select(document.body, function ($result, $unit, result, container, add) {
-            var r_input_type = /input/i, r_num = /^\d+$/, r_input = /\d+-\d+/, r_group = {
-                num: /[^\d]/g,
-                size: /[^\d-]/g,
-            }, units = [], $$result = compile($result.innerText), refresh = function () {
-                var count = 0, n = units
-                    .filter(function (v) { return v.valid(); })
-                    .reduce(function (r, i) {
-                    count += i.count();
-                    return r += i.compute();
-                }, 0);
-                result.innerHTML = $$result({
-                    count: count,
-                    price: number(n)
-                });
-            }, create = function () {
-                select(createHTML($unit.innerText), function (price, size, count, remove) {
-                    var _this = this;
-                    var ctrl = {
-                        index: units.length,
-                        count: function () {
-                            return parseInt(count.value || '1');
-                        },
-                        valid: function () {
-                            console.log(price.value, size.value);
-                            return r_num.test(price.value) && r_input.test(size.value);
-                        },
-                        compute: function () {
-                            var p = parseInt(price.value), _a = size.value.split(/-/), _w = _a[0], _h = _a[1], w = parseInt(_w), h = parseInt(_h);
-                            return (w * h / 1000000) * p * this.count();
-                        }
-                    };
-                    container.appendChild(this);
-                    units.push(ctrl);
-                    remove.addEventListener('click', function () {
-                        units.splice(units.indexOf(ctrl), 1);
-                        ctrl = null;
-                        container.removeChild(_this);
-                        refresh();
-                    });
-                }, '.price', '.size', '.count', '.remove');
-            };
-            container.addEventListener('keyup', function (e) {
-                var target = e.target;
-                if (r_input_type.test(target.tagName)) {
-                    target.value = target.value.replace(r_group[target.getAttribute('data-regexp')], '');
-                    refresh();
-                }
-            });
-            add.addEventListener('click', function () { return create(); });
-            create();
-        }, byId('result-template'), byId('unit-template'), '#result', '#values', '#add');
-    });
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 39:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    /**
-     * Created by hellofunc on 2017-03-01.
-     */
-    var Formats;
-    (function (Formats) {
-        var rr = /:([\w.]+)/g;
-        function replaceAll(str, val) {
-            var v;
-            if (val == null)
-                return str;
-            return str.replace(rr, function (_, prop) {
-                v = access_1.Access.access(val, prop);
-                return v == null ? '' : v;
-            });
-        }
-        Formats.replaceAll = replaceAll;
-        function replace(__value, rg, literal, matcher) {
-            var pos = 0, result = __value.replace(rg, function (all, match, index) {
-                if (index)
-                    literal(__value.substring(pos, index));
-                pos = index + all.length;
-                return matcher.apply(this, arguments);
-                ;
-            });
-            if (pos < __value.length)
-                literal(__value.substring(pos, __value.length));
-            return result;
-        }
-        Formats.replace = replace;
-        // 숫자 받아서 파일 크기로... (천단위 쉼표)
-        // unit은 단위를 덧붙일 것인지
-        Formats.fileSize = (function (array) {
-            var r = /\B(?=(?:\d{3})+(?!\d))/g;
-            return function (size, unit) {
-                if (unit === void 0) { unit = true; }
-                var t = typeof size;
-                if (t !== 'number') {
-                    if (t !== 'string' || !/^\d+$/.test(size))
-                        return '';
-                    size = parseInt(size);
-                }
-                if (size === 0)
-                    return '0 bytes';
-                var result = Math.floor(Math.log(size) / Math.log(1024));
-                return String((size / Math.pow(1024, result)).toFixed(2)).replace(r, ',')
-                    + (unit ? " " + array[result] : '');
-            };
-        })(['bytes', 'kB', 'MB', 'GB', 'TB', 'PB']);
-        Formats.moneyKr = (function (hanA, danA) {
-            return function (val) {
-                if (typeof val === 'number')
-                    val = val.toString();
-                if (typeof val === 'string' && /^\d+$/.test(val)) {
-                    var result = '', han = void 0, str = void 0, i = 0, l = val.length;
-                    for (; i < l; i++) {
-                        str = '';
-                        han = hanA[val[l - (i + 1)]];
-                        if (han != "")
-                            str = han + danA[i];
-                        if (i == 4)
-                            str += "만";
-                        if (i == 8)
-                            str += "억";
-                        result = str + result;
-                    }
-                    return result || '';
-                }
-                return '';
-            };
-        })(["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구", "십"], ["", "십", "백", "천", "", "십", "백", "천", "", "십", "백", "천"]);
-        // {{obj}}
-        function replaceByObj(str, obj) {
-            var f;
-            return str.replace(/{{[^{}]+}}/g, function (_, g) {
-                f = obj[g];
-                if (f == null)
-                    return '';
-                else if (typeof f === 'function')
-                    return f.call(obj);
-                else
-                    return '';
-            });
-        }
-        Formats.replaceByObj = replaceByObj;
-        // HTML 이스케이프
-        Formats._htmlEscape = (function () {
-            var escape = /&lt;|&gt;|&nbsp;|&amp;|&quot;|&apos;/g;
-            function _change(c) {
-                switch (c) {
-                    case '&lt;':
-                        return '<';
-                    case '&gt;':
-                        return '>';
-                    case '&nbsp;':
-                        return ' ';
-                    case '&amp;':
-                        return '&';
-                    case '&quot;':
-                        return '"';
-                    case '&apos;':
-                        return '\'';
-                    default:
-                        return c;
-                }
-            }
-            return function (str) {
-                return str.replace(escape, function (s) { return _change(s); });
-            };
-        })();
-        var r_num = /^[-+]?\d+$/, r_num_replace = /\B(?=(\d{3})+(?!\d))/g;
-        Formats.number = function (val) {
-            if (typeof val === 'number')
-                val = val.toString();
-            if (typeof val === 'string' && r_num.test(val))
-                return val.replace(r_num_replace, ",");
-            return '0';
-        };
-    })(Formats = exports.Formats || (exports.Formats = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 4:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+    function log(a) {
+        console.log(a);
+        return a;
+    }
     var HTML;
     (function (HTML) {
         HTML.unCamelCase = (function (r_data, r_up, fn) {
@@ -1053,54 +789,65 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          *  사용방법은 아래 코드를 참조하자.
          *
          */
-        var r_replace_name = /:(:)?([^>]+)>$/, r_eraser = /\s+::?[^>]+>/g;
+        var r_replace_name = /:(:)?([^>\s]+)>$/, r_eraser = /\s+::?[^>\s]+>/g;
         /*
          *  템플릿 가운데 치환자로 변환할 위치를 설정하는 클래스
          *  하위 엘리먼트부터 상위로 올라가므로 시작 index는 점점 작은 숫자가 들어온다고 보면 된다.
          */
         var ParseIndex = /** @class */ (function () {
-            function ParseIndex() {
+            function ParseIndex(html) {
+                this.html = html;
                 this.values = [];
+                this.result = {};
             }
-            ParseIndex.prototype.setVal = function (s, end, name) {
-                var _a = this, values = _a.values, length = _a.values.length, i = 0, v, nVal = [], nI = 0;
-                while (length-- > 0) {
-                    v = values[length];
-                    if (s < v.start && v.end < end)
+            // 저장되지 않는 단순 마커(:value)를 위한 추가메서드
+            ParseIndex.prototype.remove = function (s, e) {
+                var _a = this, values = _a.values, l = _a.values.length, i = 0, newValues = [], ni = 0;
+                for (; i < l; i++) {
+                    // 매치된건 없앤다.
+                    if (values[i].start > s && values[i].end < e)
                         void 0;
                     else
-                        nVal[nI++] = v;
+                        newValues[ni++] = values[i];
                 }
-                nVal.push({ start: s, end: end, name: name });
-                this.values = nVal;
+                this.values = newValues;
+            };
+            // 저장되는 마커(::value)를 위한 메서드
+            ParseIndex.prototype.loop = function (s, e) {
+                var _a = this, html = _a.html, values = _a.values, l = _a.values.length, buf = new StringBuffer_1.StringBuffer(), pos = s, i = 0, newValues = [], ni = 0;
+                for (; i < l; i++) {
+                    // 매치된건 없앤다.
+                    if (values[i].start > s && values[i].end < e) {
+                        buf.append(html.substring(pos, values[i].start))
+                            .append('{{').append(values[i].name).append('}}');
+                        pos = values[i].end;
+                    }
+                    else {
+                        newValues[ni++] = values[i];
+                    }
+                }
+                if (pos < e)
+                    buf.append(html.substring(pos, e));
+                this.values = newValues;
+                return buf.toString().replace(r_eraser, '>');
+            };
+            // new
+            ParseIndex.prototype.setV = function (s, e, name, save) {
+                if (save)
+                    this.result[name] = compile(this.loop(s, e));
+                else
+                    this.remove(s, e);
+                this.values.push({ start: s, end: e, name: name });
                 return this;
             };
-            ParseIndex.prototype.replace = function (html) {
-                var list = this.values.sort(function (a, b) { return a.start - b.start; }), v, pos = 0, l = list.length, i = 0, result = [], index = 0;
-                for (; i < l; i++) {
-                    v = list[i];
-                    result[index++] = html.substring(pos, v.start);
-                    result[index++] = v.name == null ? '' : '{{' + v.name + '}}';
-                    pos = v.end;
-                }
-                if (html.length > pos)
-                    result[index++] = html.substring(pos);
-                return result.join('');
+            // new
+            ParseIndex.prototype.getResult = function () {
+                return [compile(this.loop(0, this.html.length)), this.result];
             };
             return ParseIndex;
         }());
-        /*
-         *  html 문자열을 파싱한다.
-         *
-         *  ① 여는 태그를 순회하며 위치정보와 메타정보를 스택에 저장한다.
-         *  ② 닫는 태그가 나오면 스택에 저장된 것들을 차례로 꺼내어
-         *     파싱 로직을 실행한다.
-         *
-         *  간단한 접근법이지만, html문서를 파싱하는데 매우 강력한 기법이다.
-         *
-         */
-        function htmlParser(html) {
-            var parseIndex = new ParseIndex(), result = {}, pos = 0, tagNames = [], startPos = [], lines = [], index = 0;
+        function htmlParser(html, handler) {
+            var parseIndex = new ParseIndex(html), pos = 0, tagNames = [], startPos = [], lines = [], index = 0;
             while ((pos = html.indexOf('<', pos)) !== -1) {
                 var l = html.indexOf('>', pos) + 1; // <...>
                 // ① 시작 태그
@@ -1138,9 +885,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                         //
                         if (match) {
                             var save = match[1], name_1 = match[2];
-                            if (save)
-                                result[name_1] = compile(html.substring(startIndex, endIndex).replace(r_eraser, '>'));
-                            parseIndex.setVal(startIndex, endIndex, name_1);
+                            parseIndex.setV(startIndex, endIndex, name_1, !!save);
                         }
                         if (own)
                             break;
@@ -1153,10 +898,327 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             /*
              *  let [create, {val1, val2}] = htmlParse()
              */
-            return [compile(parseIndex.replace(html)), result];
+            var _a = parseIndex.getResult(), $c = _a[0], result = _a[1];
+            parseIndex = null;
+            return handler ? handler($c, result) : [$c, result];
         }
         HTML.htmlParser = htmlParser;
     })(HTML = exports.HTML || (exports.HTML = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 3:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var StringBuffer = /** @class */ (function () {
+        function StringBuffer(init) {
+            this.array = [];
+            this.i = 0;
+            if (init)
+                this.append(init);
+        }
+        StringBuffer.prototype.reset = function () {
+            this.array = [];
+            this.i = 0;
+            return this;
+        };
+        StringBuffer.prototype.prepend = function (v) {
+            this.array.unshift(v);
+            this.i++;
+            return this;
+        };
+        StringBuffer.prototype.append = function (v) {
+            var array = this.array;
+            if (!Array.isArray(v))
+                array[this.i++] = v;
+            else {
+                var i = 0, u = this.i, l = v.length;
+                while (i < l)
+                    array[u++] = v[i++];
+                this.i = u;
+            }
+            return this;
+        };
+        StringBuffer.prototype.toString = function () {
+            return this.array.join('');
+        };
+        return StringBuffer;
+    }());
+    exports.StringBuffer = StringBuffer;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 36:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(37), __webpack_require__(2), __webpack_require__(11), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, format_1, html_1, selector_1, dom_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var number = format_1.Formats.number;
+    var createHTML = dom_1.DOM.createHTML;
+    var select = selector_1.Selector.select;
+    var byId = selector_1.Selector.byId;
+    var compile = html_1.HTML.compile;
+    core_1.$ready(function () {
+        select(document.body, function ($result, $unit, result, container, add) {
+            var r_input_type = /input/i, r_num = /^\d+$/, r_input = /\d+-\d+/, r_group = {
+                num: /[^\d]/g,
+                size: /[^\d-]/g,
+            }, units = [], $$result = compile($result.innerText), refresh = function () {
+                var count = 0, n = units
+                    .filter(function (v) { return v.valid(); })
+                    .reduce(function (r, i) {
+                    count += i.count();
+                    return r += i.compute();
+                }, 0);
+                result.innerHTML = $$result({
+                    count: count,
+                    price: number(n)
+                });
+            }, create = function () {
+                select(createHTML($unit.innerText), function (price, size, count, remove) {
+                    var _this = this;
+                    var ctrl = {
+                        index: units.length,
+                        count: function () {
+                            return parseInt(count.value || '1');
+                        },
+                        valid: function () {
+                            console.log(price.value, size.value);
+                            return r_num.test(price.value) && r_input.test(size.value);
+                        },
+                        compute: function () {
+                            var p = parseInt(price.value), _a = size.value.split(/-/), _w = _a[0], _h = _a[1], w = parseInt(_w), h = parseInt(_h);
+                            return (w * h / 1000000) * p * this.count();
+                        }
+                    };
+                    container.appendChild(this);
+                    units.push(ctrl);
+                    remove.addEventListener('click', function () {
+                        units.splice(units.indexOf(ctrl), 1);
+                        ctrl = null;
+                        container.removeChild(_this);
+                        refresh();
+                    });
+                }, '.price', '.size', '.count', '.remove');
+            };
+            container.addEventListener('keyup', function (e) {
+                var target = e.target;
+                if (r_input_type.test(target.tagName)) {
+                    target.value = target.value.replace(r_group[target.getAttribute('data-regexp')], '');
+                    refresh();
+                }
+            });
+            add.addEventListener('click', function () { return create(); });
+            create();
+        }, byId('result-template'), byId('unit-template'), '#result', '#values', '#add');
+    });
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 37:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    /**
+     * Created by hellofunc on 2017-03-01.
+     */
+    var Formats;
+    (function (Formats) {
+        var rr = /:([\w.]+)/g;
+        function replaceAll(str, val) {
+            var v;
+            if (val == null)
+                return str;
+            return str.replace(rr, function (_, prop) {
+                v = access_1.Access.access(val, prop);
+                return v == null ? '' : v;
+            });
+        }
+        Formats.replaceAll = replaceAll;
+        function replace(__value, rg, literal, matcher) {
+            var pos = 0, result = __value.replace(rg, function (all, match, index) {
+                if (index)
+                    literal(__value.substring(pos, index));
+                pos = index + all.length;
+                return matcher.apply(this, arguments);
+                ;
+            });
+            if (pos < __value.length)
+                literal(__value.substring(pos, __value.length));
+            return result;
+        }
+        Formats.replace = replace;
+        // 숫자 받아서 파일 크기로... (천단위 쉼표)
+        // unit은 단위를 덧붙일 것인지
+        Formats.fileSize = (function (array) {
+            var r = /\B(?=(?:\d{3})+(?!\d))/g;
+            return function (size, unit) {
+                if (unit === void 0) { unit = true; }
+                var t = typeof size;
+                if (t !== 'number') {
+                    if (t !== 'string' || !/^\d+$/.test(size))
+                        return '';
+                    size = parseInt(size);
+                }
+                if (size === 0)
+                    return '0 bytes';
+                var result = Math.floor(Math.log(size) / Math.log(1024));
+                return String((size / Math.pow(1024, result)).toFixed(2)).replace(r, ',')
+                    + (unit ? " " + array[result] : '');
+            };
+        })(['bytes', 'kB', 'MB', 'GB', 'TB', 'PB']);
+        Formats.moneyKr = (function (hanA, danA) {
+            return function (val) {
+                if (typeof val === 'number')
+                    val = val.toString();
+                if (typeof val === 'string' && /^\d+$/.test(val)) {
+                    var result = '', han = void 0, str = void 0, i = 0, l = val.length;
+                    for (; i < l; i++) {
+                        str = '';
+                        han = hanA[val[l - (i + 1)]];
+                        if (han != "")
+                            str = han + danA[i];
+                        if (i == 4)
+                            str += "만";
+                        if (i == 8)
+                            str += "억";
+                        result = str + result;
+                    }
+                    return result || '';
+                }
+                return '';
+            };
+        })(["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구", "십"], ["", "십", "백", "천", "", "십", "백", "천", "", "십", "백", "천"]);
+        // {{obj}}
+        function replaceByObj(str, obj) {
+            var f;
+            return str.replace(/{{[^{}]+}}/g, function (_, g) {
+                f = obj[g];
+                if (f == null)
+                    return '';
+                else if (typeof f === 'function')
+                    return f.call(obj);
+                else
+                    return '';
+            });
+        }
+        Formats.replaceByObj = replaceByObj;
+        // HTML 이스케이프
+        Formats._htmlEscape = (function () {
+            var escape = /&lt;|&gt;|&nbsp;|&amp;|&quot;|&apos;/g;
+            function _change(c) {
+                switch (c) {
+                    case '&lt;':
+                        return '<';
+                    case '&gt;':
+                        return '>';
+                    case '&nbsp;':
+                        return ' ';
+                    case '&amp;':
+                        return '&';
+                    case '&quot;':
+                        return '"';
+                    case '&apos;':
+                        return '\'';
+                    default:
+                        return c;
+                }
+            }
+            return function (str) {
+                return str.replace(escape, function (s) { return _change(s); });
+            };
+        })();
+        var r_num = /^[-+]?\d+$/, r_num_replace = /\B(?=(\d{3})+(?!\d))/g;
+        Formats.number = function (val) {
+            if (typeof val === 'number')
+                val = val.toString();
+            if (typeof val === 'string' && r_num.test(val))
+                return val.replace(r_num_replace, ",");
+            return '0';
+        };
+    })(Formats = exports.Formats || (exports.Formats = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 4:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Created by hellofunc on 2017-03-01.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Access;
+    (function (Access) {
+        // dot으로 구분된 프로퍼티 읽어오기
+        Access.read = (function () {
+            function ___read(prop, data) {
+                var value = data[prop];
+                return typeof value === 'function' ? value.call(data) : value;
+            }
+            return function (prop, data, nullSafeVal) {
+                if (nullSafeVal === void 0) { nullSafeVal = null; }
+                var props = prop.split(/\./), i = 0, l = props.length, result = data;
+                for (; i < l; i++) {
+                    result = ___read(props[i], result);
+                    if (result == null)
+                        return nullSafeVal;
+                }
+                return Access.primitive(result);
+            };
+        })();
+        Access.primitive = (function () {
+            var r_number = /^\d+$/, r_boolean = /^true$|^false$/, r_string = /^['"][^"']+['"]$/, r_date = /^\d{4}-\d{2}-\d{2}$|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/, r_string_replace = /["']/g;
+            return function (val) {
+                if (typeof val === 'string' && val.length > 0) {
+                    if (r_number.test(val))
+                        return parseInt(val);
+                    if (r_boolean.test(val))
+                        return val === 'true';
+                    if (r_string.test(val))
+                        return val.replace(r_string_replace, '');
+                    if (r_date.test(val))
+                        return new Date(val);
+                }
+                return val;
+            };
+        })();
+        function access(target, _props, val, force) {
+            var props = _props.split(/\./), len = props.length - 1, obj = target, temp, i = 0;
+            for (; obj != null && i < len; i++) {
+                temp = obj[props[i]];
+                if (temp == null && force)
+                    temp = obj[props[i]] = {};
+                obj = temp;
+            }
+            // [1] getter
+            if (arguments.length === 2)
+                return obj != null ? obj[props[i]] : obj;
+            // [2] setter
+            obj != null && (obj[props[i]] = val);
+            return target;
+        }
+        Access.access = access;
+    })(Access = exports.Access || (exports.Access = {}));
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 

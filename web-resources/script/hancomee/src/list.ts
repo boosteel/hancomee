@@ -1,21 +1,21 @@
 import {SPA} from "../../../lib/core/spa";
-import {GenericModule} from "../genericModule";
+import {GenericModule} from "./genericModule";
 
-interface P {
+class Search {
     name: string
 }
 
-export class List extends GenericModule<P> {
+export class List extends GenericModule<Search> {
 
     constructor() {
-        super('list');
+        super('list', Search);
     }
     
     $init(container, frag) {
         container.appendChild(frag);
     }
 
-    load(param) {
+    $load(param) {
     }
 
     close() {

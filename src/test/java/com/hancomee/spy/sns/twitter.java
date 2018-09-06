@@ -47,8 +47,8 @@ public class twitter extends AbstractSpy {
     public void run() throws Exception {
 
         //  3ZBzD5cPmRZtaVu
-        //tour();
-        run("doxes_69 sexsexhj You20161216 loQ1EEFxdiLhMCK");
+        tour();
+       //run("Drug_Champagne_");
 
     }
 
@@ -62,8 +62,7 @@ public class twitter extends AbstractSpy {
                 for (Path dir : stream) {
                     if (Files.isDirectory(dir)) {
                         try {
-                            run(dir.getFileName().toString());
-                            total += count;
+                            total += run(dir.getFileName().toString());
                         } catch (Exception e) {
                             out(e.getMessage());
                         }
@@ -80,20 +79,22 @@ public class twitter extends AbstractSpy {
     }
 
 
-    public void run(String _names) throws Exception {
+    public int run(String _names) throws Exception {
+        int saveCount = 0;
         for (String screen_name : _names.split("\\s+")) {
             count = 1;
             if (!screen_name.trim().isEmpty())
-                api(screen_name);
+                saveCount += api(screen_name);
         }
+        return saveCount;
     }
 
-    private void api(String screenName) throws Exception {
+    private int api(String screenName) throws Exception {
         out("\n\n--------------------------------- [" + screenName + "] ---------------------------------");
 
         resolve(screenName);
         api(screenName, null);
-        $push(targetPath);
+        return $push(targetPath);
     }
 
     private void api(String screenName, String maxId) throws Exception {

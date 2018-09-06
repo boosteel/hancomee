@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 36);
+/******/ 	return __webpack_require__(__webpack_require__.s = 34);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -278,10 +278,65 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 36:
+/***/ 10:
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, dom_1, calcurator_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Calcurator;
+    (function (Calcurator) {
+        // num1이 num1c로 변할때 num2의 값
+        function ratio(num1, num1c, num2) {
+            return num2 + (num2 * ((num1c - num1) / num1));
+        }
+        Calcurator.ratio = ratio;
+    })(Calcurator = exports.Calcurator || (exports.Calcurator = {}));
+    var ImageCal;
+    (function (ImageCal) {
+        function __tilt(rotate, r) {
+            if (r === void 0) { r = Math.abs(rotate % 360); }
+            return r === 90 || r === 270;
+        }
+        function __ratio(num1, num1c, num2) {
+            return num2 + (num2 * ((num1c - num1) / num1));
+        }
+        // [x, y, width, height]
+        function alignment(w, h, rotate, W, H) {
+            if (__tilt(rotate)) {
+                var maxHeight_1 = __ratio(w, H, h);
+                if (maxHeight_1 > W) {
+                    w = __ratio(h, W, w);
+                    return [(W - w) / 2, (H - W) / 2, w, W];
+                }
+                else {
+                    w = H;
+                    return [(W - w) / 2, (H - maxHeight_1) / 2, w, maxHeight_1];
+                }
+            }
+            var maxHeight = __ratio(w, W, h);
+            // 세로를 딱 맞춰야 할 경우
+            if (maxHeight > H) {
+                w = __ratio(h, H, w);
+                return [(W - w) / 2, 0, w, H];
+            }
+            else {
+                h = maxHeight;
+                return [0, (H - h) / 2, W, h];
+            }
+        }
+        ImageCal.alignment = alignment;
+    })(ImageCal = exports.ImageCal || (exports.ImageCal = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 34:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, dom_1, calcurator_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var createHTML = dom_1.DOM.createHTML;
@@ -375,61 +430,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     });
     var d = location.search.replace(/[^\d]+/g, '') || '1';
     run(parseInt(d));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 9:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Calcurator;
-    (function (Calcurator) {
-        // num1이 num1c로 변할때 num2의 값
-        function ratio(num1, num1c, num2) {
-            return num2 + (num2 * ((num1c - num1) / num1));
-        }
-        Calcurator.ratio = ratio;
-    })(Calcurator = exports.Calcurator || (exports.Calcurator = {}));
-    var ImageCal;
-    (function (ImageCal) {
-        function __tilt(rotate, r) {
-            if (r === void 0) { r = Math.abs(rotate % 360); }
-            return r === 90 || r === 270;
-        }
-        function __ratio(num1, num1c, num2) {
-            return num2 + (num2 * ((num1c - num1) / num1));
-        }
-        // [x, y, width, height]
-        function alignment(w, h, rotate, W, H) {
-            if (__tilt(rotate)) {
-                var maxHeight_1 = __ratio(w, H, h);
-                if (maxHeight_1 > W) {
-                    w = __ratio(h, W, w);
-                    return [(W - w) / 2, (H - W) / 2, w, W];
-                }
-                else {
-                    w = H;
-                    return [(W - w) / 2, (H - maxHeight_1) / 2, w, maxHeight_1];
-                }
-            }
-            var maxHeight = __ratio(w, W, h);
-            // 세로를 딱 맞춰야 할 경우
-            if (maxHeight > H) {
-                w = __ratio(h, H, w);
-                return [(W - w) / 2, 0, w, H];
-            }
-            else {
-                h = maxHeight;
-                return [0, (H - h) / 2, W, h];
-            }
-        }
-        ImageCal.alignment = alignment;
-    })(ImageCal = exports.ImageCal || (exports.ImageCal = {}));
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 

@@ -95,14 +95,11 @@ class Data {
                 if (xhr.readyState == 4) {
                     if (xhr.status == 200) {
                         this.values = JSON.parse(xhr.responseText);
-                        className(this.$template, ['loading'], false);
-                        this.apply();
-                        this.loading = false;
                         this.checks = this.values.map(s => s.url)
+                        this.apply();
                     }
-                    else {
-                        this.xhr = new XMLHttpRequest();
-                    }
+                    className(this.$template, ['loading'], false);
+                    this.loading = false;
                     o();
                 }
             };
@@ -198,7 +195,7 @@ $ready(() => {
             let value = decodeURIComponent(location.search.replace(/^\?/, ''));
 
             if (value) {
-                filter = new RegExp(value.replace(/\s+/g, '|'), 'gi');
+                filter = new RegExp(value.replace(/[\s,]+/g, '|'), 'gi');
                 ele.value = value;
             }
 
@@ -208,7 +205,7 @@ $ready(() => {
                     let keyword = ele.value.trim();
                     if (keyword && keyword !== value) {
                         try {
-                            filter = new RegExp(keyword.replace(/\s+/g, '|'), 'gi');
+                            filter = new RegExp(keyword.replace(/[\s,]+/g, '|'), 'gi');
                         } catch (e) {
                             filter = null;
                         }

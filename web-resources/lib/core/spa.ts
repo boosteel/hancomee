@@ -8,29 +8,28 @@ let
 
 
 class Provider {
-    private factory: iSPA.factory<any>
-    module: iSPA.module<any>
+    private _factory: iSPA.factory<any>
+    private _module: iSPA.module<any>
     element: HTMLElement
 
     // 클래스가 그대로 들어와도 되고, 객체가 들어와도 된다.
     constructor(public path: string, f: iSPA.module<any> | iSPA.factory<any>) {
-        if (typeof f !== 'function') this.module = f;
-        else this.factory = f;
+        if (typeof f !== 'function') this._module = f;
+        else this._factory = f;
     }
 
     param(p?) {
-        let module = this.getModule(), {defaultParam} = module,
-            param = _extend({}, typeof defaultParam === 'function' ? new defaultParam : defaultParam);
+        let param = this.module.getParam();
         if (p) param = _extend(p, param);
         return param;
     }
 
-    init(param) {
-        return this.getModule().init(param).then((ele) => this.element = ele);
+    init() {
+        return this.module.init().then((ele) => this.element = ele);
     }
 
-    private getModule() {
-        return this.module || (this.module = new this.factory());
+    get module() {
+        return this._module || (this._module = new this._factory());
     }
 }
 
@@ -73,7 +72,7 @@ export class SPA {
                 }
             }
 
-            if(provider) {
+            if (provider) {
                 let {index, config} = this,
                     param = Search.toObject(search, provider.param());
 
@@ -85,10 +84,10 @@ export class SPA {
                     .then(() => config.before && config.before(pathname, param, _index, index))
                     .then(() => Promise.all([
                         $active && $active.module.close(),
-                        provider.init(param)
+                        provider.init()
                     ]))
                     .then(([, html]) => {
-                        return RESOLVE.then(() => provider.module.load(param))
+                        return RESOLVE.then(() => provider.module.load(param, search))
                             .then(() => config.onChange(provider.element, $active && $active.element))
                     })
                     .then(() => config.after && config.after(pathname, param, _index, index));
@@ -98,7 +97,7 @@ export class SPA {
         // ② 모듈 재로딩
         else if ($active && !Search.equals(url.search, search)) {
             this._queue = this._queue.then(() =>
-                $active.module.load(Search.toObject(search, $active.param())));
+                $active.module.load(Search.toObject(search, $active.param()), search));
         }
 
 
@@ -107,7 +106,11 @@ export class SPA {
 
     onHash() {
         if (!this.isHash) {
-            SPA.onHash(this);
+            let handler = () => {
+                location.hash && this.run(location.hash.slice(1));
+            }
+            window.addEventListener('hashchange', handler);
+            handler();
             this.isHash = true;
         }
         return this;
@@ -119,16 +122,6 @@ export class SPA {
 export namespace SPA {
 
     import createFragment = HTML.createFragment;
-
-    export function onHash(spa: SPA) {
-        let handler = () => {
-            location.hash && spa.run(location.hash.slice(1));
-        }
-        window.addEventListener('hashchange', handler);
-        handler();
-        return spa;
-    }
-
 
     function get(url) {
         return new Promise<string>((o, x) => {

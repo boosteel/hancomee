@@ -19,7 +19,11 @@ aside {
     > li {
       > a {
         display: block;
+        padding: 10px 0;
+
+        border-bottom: 1px solid black;
         color: #888;
+        text-shadow: -1px -1px 1px black;
         text-align: center;
         > i {
           display: block;
@@ -27,15 +31,27 @@ aside {
         }
         &:hover {
           color: #eee;
+          background-color: #1f1f1f;
+        }
+      }
+
+      &.active {
+        > a {
+          color: #de9b1d;
+          background-color: #1f1f1f;
         }
       }
 
       background-color: #232323;
-    }
+
+      & + li {
+        > a {
+          border-top: 1px solid #2f2f2f;
+        }
+      }
+    } // li
   }
-
 }
-
 
 // 열렸을때
 aside:hover {

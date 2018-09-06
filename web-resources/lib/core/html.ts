@@ -1,4 +1,10 @@
 import {__makeArray} from "./core";
+import {StringBuffer} from "./support/StringBuffer";
+
+function log(a) {
+    console.log(a);
+    return a;
+}
 
 export namespace HTML {
     export let unCamelCase = (function (r_data, r_up, fn) {
@@ -220,8 +226,8 @@ export namespace HTML {
      *  사용방법은 아래 코드를 참조하자.
      *
      */
-    let r_replace_name = /:(:)?([^>]+)>$/,
-        r_eraser = /\s+::?[^>]+>/g;
+    let r_replace_name = /:(:)?([^>\s]+)>$/,
+        r_eraser = /\s+::?[^>\s]+>/g;
 
     /*
      *  템플릿 가운데 치환자로 변환할 위치를 설정하는 클래스
@@ -229,41 +235,65 @@ export namespace HTML {
      */
     class ParseIndex {
 
-        values: { start: number, end: number, name: string }[] = []
+        private values: { start: number, end: number, name: string }[] = []
+        result = {}
 
+        constructor(private html: string) {
+        }
 
-        setVal(s: number, end: number, name: string) {
-            let {values, values: {length}} = this, i = 0, v,
-                nVal = [], nI = 0;
+        // 저장되지 않는 단순 마커(:value)를 위한 추가메서드
+        private remove(s: number, e: number) {
+            let {values, values: {length: l}} = this, i = 0,
+                newValues = [], ni = 0;
 
-            while (length-- > 0) {
-                v = values[length];
-                if (s < v.start && v.end < end) void 0
-                else nVal[nI++] = v;
+            for (; i < l; i++) {
+                // 매치된건 없앤다.
+                if (values[i].start > s && values[i].end < e) void 0
+                else newValues[ni++] = values[i];
+            }
+            this.values = newValues;
+        }
+
+        // 저장되는 마커(::value)를 위한 메서드
+        private loop(s: number, e: number) {
+            let {html, values, values: {length: l}} = this,
+                buf = new StringBuffer(),
+                pos = s, i = 0,
+                newValues = [], ni = 0;
+
+            for (; i < l; i++) {
+
+                // 매치된건 없앤다.
+                if (values[i].start > s && values[i].end < e) {
+                    buf.append(html.substring(pos, values[i].start))
+                        .append('{{').append(values[i].name).append('}}');
+                    pos = values[i].end;
+                }
+                else {
+                    newValues[ni++] = values[i];
+                }
             }
 
-            nVal.push({start: s, end: end, name: name});
-            this.values = nVal;
+            if (pos < e) buf.append(html.substring(pos, e));
 
+            this.values = newValues;
+
+            return buf.toString().replace(r_eraser, '>');
+        }
+
+        // new
+        setV(s: number, e: number, name: string, save: boolean) {
+            if (save) this.result[name] = compile(this.loop(s, e));
+            else this.remove(s, e);
+            this.values.push({start: s, end: e, name: name});
             return this;
         }
 
-        replace(html: string) {
-            let list = this.values.sort((a, b) => a.start - b.start),
-                v,
-                pos = 0, l = list.length, i = 0, result = [], index = 0;
-            for (; i < l; i++) {
-                v = list[i];
-                result[index++] = html.substring(pos, v.start);
-                result[index++] = v.name == null ? '' : '{{' + v.name + '}}';
-                pos = v.end;
-            }
-
-            if (html.length > pos)
-                result[index++] = html.substring(pos);
-
-            return result.join('');
+        // new
+        getResult() {
+            return [compile(this.loop(0, this.html.length)), this.result];
         }
+
     }
 
 
@@ -277,10 +307,14 @@ export namespace HTML {
      *  간단한 접근법이지만, html문서를 파싱하는데 매우 강력한 기법이다.
      *
      */
-    export function htmlParser(html: string): [iCompile, { [index: string]: iCompile }] {
+
+    type BindHandler<T> = (com: iCompile, map: iCompileMap) => T
+
+    export function htmlParser<T>(html: string, handler: BindHandler<T>): T
+    export function htmlParser(html: string): [iCompile, iCompileMap]
+    export function htmlParser(html: string, handler?) {
         let
-            parseIndex = new ParseIndex(),
-            result: { [index: string]: iCompile } = {},
+            parseIndex = new ParseIndex(html),
             pos = 0,
             tagNames = [], startPos = [], lines = [], index = 0;
 
@@ -334,8 +368,7 @@ export namespace HTML {
                     //
                     if (match) {
                         let [, save, name] = match;
-                        if (save) result[name] = compile(html.substring(startIndex, endIndex).replace(r_eraser, '>'));
-                        parseIndex.setVal(startIndex, endIndex, name);
+                        parseIndex.setV(startIndex, endIndex, name, !!save);
                     }
 
                     if (own) break;
@@ -350,7 +383,9 @@ export namespace HTML {
         /*
          *  let [create, {val1, val2}] = htmlParse()
          */
-        return [compile(parseIndex.replace(html)), result];
+        let [$c, result] = parseIndex.getResult();
+        parseIndex = null;
+        return handler ? handler($c, result) : [$c, result];
     }
 
 

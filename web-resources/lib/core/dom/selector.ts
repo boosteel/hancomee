@@ -1,6 +1,5 @@
 export namespace Selector {
 
-
     export function select<T>(ele: DocumentFragment, handler: (this: DocumentFragment, ...arg: HTMLElement[]) => T, ...arg: (string|Element)[]): T
     export function select<T, P extends HTMLElement>(ele: HTMLElement, handler: (this: P, ...arg: HTMLElement[]) => T, ...arg: (string|Element)[]): T
     export function select<T>(ele: string, handler: (this: HTMLElement, ...arg: HTMLElement[]) => T, ...arg: (string|Element)[]): T
