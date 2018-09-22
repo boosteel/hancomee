@@ -1,6 +1,90 @@
 @import "../variables";
 @import "../../flex";
+@import "./_common/work-state";
 
-@import "_list/nav";
-@import "_list/info";
 
+#list {
+
+  @import "_list/nav";
+  @import "_list/info";
+
+  .col-3 {
+    flex: 0 0 20%;
+    max-width: 20%;
+  }
+
+  .work {
+
+    margin-top: 25px;
+    background: {
+      color: white;
+    }
+    border: 1px solid #ddd;
+
+    .thumb {
+
+      height: 200px;
+      border: 10px solid #ddd;
+      background: {
+        repeat: no-repeat;
+        position: center;
+        size: contain;
+        color: #ddd;
+      }
+    }
+
+    .content {
+      position: relative;
+      padding: 15px;
+      color: #666;
+
+      // dropdown
+      .state {
+        position: absolute;
+        right: 13px;
+        top: 14px;
+        font-size: 12px;
+      }
+
+      .datetime, .title, .customer {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .datetime {
+        font-size: 14px;
+      }
+
+      .title {
+        margin-top: 10px;
+        font-size: 18px;
+        letter-spacing: -2px;
+        color: #444;
+      }
+      .customer {
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .info {
+        margin-top: 20px;
+        text-align: right;
+        > span {
+          display: inline-block;
+        }
+        .count {
+          position: relative;
+          top: -2px;
+          padding: 1px 9px;
+          margin-right: 3px;
+          border: 1px solid #c3c3c3;
+        }
+        .total {
+          font-family: tahoma;
+          font-size: 22px;
+        }
+      }
+    }
+  }
+}

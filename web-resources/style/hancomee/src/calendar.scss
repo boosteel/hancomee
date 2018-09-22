@@ -177,8 +177,8 @@
           }
         }
 
-
-      } // td
+      }
+      // td
 
       &:first-child {
         .calendar-cell {
@@ -201,21 +201,19 @@
     }
   }
 
+  // ***************************************** 스크린 *****************************************
   #screen {
-    display: none;
+    position: fixed;
     flex-direction: column;
     align-items: center;
+    display: flex;
     justify-content: center;
-    position: fixed;
+    z-index: -1;
 
-    &.on {
-      display: flex;
-    }
 
     &:before {
       display: block;
       position: absolute;
-      //z-index: -1;
       content: '';
       background-color: black;
       opacity: .85;
@@ -236,6 +234,10 @@
       width: 40%;
       background-color: #f3f3f3;
       border-radius: 5px;
+
+      opacity: 0;
+      transform: translate(0, -50px);
+      transition: .3s ease opacity, .3s ease transform;
 
       > div {
         & + div {
@@ -301,6 +303,18 @@
 
       textarea {
         min-height: 200px;
+      }
+    }
+
+    &.on {
+      z-index: 1080;
+
+      &, .content {
+        opacity: 1;
+      }
+      .content {
+        transform: translate(0, 0);
+        transition-delay: .15s;
       }
     }
 

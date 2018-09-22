@@ -1,19 +1,70 @@
+<script id="work" type="text/html">
+    <div class="col-3">
+        <div class="work">
+            <div class="thumb" style="{{work | thumb}}"></div>
+            <div class="content">
+
+                <div class="state dropdown">
+                    <span data-toggle="dropdown">{{work.state | state}} ▼</span>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <ul>
+                            <li class="{{className}}" ::li>
+                                <span>{{state | state}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="datetime">{{work.datetime | date : 'yyyy-MM-dd(E) HH:mm:ss'}}</div>
+                <div class="title"><a href="#view?uuid={{work.uuid}}">{{work.title}}</a></div>
+                <div class="customer">{{work.customer.name}}</div>
+                <div class="info">
+                    <span class="count">{{work.item_len}}</span>
+                    <span class="total">{{work.total | num}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="state" type="text/html">
+    <ul>
+        <li class="{{className}}" data-event="move" data-value="state:{{state}}" ::li>
+            <i>{{state | state}}</i>
+            <b>{{count | num}}</b>
+            <span>{{price | num}}</span>
+        </li>
+    </ul>
+</script>
+
+
+<script id="navi" type="text/html">
+    <div class="navi-btn {{_.prev === -1 ? '' : 'active'}}" data-event="move" data-value="move:{{prev}}">
+        <i class="material-icons">keyboard_arrow_left</i>
+    </div>
+    <div class="navi-info">
+        <span class="num"><strong>{{page}}</strong><i>/{{totalPages}}</i></span>
+        <span class="state">{{state | state}}</span>
+    </div>
+    <div class="navi-btn {{_.next === -1 ? '' : 'active'}}" data-event="move" data-value="move:{{next}}">
+        <i class="material-icons">keyboard_arrow_right</i>
+    </div>
+</script>
 
 <nav>
     <span class="title">정렬</span>
-    <div class="sort">
-        <span>
-            <i class="material-icons">date_range</i>
-            <span>입력일순</span>
-        </span>
-        <span>
-            <i class="material-icons">speaker_notes</i>
-            <span>제목순</span>
-        </span>
-        <span>
-            <i class="material-icons">attach_money</i>
-            <span>금액순</span>
-        </span>
+    <div class="sort nav-list" data-event="order">
+        <span data-order="datetime">입력일순</span>
+        <span data-order="title">제목순</span>
+        <span data-order="total">금액순</span>
+    </div>
+
+
+    <span class="title">기간</span>
+    <div class="datetime nav-list" data-event="duration">
+        <span data-order="datetime">오늘3</span>
+        <span data-order="title">이번주</span>
+        <span data-order="total">일주일</span>
     </div>
 
     <div class="navbar-form">
@@ -26,49 +77,12 @@
     </div>
 </nav>
 
+
 <div id="total-info">
-
-    <div class="navi">
-
-
-    </div>
-
-    <ul class="numbers">
-        <li>
-            <i>작업대기</i>
-            <b>18</b>
-            <span>22,182,700</span>
-        </li>
-        <li>
-            <i>시안검토</i>
-            <b>130</b>
-            <span>55,694,100</span>
-        </li>
-        <li>
-            <i>시안완료</i>
-            <b>0</b>
-            <span>0</span>
-        </li>
-        <li>
-            <i>제작중</i>
-            <b>0</b>
-            <span>1,348,000</span>
-        </li>
-        <li>
-            <i>입고</i>
-            <b>5</b>
-            <span>76,500</span>
-        </li>
-        <li>
-            <i>납품</i>
-            <b>60</b>
-            <span>15,064,200</span>
-        </li>
-        <li>
-            <i>거래완료</i>
-            <b>8,421</b>
-            <span>480,541,638</span>
-        </li>
-    </ul>
+    <div class="navi"></div>
+    <div class="work-state"></div>
 </div>
 
+<div class="container-fluid">
+    <div class="row" id="list"></div>
+</div>

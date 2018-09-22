@@ -300,6 +300,7 @@ export namespace Events {
      *  event가 발생하면 target 엘리먼트부터 상위엘리먼트로 올라가면서
      *  어트리뷰트를 읽어 데이터맵을 만들어준다.
      */
+    let r_read_split = /,\s*/;
     function read(target: HTMLElement, limit, obj) {
 
         let event: string, n, v: string, vv, fn;
@@ -307,8 +308,8 @@ export namespace Events {
         while (target && limit !== target) {
 
             if (event == null) {
-                if(event = target.getAttribute('data-event')) {
-                    if(typeof obj['setTarget'] === 'function') obj['setTarget'](target);
+                if (event = target.getAttribute('data-event')) {
+                    if (typeof obj['setTarget'] === 'function') obj['setTarget'](target);
                     else obj.target = target;
                 }
             }
@@ -323,16 +324,13 @@ export namespace Events {
             }
 
             // property 이름
-            if (v = target.getAttribute('data-property')) {
-
-                // 값
-                if (vv = target.getAttribute('data-value')) {
-
-                    // set{Value}()가 있으면 거기에 넣어준다.
-                    if (typeof (fn = obj['set' + v[0].toUpperCase() + v.slice(1)]) === 'function')
-                        fn(primitive(vv));
-                    else obj[v] = primitive(vv);
-
+            if ((v = target.getAttribute('data-value')) && v.indexOf(':') !== -1) {
+                let array = v.split(r_read_split), l = array.length;
+                while (l-- > 0) {
+                    let [k,v] = array[l].split(':');
+                    if (typeof (fn = obj['set' + k[0].toUpperCase() + k.slice(1)]) === 'function')
+                        fn(primitive(v));
+                    else obj[k] = primitive(v);
                 }
             }
             target = target.parentElement

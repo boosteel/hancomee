@@ -17,4 +17,5 @@ public class PageRequest {
         if(count % size != 0) totalPages++;
         this.page = page;
     }
+
 }

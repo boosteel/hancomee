@@ -18,6 +18,7 @@ public class AudioBay {
 
 
     private static Pattern
+            r_naver_cafe2 = Pattern.compile("\"inner_number\">(\\d+).*?([^<>]+)<\\/a>.*?td_view\">(\\d+)"),
             r_naver_cafe = Pattern.compile("list-count\">(\\d+).*?'m-tcol-c'>([^<>]+).*?id=\"article.*?([^<>]+)<.*?view-count.*?([^<>]+)<.*?view-count.*?([^<>]+)<"),
             r_naver_cafe_search = Pattern.compile("list-count\">(\\d+).*?'m-tcol-c'>(.+?)<\\/a.*?id=\"article.*?([^<>]+)<.*?view-count.*?([^<>]+)<.*?view-count.*?([^<>]+)<"),
             r_wassada = Pattern.compile("'center'>[,\\d]{3,}.*?href='([^']+board_uusell[^']+).*?([^<>]+)<.*?'15'>([^<>]+).*?'center'>.*?(\\d+)"),
@@ -136,6 +137,18 @@ public class AudioBay {
                     .setSoldout(g.contains("완료"));
             list.add(bb);
         });
+
+        if (list.isEmpty()) {
+            Patterns.forEach(r_naver_cafe2, html, (i, g, num, title, count) -> {
+                BayBean bb = new BayBean()
+                        .setCount(count)
+                        .setTitle(title)
+                        .setUrl("https://cafe.naver.com/" + name + "/" + num)
+                        .setSoldout(g.contains("완료"));
+                list.add(bb);
+            });
+        }
+
         return list;
     }
 

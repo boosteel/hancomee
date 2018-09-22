@@ -1,64 +1,107 @@
 
-
 #total-info {
 
-  @extend %_flex;
-  justify-content: space-between;
-
+  display: flex;
   border-bottom: 1px solid $nav-border-bottom-color;
   background-color: #f9f9f9;
 
-  > * {
-    flex-grow: 1;
-  }
-
   .navi {
+    min-width: 250px;
+    margin-right: auto;
+    display: flex;
+    color: #666;
 
+    > * {
+      text-align: center;
+    }
+
+    .navi-btn {
+      flex-grow: 1;
+      color: #cacaca;
+      > i {
+        font-size: 86px;
+      }
+      &.active {
+        color: #666;
+        cursor: pointer;
+        &:hover {
+          color: #444;
+        }
+      }
+    }
+
+    .navi-info {
+      width: 70%;
+      > span {
+        display: block;
+
+        &.state {
+          margin-top: -8px;
+          font-size: 14px;
+        }
+
+        &.num {
+          margin-top: -1px;
+        }
+
+
+        > strong {
+          font-size: 46px;
+        }
+        > i {
+          font-size: 20px;
+          font-style: normal;
+        }
+      }
+    }
   }
 
   // 작업 버튼
-  .numbers {
+  .work-state {
+    width: 70%;
+    > ul {
+      display: flex;
+      padding: 0;
+      margin: 0;
+      list-style: none;
 
-    &, > li {
-      @extend %_flex;
-    }
-    justify-content: space-evenly;
-    padding: 0;
-    margin: 0;
-    list-style: none;
+      > li {
+        flex-grow: 1;
+        overflow: hidden;
+        padding: 10px;
+        text-align: right;
+        border-left: 1px solid $nav-border-bottom-color;
+        cursor: pointer;
 
-    > li {
+        > * {
+          display: block;
+          width: 100%;
+          line-height: 1;
+          color: #828282;
+        }
 
-      overflow: hidden;
+        > i {
+          align-self: flex-start;
+          font-size: 14px;
+        }
+        // 작업건수
+        > b {
+          font-size: 45px;
+          align-self: flex-end;
+        }
 
-      flex-grow: 1;
-      align-items: center;
-      flex-wrap: wrap;
+        > span {
+          align-self: flex-end;
+          font-size: 14px;
+        }
 
-      padding: 10px;
-      width: 1%;
-      border-left: 1px solid $nav-border-bottom-color;
-
-      > * {
-        display: block;
-        width: 100%;
-        line-height: 1;
-        color: #666;
-      }
-
-      > i {
-        align-self: flex-start;
-        font-size: 14px;
-      }
-      // 작업건수
-      > b {
-        font-size: 45px;
-        align-self: flex-end;
-      }
-
-      > span {
-        align-self: flex-end;
-        font-size: 14px;
+        &.active {
+          background-color: #ececec;
+          text-shadow: 1px 1px 1px white;
+          > * {
+            color: #666;
+          }
+        }
       }
     }
   }

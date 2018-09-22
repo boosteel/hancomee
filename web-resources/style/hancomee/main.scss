@@ -3,6 +3,7 @@
 @import "main/aside";
 @import "main/nav";
 @import "../lib/animation/fade-page";
+@import "fonts";
 
 
 a {
@@ -22,14 +23,18 @@ html {
 body {
 
   overflow-x: hidden;
-
+  overflow-y: scroll;
   padding: {
     left: $aside-width-thumb;
   }
 
-  font-family: 'Nanum Gothic';
   letter-spacing: -.01em;
+  background-color: #f5f5f5;
 
+  &, pre, textarea {
+    font-family: 'Roboto', 'Nanum Gothic';
+    margin: 0;
+  }
 }
 
 
@@ -39,7 +44,7 @@ aside {
   left: 0;
   bottom: 0;
   width: $aside-width-thumb;
-  z-index: 1041;
+  z-index: 1048;
 
   background: {
     color: #222;
@@ -48,12 +53,39 @@ aside {
 
 body {
 
+  > nav, nav {
+    position: fixed;
+    top: 0;
+    left: $aside-width-thumb;
+    right: 0;
+    z-index: 1041;
+
+    height: $nav-height;
+
+    background-color: #444;
+    border-bottom: 1px solid #222;
+  }
+
+  > main {
+    nav {
+      display: flex;
+      align-items: center;
+      z-index: 1042;
+
+      padding: 0 1rem 0 15px;
+      height: $nav-height;
+
+      color: #bfbfbf;
+    }
+  }
+
+
   > main {
 
     position: relative;
 
     &.load {
-      opacity: .4;
+      //opacity: .4;
     }
 
     > div, > nav {
@@ -66,6 +98,7 @@ body {
 
       display: none;
       position: absolute;
+      z-index: 1042;
 
       &.page-in, &.page-out, &.on {
         display: block;
@@ -89,24 +122,19 @@ body {
         }
       }
     }
+  }
+}
 
-    nav {
-      display: flex;
-      align-items: center;
+// 수정폼 엘리먼트.
+.d-form {
+  & + * {
+    display: none;
+  }
+}
 
-      position: fixed;
-      top: 0;
-      left: $aside-width-thumb;
-      right: 0;
-
-      padding: 0 1rem 0 $aside-width-thumb;
-      height: $nav-height;
-
-      background-color: #f1f1f1;
-      border-bottom: 1px solid $nav-border-bottom-color;
-
-      color: #555;
-      text-shadow: 0px 1px 0px white;
-    }
+.hide-input {
+  display: none;
+  .form & {
+    display: block;
   }
 }

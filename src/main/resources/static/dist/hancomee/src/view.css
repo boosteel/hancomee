@@ -1,0 +1,226 @@
+.state.dropdown [data-toggle] {
+  cursor: pointer; }
+
+.state.dropdown > .dropdown-menu {
+  min-width: auto; }
+  .state.dropdown > .dropdown-menu > ul {
+    padding: 0;
+    margin: 0;
+    list-style: none; }
+    .state.dropdown > .dropdown-menu > ul > li > span {
+      display: block;
+      padding: 3px 20px 3px 10px;
+      font-size: 14px;
+      white-space: nowrap;
+      cursor: pointer; }
+      .state.dropdown > .dropdown-menu > ul > li > span:hover {
+        background-color: #ddd; }
+    .state.dropdown > .dropdown-menu > ul > li.active > span {
+      color: white;
+      background-color: #2a77c3; }
+
+.v-btn {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  background-color: white;
+  transition: .2s ease background-color, .1s ease color; }
+  .v-btn:hover {
+    background-color: #777;
+    color: white; }
+  .v-btn:active {
+    background-color: #555; }
+
+#view table {
+  border-collapse: collapse; }
+  #view table > tbody > tr > td, #view table > tbody > tr > th, #view table > thead > tr > td, #view table > thead > tr > th {
+    padding: 5px 10px;
+    font-size: 16px;
+    border-top: 1px solid #e8e8e8;
+    border-bottom: 1px solid #e8e8e8; }
+
+#view main {
+  padding-bottom: 100px; }
+  #view main, #view main pre, #view main input {
+    color: #777; }
+  #view main table {
+    width: 100%; }
+    #view main table > thead > tr > td > input, #view main table > tbody > tr > td > input {
+      padding: 0 10px;
+      border: 1px solid #efefef;
+      background-color: #fbfbfb;
+      border-radius: 3px; }
+    #view main table > thead > tr > th, #view main table > tbody > tr > th {
+      text-align: center;
+      font-weight: normal;
+      background-color: #f8f8f8; }
+    #view main table > thead > tr > th:first-child, #view main table > thead > tr > td:first-child, #view main table > tbody > tr > th:first-child, #view main table > tbody > tr > td:first-child {
+      border-left: 0; }
+    #view main table > thead > tr > th:last-child, #view main table > thead > tr > td:last-child, #view main table > tbody > tr > th:last-child, #view main table > tbody > tr > td:last-child {
+      border-right: 0; }
+    #view main table > thead > tr:first-child > th, #view main table > thead > tr:first-child > td, #view main table > tbody > tr:first-child > th, #view main table > tbody > tr:first-child > td {
+      border-top: 0; }
+    #view main table > thead > tr:last-child > th, #view main table > thead > tr:last-child > td, #view main table > tbody > tr:last-child > th, #view main table > tbody > tr:last-child > td {
+      border-bottom: 0; }
+    #view main table.form > tbody > tr > td > span {
+      display: none; }
+      #view main table.form > tbody > tr > td > span.v-btn {
+        display: inline-block; }
+
+#view .row {
+  padding: 30px; }
+
+#view .panel {
+  background-color: white; }
+  #view .panel > .header {
+    padding: 10px 25px;
+    border: 1px solid #cecece;
+    border-bottom: 1px solid #eaeaea;
+    border-top-width: 2px; }
+    #view .panel > .header .ctrl {
+      float: right; }
+    #view .panel > .header > .title {
+      font-size: 16px;
+      font-weight: bold; }
+  #view .panel > .body {
+    padding: 25px;
+    border-left: 1px solid #cecece;
+    border-right: 1px solid #cecece;
+    border-bottom: 1px solid #cecece; }
+  #view .panel > .footer {
+    padding: 25px;
+    border: 1px solid #cecece; }
+  #view .panel > .body + .footer {
+    border-top: 0; }
+  #view .panel #title .info > .state {
+    float: right; }
+    #view .panel #title .info > .state .value {
+      font-size: 14px;
+      font-weight: bold; }
+    #view .panel #title .info > .state .arrow {
+      font-size: 12px; }
+  #view .panel #title .info > span {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 16px; }
+    #view .panel #title .info > span.uuid {
+      padding-right: 10px;
+      margin-right: 5px;
+      border-right: 1px solid #ddd; }
+      #view .panel #title .info > span.uuid > i {
+        display: inline-block;
+        margin-right: 5px;
+        font-style: normal; }
+  #view .panel #title .title {
+    margin-top: 28px; }
+    #view .panel #title .title > .value, #view .panel #title .title input {
+      height: 46px; }
+    #view .panel #title .title .customer {
+      font-size: 16px; }
+    #view .panel #title .title .value, #view .panel #title .title .hide-input {
+      margin-top: 5px; }
+    #view .panel #title .title .value {
+      overflow: hidden;
+      display: block;
+      text-overflow: ellipsis;
+      white-space: nowrap; }
+      #view .panel #title .title .value > [data-name] {
+        font-size: 22px;
+        font-weight: 900; }
+      #view .panel #title .title .value > * {
+        vertical-align: middle; }
+    #view .panel #title .title .hide-input > input {
+      width: 80%; }
+    #view .panel #title .title.form > .value {
+      display: none; }
+    #view .panel #title .title > input {
+      padding-left: 10px;
+      padding-right: 10px;
+      width: 80%;
+      font-size: 16px;
+      border: 1px solid #cecece; }
+  #view .panel #sum {
+    border-top: 0;
+    text-align: right; }
+    #view .panel #sum > table > tbody > tr > th, #view .panel #sum > table > tbody > tr > td {
+      padding-top: 0;
+      padding-bottom: 0; }
+    #view .panel #sum > table > tbody > tr > th {
+      padding-right: 15px;
+      background-color: transparent;
+      text-align: right;
+      border: 0; }
+    #view .panel #sum > table > tbody > tr > td {
+      width: 1%;
+      white-space: nowrap;
+      font-size: 30px; }
+      #view .panel #sum > table > tbody > tr > td > span {
+        vertical-align: middle; }
+    #view .panel #sum > table .count {
+      display: inline-block;
+      width: 46px;
+      height: 46px;
+      font-size: 24px;
+      text-align: center;
+      line-height: 46px;
+      border: 1px solid #cecece; }
+    #view .panel #sum > table .num {
+      font-size: 60px;
+      font-weight: 600; }
+
+#view #customer table > tbody > tr > th {
+  width: 120px; }
+
+#view #customer table > tbody > tr > th, #view #customer table > tbody > tr > td {
+  height: 46px; }
+
+#view #work-item table > thead > tr > th {
+  border-bottom: 1px solid #e8e8e8; }
+
+#view #work-item table > tbody > tr > td, #view #work-item table > tbody > tr > th, #view #work-item table > thead > tr > td, #view #work-item table > thead > tr > th {
+  height: 46px; }
+
+#view #work-item table > tbody > tr > td[data-type="number"] {
+  text-align: right; }
+
+#view #work-memo .list > div {
+  padding: 15px 0; }
+  #view #work-memo .list > div + div {
+    border-top: 1px solid #e8e8e8; }
+  #view #work-memo .list > div:first-child {
+    padding-top: 0; }
+  #view #work-memo .list > div:last-child {
+    padding-bottom: 0; }
+  #view #work-memo .list > div .ctrl {
+    margin-top: 15px; }
+  #view #work-memo .list > div pre {
+    font-size: 16px; }
+
+#view #work-memo .form {
+  display: table;
+  width: 100%; }
+  #view #work-memo .form .textarea, #view #work-memo .form .confirm {
+    display: table-cell;
+    border: 1px solid #ddd; }
+  #view #work-memo .form .textarea {
+    width: 100%;
+    background-color: #fbfbfb;
+    height: 131px;
+    color: #6d6d6d; }
+    #view #work-memo .form .textarea > textarea {
+      padding: 15px;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background-color: #fbfbfb; }
+      #view #work-memo .form .textarea > textarea:focus {
+        outline: 0; }
+  #view #work-memo .form .confirm {
+    padding: 0 25px;
+    width: 1%;
+    white-space: nowrap;
+    vertical-align: middle;
+    border-left: 0;
+    cursor: pointer; }

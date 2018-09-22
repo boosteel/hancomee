@@ -28,8 +28,8 @@ public class VvideoController {
     public PageRequest values(Query query) throws Exception {
         String[] sql = query.SQL();
         return new PageRequest(
-                db.execute(sql[0], (rs) -> SQL.readAll(rs)),
-                db.execute(sql[1], (rs) -> rs.getLong(1)),
+                db.execute(sql[0], SQL::readAllJSON),
+                db.execute(sql[1], 0l, (rs) -> rs.getLong(1)),
                 query.page,
                 query.size
         );
@@ -39,10 +39,9 @@ public class VvideoController {
     @RequestMapping("paths")
     @ResponseBody
     public List<String> paths() throws Exception {
-        return db.executeAll("SELECT path FROM vvideo GROUP BY path ORDER BY path",
-                (rs, i) -> {
-                    return rs.getString("path");
-                });
+        return db.execute("SELECT path FROM vvideo GROUP BY path ORDER BY path",
+                new ArrayList<>(),
+                (rs, i) -> rs.getString("path"));
     }
 
 
@@ -51,6 +50,7 @@ public class VvideoController {
     @ResponseBody
     public int pick() throws Exception {
         return db.execute("SELECT COUNT(*) FROM vvideo WHERE pick = true",
+                0,
                 (rs) -> rs.getInt(1));
     }
 
@@ -144,11 +144,11 @@ public class VvideoController {
             if (!tag.isEmpty())
                 from += " AND tag LIKE '%" + tag + "%'";
 
-            if(pick) {
+            if (pick) {
                 from += " AND pick = 1";
             }
 
-            if(shot > 0) {
+            if (shot > 0) {
                 from += " AND shot >= " + shot;
             }
 

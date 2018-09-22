@@ -53,11 +53,13 @@ public abstract class AbstractSpy {
             $db = new DB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
 
             // DB에서 uuid 가지고 오기
-            $db.executeAll("SELECT uuid FROM spy_data WHERE path LIKE '" + uri + "%'", (rs, i) -> {
-                uuid.add(rs.getString("uuid"));
+            $db.execute("SELECT uuid FROM spy_data WHERE path LIKE '" + uri + "%'", (rs) -> {
+                while (rs.next())
+                    uuid.add(rs.getString("uuid"));
             });
-            $db.executeAll("SELECT uuid FROM secret_gallery WHERE path LIKE '" + uri + "%'", (rs, i) -> {
-                uuid.add(rs.getString("uuid"));
+            $db.execute("SELECT uuid FROM secret_gallery WHERE path LIKE '" + uri + "%'", (rs) -> {
+                while (rs.next())
+                    uuid.add(rs.getString("uuid"));
             });
 
 
@@ -119,20 +121,24 @@ public abstract class AbstractSpy {
 
         // 이미 저장된 uuid를 가지고 온다.
         List<String> uuids =
-                $db.executeAll("SELECT uuid FROM secret_gallery WHERE path LIKE '" + path + "%'", (rs, i) -> {
-                    return rs.getString("uuid");
-                });
+                $db.execute("SELECT uuid FROM secret_gallery WHERE path LIKE '" + path + "%'",
+                        new ArrayList<>(),
+                        (rs, i) -> {
+                            return rs.getString("uuid");
+                        });
 
         // 해당 path의 모든 데이터를 가지고 온다.
         List<Map<String, Object>> data =
-                $db.executeAll("SELECT * FROM spy_data WHERE path LIKE '" + path + "%'", (rs, i) -> {
-                    Map<String, Object> map = new HashMap<>();
+                $db.execute("SELECT * FROM spy_data WHERE path LIKE '" + path + "%'",
+                        new ArrayList<>(),
+                        (rs, i) -> {
+                            Map<String, Object> map = new HashMap<>();
 
-                    for (String prop : SPY_DATA_PROPS)
-                        map.put(prop, rs.getString(prop));
+                            for (String prop : SPY_DATA_PROPS)
+                                map.put(prop, rs.getString(prop));
 
-                    return map;
-                }),
+                            return map;
+                        }),
                 result = new ArrayList<>();
 
         // 솎아낸다.

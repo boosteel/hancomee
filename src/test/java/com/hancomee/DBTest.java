@@ -1,43 +1,45 @@
 package com.hancomee;
 
+import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import com.hancomee.util.DB;
+import com.hancomee.util.Patterns;
 import com.hancomee.util.SQL;
+import com.hancomee.util.db.TableInfo;
+import com.hancomee.web.WebApplication;
+import com.hancomee.web.controller.AudioBay;
+import com.zaxxer.hikari.HikariConfig;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DBTest {
 
+    DB db = new DB("jdbc:mariadb://115.23.187.44:3306/hellofunc", "root", "ko9984");
+
+    Set<Connection> cons = new HashSet<>();
+
+    public TableInfo customer = TableInfo.create("hancomee_customer", db),
+            work = TableInfo.create("hancomee_work", db),
+            workItem = TableInfo.create("hancomee_workitem", db),
+            workFile = TableInfo.create("hancomee_workfile", db);
+
     @Test
     public void test() throws Exception {
-        Connection con = getCon();
 
-        //out(SQL.readAll(con.createStatement().executeQuery("SELECT * FROM secret_media")));
-
-        DB db = new DB("jdbc:mysql://183.111.100.230:3306/boosteel", "boosteel", "ko916304");
-        db.execute("SHOW TABLES", (rs) -> {
-            out(rs.getString(1));
-            return null;
-        });
-
-        /*Statement st = con.createStatement();
-        Map<String, Object> map = new HashMap<>();
-        map.put("favorite", 1);
-        map.put("title", "울랄ㄹ랄''ㅁㄴㅇㄹ'ㅁㄴㅇㄹ");
-        map.put("user", "이히히랄라");
-        map.put("dateTime", new Date());
-        map.put("filename", "mag'''ic");
-        map.put("path", "/asdf/asdf/asdf/");
-        map.put("filetype", "jpg");
-        map.put("uploadTime", new Date());
-        map.put("blind", true);
-
-        String sql = SQL.insert("secret_media", map);
-        st.executeQuery(sql);*/
     }
+
+
+
 
     public Connection getCon() throws SQLException {
         return DriverManager.getConnection("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
@@ -98,7 +100,7 @@ public class DBTest {
         }
     }
 
-    private<T> T out(T obj) {
+    private <T> T out(T obj) {
         System.out.println(obj);
         return obj;
     }

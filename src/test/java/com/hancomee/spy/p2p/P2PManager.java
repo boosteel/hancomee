@@ -16,9 +16,10 @@ public class P2PManager {
 
     protected P2PManager(String site) throws Exception {
         this.site = site;
-        db.executeAll("SELECT uuid FROM p2p WHERE site = '" + site + "'",
-                (rs, i) -> {
-                    CHECK.add(rs.getString(1));
+        db.execute("SELECT uuid FROM p2p WHERE site = '" + site + "'",
+                (rs) -> {
+                    while (rs.next())
+                        CHECK.add(rs.getString(1));
                 });
     }
 

@@ -1,0 +1,321 @@
+<script id="customerTable" type="text/html">
+    <div class="panel">
+        <div class="header">
+            <span class="title">거래처</span>
+            <div class="ctrl">
+                <span class="v-btn" data-event="save">저장</span>
+                <span class="v-btn" data-event="modify">수정</span>
+                <span class="v-btn" data-event="cancel">취소</span>
+            </div>
+        </div>
+        <div class="body">
+            <table>
+                <tbody>
+                <tr>
+                    <th>상호</th>
+                    <td colspan="3">
+                        <span data-name="name"></span>
+                        <input class="hide-input" name="name">
+                    </td>
+                </tr>
+                <tr>
+                    <th>사업자번호</th>
+                    <td>
+                        <span data-name="biz_num"></span>
+                        <input class="hide-input" name="biz_num">
+                    </td>
+                    <th>대표자</th>
+                    <td>
+                        <span data-name="ceo"></span>
+                        <input class="hide-input" name="ceo">
+                    </td>
+                </tr>
+                <tr>
+                    <th>업태</th>
+                    <td>
+                        <span data-name="biz_con"></span>
+                        <input class="hide-input" name="biz_con">
+                    </td>
+                    <th>종목</th>
+                    <td>
+                        <span data-name="biz_type"></span>
+                        <input class="hide-input" name="biz_type">
+                    </td>
+                </tr>
+                <tr>
+                    <th>휴대전화</th>
+                    <td>
+                        <span data-name="mobile"></span>
+                        <input class="hide-input" name="mobile">
+                    </td>
+                    <th>이메일</th>
+                    <td>
+                        <span data-name="email"></span>
+                        <input class="hide-input" name="email">
+                    </td>
+                </tr>
+                <tr>
+                    <th>유선전화</th>
+                    <td>
+                        <span data-name="tel"></span>
+                        <input class="hide-input" name="tel">
+                    </td>
+                    <th>팩스</th>
+                    <td>
+                        <span data-name="fax"></span>
+                        <input class="hide-input" name="fax">
+                    </td>
+                </tr>
+                <tr>
+                    <th>주소</th>
+                    <td colspan="3">
+                        <span data-name="address"></span>
+                        <input class="hide-input" name="address">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</script>
+
+
+<script id="workMemo" type="text/html">
+    <div data-value="id:{{id}}" data-self="ele">
+        <div class="value" data-name="value">
+            <pre>{{value}}</pre>
+        </div>
+        <div class="ctrl">
+            <span class="datetime">{{datetime | date : 'yyyy-MM-dd(E) HH:mm:ss'}}</span>
+            <span class="v-btn" data-event="modify">수정</span>
+            <span class="v-btn" data-event="delete">삭제</span>
+        </div>
+    </div>
+</script>
+
+
+<script id="workMemoForm" type="text/html">
+    <div class="d-form">
+        <div class="textarea">
+            <textarea></textarea>
+        </div>
+        <div class="ctrl">
+            <span class="v-btn" data-event="confirm">확인</span>
+            <span class="v-btn" data-event="cancel">취소</span>
+        </div>
+    </div>
+</script>
+
+<script id="itemTable" type="text/html">
+    <table>
+        <thead>
+        <tr>
+            <th>품목</th>
+            <th>규격</th>
+            <th>수량</th>
+            <th>단가</th>
+            <th>금액</th>
+            <th>부가세</th>
+            <th>비고</th>
+            <th>img</th>
+            <th>file</th>
+            <th>ctrl</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="work-item">
+            <td data-name="subject"></td>
+            <td data-name="detail"></td>
+            <td data-name="count" data-type="number"></td>
+            <td data-name="price" data-type="number"></td>
+            <td data-name="vat" data-type="number"></td>
+            <td data-name="total" data-type="number"></td>
+            <td data-name="memo"></td>
+            <td data-name="draft"></td>
+            <td data-name="print"></td>
+            <td data-event="modify">
+                <span class="v-btn" data-event="cancel">수정</span>
+            </td>
+        </tr>
+        <tr class="work-item-form d-form">
+            <td>
+                <input name="title">
+            </td>
+            <td>
+                <input name="detail">
+            </td>
+            <td>
+                <input name="count">
+            </td>
+            <td>
+                <input name="price">
+            </td>
+            <td>
+                <input name="vat">
+            </td>
+            <td>
+                <input name="total">
+            </td>
+            <td>
+                <input name="memo">
+            </td>
+            <td>
+                <input name="draft">
+            </td>
+            <td>
+                <input name="print">
+            </td>
+            <td>
+                <span class="v-btn" data-event="confirm">수정</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+
+<nav>
+</nav>
+
+
+<main class="container-fluid">
+
+    <div class="row">
+
+        <div class="col-6">
+
+            <div class="panel">
+
+                <div id="title" class="header">
+                    <div class="info">
+                        <div class="state dropdown">
+                            <span data-toggle="dropdown">
+                                <span class="value">작업대기</span>
+                                <span class="arrow">▼</span>
+                            </span>
+                            <div class="dropdown-menu">
+                                <ul>
+                                    <li><span>작업대기</span></li>
+                                    <li><span>시안검토</span></li>
+                                    <li><span>시안완료</span></li>
+                                    <li><span>제작중</span></li>
+                                    <li><span>입고</span></li>
+                                    <li><span>납품</span></li>
+                                    <li><span>완료</span></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <span class="uuid">
+                            <i>No.</i>
+                            <span data-name="uuid">2018-1231155</span>
+                        </span>
+                        <span class="datetime" data-name="datetime"
+                              data-type="datetime:yyyy-MM-dd(E) HH:mm:ss">2018-09-21(월) 21:11:43</span>
+                    </div>
+
+                    <div class="title">
+                        <span class="customer">알리바바</span>
+                        <div class="value">
+                            <span data-name="title">제목</span>
+                            <span class="v-btn" data-event="modify">수정</span>
+                        </div>
+                        <div class="hide-input">
+                            <input>
+                            <span class="v-btn" data-event="confirm">확인</span>
+                            <span class="v-btn" data-event="cancel">취소</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="body">
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-6" id="customer">
+        </div>
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-3">
+            <div class="panel">
+                <div class="header">
+                    <span class="title">견적 내역</span>
+                </div>
+                <div id="sum" class="body">
+                    <table>
+                        <tbody>
+                        <tr>
+                            <th>총액</th>
+                            <td class="total">
+                                <span class="count" data-name="count">4</span>
+                                <span class="num" data-name="total">16,500</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>단가</th>
+                            <td class="price" data-name="price">15,000</td>
+                        </tr>
+                        <tr>
+                            <th>부가세</th>
+                            <td class="vat" data-name="vat">1,500</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-9">
+            <div class="panel">
+                <div class="header">
+                    <span class="title">작업 내역</span>
+                </div>
+                <div id="work-item" class="body"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-6">
+            <div id="work-memo" class="panel">
+                <div class="header">
+                    <span class="title">작업 메모</span>
+                </div>
+                <div class="body">
+                    <div class="list"></div>
+                </div>
+                <div class="footer">
+                    <div class="form">
+                        <div class="textarea">
+                            <textarea></textarea>
+                        </div>
+                        <span class="confirm" data-event="confirm">
+                            등록
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="panel">
+                <div class="header">
+                    <span class="title">작업 파일</span>
+                </div>
+                <div id="work-ref" class="body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</main>

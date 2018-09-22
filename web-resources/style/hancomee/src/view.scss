@@ -1,0 +1,430 @@
+@import "../variables";
+@import "../../flex";
+@import "./_common/work-state";
+
+$color: #777;
+$border-color: #e8e8e8;
+
+.v-btn {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  background-color: white;
+  transition: .2s ease background-color, .1s ease color;
+
+  &:hover {
+    background-color: #777;
+    color: white;
+  }
+  &:active {
+    background-color: #555;
+  }
+}
+
+#view {
+
+
+  table {
+    border-collapse: collapse;
+    > tbody, > thead {
+      > tr {
+        > td, > th {
+          padding: 5px 10px;
+          font-size: 16px;
+          border: {
+            top: 1px solid $border-color;
+            bottom: 1px solid $border-color;
+          }
+        }
+      }
+    }
+  }
+  main {
+
+    &, pre, input {
+      color: $color;
+    }
+
+    padding: {
+      bottom: 100px;
+    }
+
+    // ********************* table 공통 설정 ********************* //
+    table {
+
+      width: 100%;
+
+      > thead, > tbody {
+        > tr {
+          > td {
+            > input {
+              padding: 0 10px;
+              border: 1px solid #efefef;
+              background-color: #fbfbfb;
+              border-radius: 3px;
+            }
+          }
+
+          > th {
+            text-align: center;
+            font: {
+              weight: normal;
+            }
+            background-color: #f8f8f8;
+          }
+
+          // 양쪽 선은 없애도록
+          > th, > td {
+            &:first-child {
+              border-left: 0;
+            }
+            &:last-child {
+              border-right: 0;
+            }
+          }
+
+          // 맨 윗선과 맨 아랫선은 두껍게
+          &:first-child {
+            > th, > td {
+              border-top: 0;
+            }
+          }
+          &:last-child {
+            > th, > td {
+              border-bottom: 0;
+            }
+          }
+        }
+      }
+
+      &.form {
+        > tbody {
+          > tr {
+            > td {
+              > span {
+                display: none;
+                &.v-btn {
+                  display: inline-block;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .row {
+    padding: 30px;
+  }
+
+  // ******************** 패널 설정 ******************** //
+  .panel {
+
+    $border-color: #cecece;
+    background-color: white;
+
+    > .header {
+      padding: 10px 25px;
+      border: 1px solid $border-color;
+      border-bottom: 1px solid #eaeaea;
+      border-top-width: 2px;
+
+      .ctrl {
+        float: right;
+      }
+
+      > .title {
+        font: {
+          size: 16px;
+          weight: bold;
+        }
+      }
+    }
+
+    > .body {
+      padding: 25px;
+      border: {
+        left: 1px solid $border-color;
+        right: 1px solid $border-color;
+        bottom: 1px solid $border-color;
+      }
+    }
+
+    > .footer {
+      padding: 25px;
+      border: 1px solid $border-color;
+    }
+
+    > .body {
+      & + .footer {
+        border: {
+          top: 0;
+        }
+      }
+    }
+
+    // ******************** 제목 설정 ******************** //
+    #title {
+
+      // 고유번호와 날짜
+      .info {
+
+        // 작업상태
+        > .state {
+          float: right;
+          .value {
+            font-size: 14px;
+            font-weight: bold;
+          }
+          .arrow {
+            font-size: 12px;
+          }
+        }
+
+        > span {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 16px;
+
+          &.uuid {
+            padding-right: 10px;
+            margin-right: 5px;
+            border-right: 1px solid #ddd;
+
+            > i {
+              display: inline-block;
+              margin-right: 5px;
+              font-style: normal;
+            }
+          }
+          &.datetime {
+          }
+        }
+      }
+
+      .title {
+
+        margin-top: 28px;
+
+        > .value, input {
+          height: 46px;
+        }
+
+        .customer {
+          font-size: 16px;
+        }
+
+        .value, .hide-input {
+          margin-top: 5px;
+        }
+
+        .value {
+          overflow: hidden;
+          display: block;
+
+          text-overflow: ellipsis;
+          white-space: nowrap;
+
+          > [data-name] {
+            font-size: 22px;
+            font-weight: 900;
+          }
+          > * {
+            vertical-align: middle;
+          }
+        }
+
+        .hide-input {
+          > input {
+            width: 80%;
+          }
+        }
+
+        // 수정시
+        &.form {
+          > .value {
+            display: none;
+          }
+        }
+
+        > input {
+          padding: {
+            left: 10px;
+            right: 10px;
+          }
+          width: 80%;
+          font-size: 16px;
+          border: 1px solid $border-color;
+        }
+      }
+    }
+
+    // ******************** 합계금액 설정 ******************** //
+    #sum {
+
+      border-top: 0;
+      text-align: right;
+
+      > table {
+        > tbody {
+          > tr {
+            > th, > td {
+              padding: {
+                top: 0;
+                bottom: 0;
+              }
+            }
+            > th {
+              padding-right: 15px;
+              background-color: transparent;
+              text-align: right;
+              border: 0;
+            }
+
+            > td {
+              width: 1%;
+              white-space: nowrap;
+              font-size: 30px;
+              > span {
+                vertical-align: middle;
+              }
+            }
+          }
+        }
+
+        .count {
+          display: inline-block;
+          width: 46px;
+          height: 46px;
+          font-size: 24px;
+          text-align: center;
+          line-height: 46px;
+          border: 1px solid #cecece;
+        }
+        .num {
+          font-size: 60px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  // ******************** 거래처 표 ******************** //
+  #customer {
+    table {
+      > tbody {
+        > tr {
+          > th {
+            width: 120px;
+          }
+          > th, > td {
+            height: 46px;
+          }
+        }
+      }
+    }
+  }
+
+  // ******************** 작업 목록 ******************** //
+  #work-item {
+    table {
+
+      > thead {
+        > tr {
+          > th {
+            border-bottom: 1px solid $border-color;
+          }
+        }
+      }
+
+      > tbody, > thead {
+        > tr {
+          > td, > th {
+            height: 46px;
+          }
+        }
+      }
+
+      > tbody {
+        > tr {
+          > td {
+            &[data-type="number"] {
+              text-align: right;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  #work-memo {
+
+    .list {
+      > div {
+
+        padding: 15px 0;
+
+        & + div {
+          border-top: 1px solid $border-color;
+        }
+
+        &:first-child {
+          padding-top: 0;
+        }
+        &:last-child {
+          padding-bottom: 0;
+        }
+
+        .ctrl {
+          margin-top: 15px;
+        }
+
+        pre {
+          font-size: 16px;
+        }
+      }
+    }
+
+    // 등록 창
+    .form {
+      display: table;
+      width: 100%;
+
+      .textarea, .confirm {
+        display: table-cell;
+        border: 1px solid #ddd;
+      }
+
+      .textarea {
+        width: 100%;
+        background-color: #fbfbfb;
+        height: 131px;
+        color: #6d6d6d;
+
+        > textarea {
+          padding: 15px;
+          width: 100%;
+          height: 100%;
+          border: 0;
+          background-color: #fbfbfb;
+          &:focus {
+            outline: 0;
+          }
+        }
+      }
+      .confirm {
+        padding: 0 25px;
+        width: 1%;
+        white-space: nowrap;
+        vertical-align: middle;
+        border: {
+          left: 0;
+        }
+        cursor: pointer;
+      }
+    }
+  }
+}

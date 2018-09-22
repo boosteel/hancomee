@@ -1,64 +1,169 @@
-#total-info, #total-info .numbers, #total-info .numbers > li {
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flexbox;
-  display: -o-flex;
-  display: flex; }
+.state.dropdown [data-toggle] {
+  cursor: pointer; }
 
-nav .title {
-  margin-right: 10px;
-  padding-right: 10px;
-  font-size: 12px; }
-
-nav .sort {
-  display: flex;
-  align-items: center;
-  margin-right: auto; }
-  nav .sort > span {
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    height: 49px;
-    border-left: 1px solid gainsboro;
-    font-size: 14px;
-    cursor: pointer; }
-    nav .sort > span:last-child {
-      border-right: 1px solid gainsboro; }
-    nav .sort > span > i {
-      font-size: 20px; }
-    nav .sort > span:hover > i {
-      color: red; }
-
-#total-info {
-  justify-content: space-between;
-  border-bottom: 1px solid gainsboro;
-  background-color: #f9f9f9; }
-  #total-info > * {
-    flex-grow: 1; }
-  #total-info .numbers {
-    justify-content: space-evenly;
+.state.dropdown > .dropdown-menu {
+  min-width: auto; }
+  .state.dropdown > .dropdown-menu > ul {
     padding: 0;
     margin: 0;
     list-style: none; }
-    #total-info .numbers > li {
-      overflow: hidden;
+    .state.dropdown > .dropdown-menu > ul > li > span {
+      display: block;
+      padding: 3px 20px 3px 10px;
+      font-size: 14px;
+      white-space: nowrap;
+      cursor: pointer; }
+      .state.dropdown > .dropdown-menu > ul > li > span:hover {
+        background-color: #ddd; }
+    .state.dropdown > .dropdown-menu > ul > li.active > span {
+      color: white;
+      background-color: #2a77c3; }
+
+#list nav * {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none; }
+
+#list nav .title {
+  padding: 2px 12px;
+  border: 1px solid #dadada;
+  background-color: white;
+  border-radius: 12px;
+  font-size: 12px; }
+
+#list nav .nav-list {
+  display: flex;
+  align-items: center; }
+  #list nav .nav-list + .title {
+    margin-left: 20px; }
+  #list nav .nav-list > span {
+    padding: 0 10px;
+    font-size: 14px;
+    cursor: pointer; }
+
+#list nav .navbar-form {
+  margin-left: auto; }
+
+#list #total-info {
+  display: flex;
+  border-bottom: 1px solid gainsboro;
+  background-color: #f9f9f9; }
+  #list #total-info .navi {
+    min-width: 250px;
+    margin-right: auto;
+    display: flex;
+    color: #666; }
+    #list #total-info .navi > * {
+      text-align: center; }
+    #list #total-info .navi .navi-btn {
       flex-grow: 1;
-      align-items: center;
-      flex-wrap: wrap;
-      padding: 10px;
-      width: 1%;
-      border-left: 1px solid gainsboro; }
-      #total-info .numbers > li > * {
-        display: block;
-        width: 100%;
-        line-height: 1;
-        color: #666; }
-      #total-info .numbers > li > i {
-        align-self: flex-start;
-        font-size: 14px; }
-      #total-info .numbers > li > b {
-        font-size: 45px;
-        align-self: flex-end; }
-      #total-info .numbers > li > span {
-        align-self: flex-end;
-        font-size: 14px; }
+      color: #cacaca; }
+      #list #total-info .navi .navi-btn > i {
+        font-size: 86px; }
+      #list #total-info .navi .navi-btn.active {
+        color: #666;
+        cursor: pointer; }
+        #list #total-info .navi .navi-btn.active:hover {
+          color: #444; }
+    #list #total-info .navi .navi-info {
+      width: 70%; }
+      #list #total-info .navi .navi-info > span {
+        display: block; }
+        #list #total-info .navi .navi-info > span.state {
+          margin-top: -8px;
+          font-size: 14px; }
+        #list #total-info .navi .navi-info > span.num {
+          margin-top: -1px; }
+        #list #total-info .navi .navi-info > span > strong {
+          font-size: 46px; }
+        #list #total-info .navi .navi-info > span > i {
+          font-size: 20px;
+          font-style: normal; }
+  #list #total-info .work-state {
+    width: 70%; }
+    #list #total-info .work-state > ul {
+      display: flex;
+      padding: 0;
+      margin: 0;
+      list-style: none; }
+      #list #total-info .work-state > ul > li {
+        flex-grow: 1;
+        overflow: hidden;
+        padding: 10px;
+        text-align: right;
+        border-left: 1px solid gainsboro;
+        cursor: pointer; }
+        #list #total-info .work-state > ul > li > * {
+          display: block;
+          width: 100%;
+          line-height: 1;
+          color: #828282; }
+        #list #total-info .work-state > ul > li > i {
+          align-self: flex-start;
+          font-size: 14px; }
+        #list #total-info .work-state > ul > li > b {
+          font-size: 45px;
+          align-self: flex-end; }
+        #list #total-info .work-state > ul > li > span {
+          align-self: flex-end;
+          font-size: 14px; }
+        #list #total-info .work-state > ul > li.active {
+          background-color: #ececec;
+          text-shadow: 1px 1px 1px white; }
+          #list #total-info .work-state > ul > li.active > * {
+            color: #666; }
+
+#list .col-3 {
+  flex: 0 0 20%;
+  max-width: 20%; }
+
+#list .work {
+  margin-top: 25px;
+  background-color: white;
+  border: 1px solid #ddd; }
+  #list .work .thumb {
+    height: 200px;
+    border: 10px solid #ddd;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-color: #ddd; }
+  #list .work .content {
+    position: relative;
+    padding: 15px;
+    color: #666; }
+    #list .work .content .state {
+      position: absolute;
+      right: 13px;
+      top: 14px;
+      font-size: 12px; }
+    #list .work .content .datetime, #list .work .content .title, #list .work .content .customer {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap; }
+    #list .work .content .datetime {
+      font-size: 14px; }
+    #list .work .content .title {
+      margin-top: 10px;
+      font-size: 18px;
+      letter-spacing: -2px;
+      color: #444; }
+    #list .work .content .customer {
+      font-size: 14px;
+      font-weight: bold; }
+    #list .work .content .info {
+      margin-top: 20px;
+      text-align: right; }
+      #list .work .content .info > span {
+        display: inline-block; }
+      #list .work .content .info .count {
+        position: relative;
+        top: -2px;
+        padding: 1px 9px;
+        margin-right: 3px;
+        border: 1px solid #c3c3c3; }
+      #list .work .content .info .total {
+        font-family: tahoma;
+        font-size: 22px; }

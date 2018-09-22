@@ -48,7 +48,7 @@ public class twitter extends AbstractSpy {
 
         //  3ZBzD5cPmRZtaVu
         tour();
-       //run("Drug_Champagne_");
+        //run("ZziAH_");
 
     }
 
@@ -112,10 +112,9 @@ public class twitter extends AbstractSpy {
             m = m.replaceAll("\\\\n", " ").replaceAll("\\\\", "");
 
             // 리트윗은 제외
-            if(m.contains("\"text\":\"RT @")) {
+            if (m.contains("\"text\":\"RT @")) {
                 out("리트윗 패스");
-            }
-            else list.add(new Mention(m));
+            } else list.add(new Mention(m));
         });
 
         if (list.size() > 1) last = list.pollLast();

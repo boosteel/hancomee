@@ -1,4 +1,5 @@
 import {Access} from "./access";
+import {r_number} from "./_regexp/number";
 
 /**
  * Created by hellofunc on 2017-03-01.
@@ -128,13 +129,12 @@ export namespace Formats {
         }
     })();
 
-    let r_num = /^[-+]?\d+$/,
-        r_num_replace = /\B(?=(\d{3})+(?!\d))/g;
+    let r_num_replace = /\B(?=(\d{3})+(?!\d))/g;
 
     export let number = (val) => {
         if (typeof val === 'number') val = val.toString();
 
-        if (typeof val === 'string' && r_num.test(val))
+        if (typeof val === 'string' && r_number.test(val))
             return val.replace(r_num_replace, ",");
 
         return '0';

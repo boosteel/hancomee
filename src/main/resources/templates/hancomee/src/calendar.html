@@ -1,15 +1,16 @@
 
+
 <script id="table" type="text/html">
     <table>
         <tbody>
         <tr :tr>
             <td class="{{className}}" ::td>
-                <span class="num">{{num}}</span>
+                <span class="num" data-event="view">{{num}}</span>
                 <div class="contents" id="date-{{isodate}}">
                     <div class="content" ::contents>
                         <div class="type type-{{type}}">{{typeName}}</div>
                         <div class="title">
-                            <span data-handler="view" data-handler-value="{{id}}">{{title}}</span>
+                            <span data-event="view" data-handler-value="{{id}}">{{title}}</span>
                         </div>
                     </div>
                 </div>
@@ -49,7 +50,7 @@
 
         <div id="types" class="types"></div>
         <div class="title">
-            <input class="title" name="title" id="title" value="울랄라 제목">
+            <input class="title" name="title" id="title">
         </div>
         <div class="body">
             <textarea id="body"></textarea>

@@ -6,6 +6,7 @@ import com.hancomee.web.controller.support.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +28,8 @@ public class Gallery {
     public PageRequest values(Query query) throws Exception {
         String[] sql = query.SQL();
         return new PageRequest(
-                db.execute(sql[0], (rs) -> SQL.readAll(rs)),
-                db.execute(sql[1], (rs) -> rs.getLong(1)),
+                db.execute(sql[0], SQL::readAllJSON),
+                db.execute(sql[1], 0l, (rs) -> rs.getLong(1)),
                 query.page,
                 query.size
         );
@@ -38,21 +39,11 @@ public class Gallery {
     @RequestMapping("paths")
     @ResponseBody
     public List<String> paths() throws Exception {
-        return db.executeAll("SELECT path FROM secret_gallery GROUP BY path ORDER BY path",
-                (rs, i) -> {
-                    return rs.getString("path");
-                });
+        return db.execute("SELECT path FROM secret_gallery GROUP BY path ORDER BY path",
+                new ArrayList<>(),
+                (rs, i) -> rs.getString("path"));
     }
 
-    // 가장 최근 수정한 것
-    @RequestMapping("paths/latest")
-    @ResponseBody
-    public List<String> latest() throws Exception {
-        return db.executeAll("SELECT path FROM secret_gallery GROUP BY path ORDER BY uploadTime",
-                (rs, i) -> {
-                    return rs.getString("path");
-                });
-    }
 
 
     // 업데이트

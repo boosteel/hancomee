@@ -1,13 +1,11 @@
 import {HTML} from "../../../lib/core/html";
 import {GenericModule} from "./genericModule";
-import htmlParser = HTML.htmlParser;
 import {Calendar, Month} from "../../../lib/core/calendar";
 import {$extend} from "../../../lib/core/core";
-import {Pager} from "../../../lib/core/pager";
 import {StringBuffer} from "../../../lib/core/support/StringBuffer";
-import {Search} from "../../../lib/core/location";
-import {Selector} from "../../../lib/core/dom/selector";
-import select = Selector.select;
+import {Events} from "../../../lib/core/events";
+import htmlParser = HTML.htmlParser;
+import select = HTML.select;
 
 type NormalizeValues = { [index: string]: DATA[] }
 
@@ -262,7 +260,21 @@ export class CModule extends GenericModule<CalSearch> {
         let {handlers} = this, l = handlers.length;
 
         // 표그리기
-        handlers[l++] = select(frag, (main) => {
+        handlers[l++] = select(frag, (frag, main, screen) => {
+
+
+            // main 엘리먼트 이벤트
+            Events.propertyMap(main, 'click', {
+                view() {
+                    screen.className = 'on';
+                }
+            });
+
+            // 스크린 끄기
+            screen.addEventListener('click', (e) => {
+                if(e.target === screen)
+                    screen.className = '';
+            })
 
             let render = new CalendarManager(htmlParser(templates.table));
 
@@ -288,10 +300,10 @@ export class CModule extends GenericModule<CalSearch> {
                     xhr.send(null);
                 });
             };
-        }, 'main');
+        }, 'main', frag.getElementById('screen'));
 
         // nav 업데이트
-        handlers[l++] = select(frag.querySelector('nav'), function (r, c) {
+        handlers[l++] = select(frag.querySelector('nav'), function (nav, r, c) {
             let temp: Month;
 
             this.addEventListener('click', (e) => {
@@ -311,7 +323,6 @@ export class CModule extends GenericModule<CalSearch> {
             };
         }, '#refresh-btn', '#date-current');
 
-        container.appendChild(frag);
     }
 
     $load(param: CalSearch) {

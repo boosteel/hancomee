@@ -33,6 +33,9 @@ gulp.task('typescript', function () {
     return tsResult.js.pipe(gulp.dest('src/main/resources/static/'));
 });
 
+gulp.task('move', function () {
+    console.log('asdfasf')
+})
 
 gulp.task('default', ['compileSass'], function () {
 });

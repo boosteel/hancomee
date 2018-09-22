@@ -1,0 +1,35 @@
+
+// dropdown
+.state.dropdown {
+
+  [data-toggle] {
+    cursor: pointer;
+  }
+  > .dropdown-menu {
+    min-width: auto;
+    > ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      > li {
+        > span {
+          display: block;
+          padding: 3px 20px 3px 10px;
+          font-size: 14px;
+          white-space: nowrap;
+          cursor: pointer;
+          &:hover {
+            background-color: #ddd;
+          }
+        }
+
+        &.active {
+          > span {
+            color: white;
+            background-color: #2a77c3;
+          }
+        }
+      }
+    }
+  }
+}

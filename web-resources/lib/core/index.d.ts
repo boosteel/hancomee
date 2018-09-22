@@ -19,15 +19,40 @@ interface iCompileHandler<T> {
 }
 
 
+interface iResponseResult<T> {
+    totalPages: number
+    count: number
+    values: T[]
+    page: number
+}
 
+type iEleArray = ArrayLike<HTMLElement>
 
+interface iEleMapEach {
+    [key: string]: (e: HTMLElement, obj) => void
+}
+
+interface iEleMap extends ArrayLike<HTMLElement> {
+
+    keys: string[]
+
+    length: number
+
+    setText(obj?): this
+
+    each(h: (e: HTMLElement, name: string, obj) => void, value?, each?: iEleMapEach): this
+
+}
 
 declare namespace iLocation {
 
     export interface iSearch {
         reset(search?: string): this
+
         extend(obj: {})
+
         hash(): this
+
         queryString(extend?: {}): string
     }
 }
@@ -47,7 +72,7 @@ declare namespace iSPA {
     }
 
 
-    export interface module<T>{
+    export interface module<T> {
 
         getParam(): T
 

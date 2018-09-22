@@ -1,6 +1,7 @@
 /**
  * Created by hellofunc on 2017-03-01.
  */
+import {r_number} from "./_regexp/number";
 
 export namespace Access {
 
@@ -27,7 +28,6 @@ export namespace Access {
 
     export let primitive = (function () {
         let
-            r_number = /^\d+$/,
             r_boolean = /^true$|^false$/,
             r_string = /^['"][^"']+['"]$/,
             r_date = /^\d{4}-\d{2}-\d{2}$|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/,
@@ -36,9 +36,9 @@ export namespace Access {
 
         return (val) => {
             if (typeof val === 'string' && val.length > 0) {
+                if (r_string.test(val)) return val.replace(r_string_replace, '');
                 if (r_number.test(val)) return parseInt(val);
                 if (r_boolean.test(val)) return val === 'true';
-                if (r_string.test(val)) return val.replace(r_string_replace, '');
                 if(r_date.test(val)) return new Date(val)
             }
             return val;

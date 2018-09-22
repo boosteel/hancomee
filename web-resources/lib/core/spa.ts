@@ -59,6 +59,8 @@ export class SPA {
             m = new URLManager(path),
             {pathname, search} = m;
 
+        this.url = m;               // 현재 url 갱신
+
         //  ① 모듈변경
         if (url.pathname !== pathname) {
 
@@ -76,7 +78,6 @@ export class SPA {
                 let {index, config} = this,
                     param = Search.toObject(search, provider.param());
 
-                this.url = m;               // 현재 url 갱신
                 this.index = _index;        // 모듈 인덱스 갱신
                 this.$active = provider;      // 현재 모듈 갱신
 
@@ -132,7 +133,7 @@ export namespace SPA {
                         if (xhr.status === 200) {
                             o(xhr.responseText);
                         }
-                        else x(xhr);
+                        else o('');
                     }
                 }
                 xhr.open('GET', url, true);

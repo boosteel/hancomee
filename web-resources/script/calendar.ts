@@ -249,7 +249,9 @@ class CalendarForm extends CalendarData {
         super();
 
         // ① 엘리먼트의 id를 key로 잡아서 property로 등록
-        Branch.$tour(screen, this);
+        Array.prototype.forEach.call(screen.querySelectorAll('[id]'), (a) => {
+            this[a.id] = a;
+        })
 
         let
             {ctrl, title, body, types, writeTime, content} = this,

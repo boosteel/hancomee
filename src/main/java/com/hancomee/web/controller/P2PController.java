@@ -27,8 +27,8 @@ public class P2PController {
     public Values values(Query query) throws Exception {
         String[] sql = query.SQL();
         return new Values(
-                db.execute(sql[0], (rs) -> SQL.readAll(rs)),
-                db.execute(sql[1], (rs) -> rs.getLong(1)),
+                db.execute(sql[0], SQL::readAllJSON),
+                db.execute(sql[1], 0l, (rs) -> rs.getLong(1)),
                 query.page,
                 query.size
         );

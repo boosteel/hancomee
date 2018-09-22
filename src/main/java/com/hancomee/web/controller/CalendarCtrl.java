@@ -32,7 +32,7 @@ public class CalendarCtrl {
     @ResponseBody
     public Object get(@RequestParam("sd") String sd, @RequestParam("ed") String ed) throws Exception {
         return db.execute("SELECT * FROM calendar WHERE date BETWEEN '" +
-                sd + "' AND '" + ed + "'", (rs) -> SQL.readAll(rs, SQL::convertJSON));
+                sd + "' AND '" + ed + "'", SQL::readAllJSON);
     }
 
 
@@ -44,7 +44,8 @@ public class CalendarCtrl {
         // save
         if (id == null) {
             db.update(SQL.insert("calendar", value));
-            id = db.execute("SELECT LAST_INSERT_ID() ", (rs) -> rs.getObject(1));
+            id = db.execute("SELECT LAST_INSERT_ID() ", null,
+                    (rs) -> rs.getObject(1));
         }
         // update
         else {

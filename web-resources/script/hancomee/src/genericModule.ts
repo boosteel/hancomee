@@ -7,6 +7,7 @@ import htmlParser = HTML.htmlParser;
 export abstract class GenericModule<T> implements iSPA.module<T> {
     private _resolve: Promise<HTMLElement>
     protected element: HTMLElement
+    protected q: T
 
     /*
      *   이미 로드된 상황 (초기화)이고
@@ -33,6 +34,7 @@ export abstract class GenericModule<T> implements iSPA.module<T> {
                 });
 
             this.$init(div, frag, templates);
+            div.appendChild(frag);
             return div;
         });
     }
@@ -45,15 +47,25 @@ export abstract class GenericModule<T> implements iSPA.module<T> {
         // 이미 로드된 상태에서 쿼리없이 주소요청만 들어오면 기존 작업상태를 그대로 보낸다.
         if (!this.isLoad || search) {
             this.isLoad = true;
+            this.q = param;
             return this.$load(param);
         }
-
     }
 
     getParam() {
         return new this.param();
     }
 
+    /*
+     *  PostContructo()로 보면 된다.
+     *
+     *  ① container는 새로 만들어진 엘리먼트이고,
+     *
+     *  ② frag는 html에 포함된 엘리먼트들이다.
+     *     - container에 포함되기 전에 $init() 메서드를 통해 조작할 수 있다.
+     *
+     *  ③ templates는 <script id="{key}"> 템플릿이 문자열로 들어간 map이다.
+     */
     abstract $init(container: HTMLElement, frag: DocumentFragment, templates: { [index: string]: string })
 
     abstract $load(param: T): Promise<any> | void

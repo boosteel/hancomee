@@ -102,13 +102,12 @@
   background-color: #34ce57; }
 
 #calendar #screen {
-  display: none;
+  position: fixed;
   flex-direction: column;
   align-items: center;
+  display: flex;
   justify-content: center;
-  position: fixed; }
-  #calendar #screen.on {
-    display: flex; }
+  z-index: -1; }
   #calendar #screen:before {
     display: block;
     position: absolute;
@@ -126,7 +125,10 @@
     padding: 35px;
     width: 40%;
     background-color: #f3f3f3;
-    border-radius: 5px; }
+    border-radius: 5px;
+    opacity: 0;
+    transform: translate(0, -50px);
+    transition: .3s ease opacity, .3s ease transform; }
     #calendar #screen .content > div + div {
       margin-top: 15px; }
     #calendar #screen .content .ctrl {
@@ -165,6 +167,13 @@
         background-color: white; }
     #calendar #screen .content textarea {
       min-height: 200px; }
+  #calendar #screen.on {
+    z-index: 1080; }
+    #calendar #screen.on, #calendar #screen.on .content {
+      opacity: 1; }
+    #calendar #screen.on .content {
+      transform: translate(0, 0);
+      transition-delay: .15s; }
   #calendar #screen .ctrl-btn {
     float: left;
     padding: 4px 8px;

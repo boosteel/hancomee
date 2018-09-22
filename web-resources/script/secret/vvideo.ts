@@ -7,8 +7,9 @@ import compile = HTML.compile;
 import {Search} from "../../lib/core/location";
 import {Pager, PagerTable} from "../../lib/core/pager";
 import "../../lib/core/component/toggle";
-import {Selector} from "../../lib/core/dom/selector";
-import select = Selector.select;
+import {Branch} from "../../lib/core/component/Branch";
+import createTree = Branch.createTree;
+import select = HTML.select;
 
 
 let xhr = {
@@ -143,7 +144,7 @@ $ready(() => {
         aside = (function (aside) {
             let treeCtrl;
             xhr.paths().then((names) => {
-                treeCtrl = HTML.createTree(names);
+                treeCtrl = createTree(names);
                 treeCtrl.handler = (path) => {
                     location.hash = 'path=' + path + '&page=1';
                 };
@@ -160,7 +161,7 @@ $ready(() => {
 
         // *************************  <nav>  ************************* //
         nav =
-            select('nav', function(count, current, pager, fav, pick, pickOut, list) {
+            select('nav', function(nav, count, current, pager, fav, pick, pickOut, list) {
 
                 let
                     pickNum,

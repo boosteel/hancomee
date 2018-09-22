@@ -1,19 +1,127 @@
-import {__makeArray} from "./core";
 import {StringBuffer} from "./support/StringBuffer";
+import "../../lib/core/component/toggle";
+import {Formats} from "./format";
+import {_date, _dateFormat, _datetime} from "./_func/datetime";
+import {Access} from "./access";
 
-function log(a) {
-    console.log(a);
-    return a;
+let
+    {forEach, reduce, map} = Array.prototype,
+    dummy = {};
+
+
+export class EleMap {
+
+    keys: string[]
+    length: number
+
+    constructor(context: HTMLElement, attrName: string) {
+        let
+            els = context.querySelectorAll('[' + attrName + ']'),
+            keys = this.keys = [];
+
+        forEach.call(els, (e, i) => {
+            keys[i] = e.getAttribute(attrName);
+            this[i] = e;
+        });
+        this.length = keys.length;
+    }
+
+    setText(obj = dummy) {
+        let {length: l, keys} = this, {setText} = HTML, i = 0;
+        for (; i < l; i++)
+            setText(this[i], obj[keys[i]]);
+        return this;
+    }
+
+
+    each(h, obj?, map = dummy) {
+
+        let {length: l, keys} = this, i = 0, k;
+
+        for (; i < l; i++) {
+            k = keys[i];
+            if (map[k]) map[k](this[i], obj);
+            else h(this[i], keys[i], obj);
+        }
+
+        return this;
+    }
+
 }
 
 export namespace HTML {
+    import number = Formats.number;
+    import fileSize = Formats.fileSize;
+    import primitive = Access.primitive;
     export let unCamelCase = (function (r_data, r_up, fn) {
         return (s: string) => s.replace(r_data, '').replace(r_up, fn);
     })(/^data-/, /-([^-])/g, (_, i) => i.toUpperCase());
 
 
-    let r = /{{(.*?)}}/g,
-        r_compile_test = /{{[^{}]+}}/;
+    let
+        r = /{{(.*?)}}/g,
+        r_compile_test = /{{[^{}]+}}/,
+        r_filter_split = / \| | : /;
+
+    function pipe(str: string) {
+        if (str[0] === '=') {
+            if (str[1] === '#') str = document.getElementById(str.substring(2)).innerHTML
+            else str = document.querySelector(str.substring(1)).innerHTML
+        }
+        return str;
+    }
+
+
+    export function select<T>(ele: DocumentFragment, handler: (this: DocumentFragment, ...arg: any[]) => T, ...arg: (string | Element)[]): T
+    export function select<T, P extends HTMLElement>(ele: HTMLElement, handler: (this: P, ...arg: any[]) => T, ...arg: (string | Element)[]): T
+    export function select<T>(ele: string, handler: (this: HTMLElement, ...arg: any[]) => T, ...arg: (string | Element)[]): T
+    export function select<T>(ele, handler, ...arg: string[]): T {
+        let
+            element = typeof ele === 'string' ?
+                (ele.indexOf('<') === -1 ? document.querySelector(ele) : createFragment(ele)) :
+                ele,
+            args = [element], index = 1, i = 0, l = arg.length,
+            str;
+
+        for (; i < l; i++) {
+
+            str = arg[i];
+
+            // (1) 문자열일 경우
+            if (typeof str === 'string') {
+
+                let l = str.length - 1;
+
+                if (str[0] === ':') {
+                    args[index++] = createFragment(str.substring(1));
+                }
+                // ① 'select[]'  ==> querySelectorAll()
+                else if (str[l] === ']' && str[l - 1] === '[') {
+                    args[index++] = element.querySelectorAll(str.substring(0, l - 1))
+                }
+
+                // ② 'select{attrName}' ==>  {attrName: ele, attrName: ele}
+                else if (str[0] === '{' && str[l] === '}') {
+                    args[index++] = new EleMap(ele, str.substring(1, l));
+                }
+                // ③ querySelector()
+                else {
+                    args[index++] = element.querySelector(str);
+                }
+            }
+
+            // (2) 문자열이 아닐 경우 그대로 결과값
+            else {
+                args[index++] = str;
+            }
+        }
+        return handler.apply(element, args);
+    };
+
+
+    export function byId(s: string): HTMLElement {
+        return document.getElementById(s);
+    }
 
     export function replaceHTML(str: string, obj) {
         return str.replace(r, (_, p) => {
@@ -21,8 +129,15 @@ export namespace HTML {
         })
     }
 
+    export let defaultFilter = {
+        number: number,
+        date: _dateFormat,
+        filesize: fileSize
+    };
 
-    export function compile(str: string) {
+    export function compile(str: string, filter = defaultFilter) {
+
+        str = pipe(str);
 
         if (!r_compile_test.test(str)) return () => str;
 
@@ -34,17 +149,29 @@ export namespace HTML {
             if ((s = str.indexOf('{{', i)) !== -1) {
 
                 let $v = str.substring(i, s);
+
+                // 일반 문자열
                 array[size++] = () => $v;
 
                 e = str.indexOf('}}', s += 2);
 
-                // _를 가지고 있을때만 Function 생성
-                let
-                    ss = str.substring(s, e),
-                    $fn = ss.indexOf('_') === -1 ?
-                        (obj) => obj == null ? '' : (typeof obj[ss] === 'function' ? obj[ss]() : obj[ss]) :
-                        new Function('_', 'return _ == null ? "" : (' + ss + ');');
-                array[size++] = $fn;
+                // {{exp}}
+                let ss = str.substring(s, e);
+
+                // 직접 컨텍스트 사용이 없을 경우 ::ex) _.name()
+                if (ss.indexOf('_.') === -1) {
+                    let [str, filter, arg] = ss.split(r_filter_split);
+                    ss = str ? '_.' + str : '_';
+
+                    if (arg) {
+                        ss = '$.' + filter + '(' + ss + ', ' + arg + ')';
+                    }
+                    else if (filter) {
+                        ss = '$.' + filter + '(' + ss + ')';
+                    }
+                }
+
+                array[size++] = new Function('_', '$', 'return _ == null ? "" : (' + ss + ');');
 
                 i = e + 2;
             } else {
@@ -54,90 +181,13 @@ export namespace HTML {
             }
         }
 
-        return function (obj) {
+        return function (obj, filter2?) {
             let i = 0, result = [];
             while (i < size) {
-                result[i] = array[i++](obj);
+                result[i] = array[i++](obj, filter2 || filter);
             }
             return result.join('');
         }
-    }
-
-
-    let r_ease = /^\/+|\/+$/,
-        r_split = /\//,
-        template = '<li data-active="false">' +
-            '<i data-child="{{!!_.childs}}">&gt;</i>' +
-            '<a href="{{href}}">{{name}}</a>' +
-            '{{_.childs ? "<ul>" + _.childs + "</ul>" : ""}}' +
-            '</li>';
-
-    function a(str: string, obj = {}) {
-        let s = str.replace(r_ease, '').split(r_split),
-            i = 0, l = s.length, v;
-        for (; i < l; i++) {
-            obj = (obj[(v = s[i])] || (obj[v] = {}))
-        }
-    }
-
-    export function toObject(list: string, obj?)
-    export function toObject(list: string[], obj?)
-    export function toObject(list, obj = {}) {
-        if (typeof list === 'string') a(list, obj);
-        else {
-            let l = list.length;
-            while (l-- > 0) a(list[l], obj);
-        }
-        return obj;
-    }
-
-    function $createHTML($com, obj, name: string, url?) {
-        if (obj == null) return '';
-        let p, c, array = [];
-        for (p in obj) {
-            if (c = $createHTML($com, obj[p], p, (url ? url + '/' + p : p)))
-                array.push(c);
-        }
-        return $com({href: url, name: name, childs: array.join('')});
-    }
-
-    export function createTree(values: string[], html = template, rootName = 'root') {
-        let c = <HTMLElement>document.createElement('div');
-        c.innerHTML = '<ul>' + $createHTML(compile(html), toObject(values), rootName, '') + '</ul>';
-        c = <HTMLElement>c.firstElementChild;
-
-        // <a> 엘리먼트들을 미리 땡겨놓는다.
-        let anchors = <NodeListOf<HTMLAnchorElement>>c.querySelectorAll('a[href]'),
-            ctrl = {
-                element: c,
-                active(path: string) {
-                    let l = anchors.length, anchor: HTMLAnchorElement;
-                    while (l-- > 0) {
-                        anchor = anchors[l];
-                        if (path.indexOf(anchor.getAttribute('href')) === 0) {
-                            anchor.parentElement.setAttribute('data-active', 'true');
-                        } else {
-                            anchor.parentElement.setAttribute('data-active', 'false');
-                        }
-                    }
-                },
-                handler: <(path: string, e: MouseEvent) => any>null
-            };
-
-        c.addEventListener('click', (e) => {
-            let target = <HTMLElement>e.target;
-            if (target['href']) {
-                ctrl.handler && ctrl.handler(target.getAttribute('href'), e);
-                e.preventDefault();
-            }
-            else if (/i/i.test(target.tagName)) {
-                let {parentElement: p} = target;
-                p.setAttribute('data-active',
-                    p.getAttribute('data-active') === 'true' ? 'false' : 'true');
-            }
-        })
-
-        return ctrl;
     }
 
 
@@ -175,8 +225,10 @@ export namespace HTML {
     export function createFragment(html): DocumentFragment {
         let frag = document.createDocumentFragment();
 
-        if (typeof html === 'string')
+        if (typeof html === 'string') {
+            html = pipe(html);
             create(html, (v) => frag.appendChild(v));
+        }
         else {
             let l = html.length;
             while (l-- > 0) frag.insertBefore(html[l], frag.firstChild);
@@ -226,7 +278,7 @@ export namespace HTML {
      *  사용방법은 아래 코드를 참조하자.
      *
      */
-    let r_replace_name = /:(:)?([^>\s]+)>$/,
+    let r_replace_name = /:(:)?([^>\s"']+)>$/,
         r_eraser = /\s+::?[^>\s]+>/g;
 
     /*
@@ -238,7 +290,7 @@ export namespace HTML {
         private values: { start: number, end: number, name: string }[] = []
         result = {}
 
-        constructor(private html: string) {
+        constructor(private html: string, private compileFilter?) {
         }
 
         // 저장되지 않는 단순 마커(:value)를 위한 추가메서드
@@ -283,7 +335,7 @@ export namespace HTML {
 
         // new
         setV(s: number, e: number, name: string, save: boolean) {
-            if (save) this.result[name] = compile(this.loop(s, e));
+            if (save) this.result[name] = compile(this.loop(s, e), this.compileFilter);
             else this.remove(s, e);
             this.values.push({start: s, end: e, name: name});
             return this;
@@ -291,7 +343,7 @@ export namespace HTML {
 
         // new
         getResult() {
-            return [compile(this.loop(0, this.html.length)), this.result];
+            return [compile(this.loop(0, this.html.length), this.compileFilter), this.result];
         }
 
     }
@@ -308,13 +360,14 @@ export namespace HTML {
      *
      */
 
+
     type BindHandler<T> = (com: iCompile, map: iCompileMap) => T
 
-    export function htmlParser<T>(html: string, handler: BindHandler<T>): T
-    export function htmlParser(html: string): [iCompile, iCompileMap]
-    export function htmlParser(html: string, handler?) {
+    export function htmlParser<T>(html: string, handler: BindHandler<T>, compileFilter?): T
+    export function htmlParser(html: string, compileFilter?): [iCompile, iCompileMap]
+    export function htmlParser(html: string, handler?, compileFilter?) {
         let
-            parseIndex = new ParseIndex(html),
+            parseIndex = new ParseIndex(html, typeof handler === 'function' ? compileFilter : handler),
             pos = 0,
             tagNames = [], startPos = [], lines = [], index = 0;
 
@@ -385,8 +438,57 @@ export namespace HTML {
          */
         let [$c, result] = parseIndex.getResult();
         parseIndex = null;
-        return handler ? handler($c, result) : [$c, result];
+        return typeof handler === 'function' ? handler($c, result) : [$c, result];
     }
 
+    export function createElement(str: string): HTMLElement {
+        let div = document.createElement('div'),
+            child;
+        div.innerHTML = str;
+        child = div.firstElementChild;
+        return div.removeChild(child);
+    }
+
+    export function pick(ele: HTMLElement | DocumentFragment, selector: string): HTMLElement {
+        let e = ele.querySelector(selector),
+            p = e.parentElement;
+        p && p.removeChild(e);
+        return <any>e;
+    }
+
+    export function innerHTML(ele: HTMLElement, html: string) {
+        let clone = <HTMLElement>ele.cloneNode(false);
+        clone.innerHTML = html;
+        ele.parentNode.replaceChild(clone, ele);
+        return clone;
+    }
+
+    let
+        converters = {
+            number: number,
+            date(val, regex = 'yyyy-MM-dd HH:mm:ss') {
+                if (val instanceof Date) return _dateFormat(val, regex);
+                return '';
+            },
+        };
+
+    export function setText(ele: HTMLElement, val) {
+        let c = ele.getAttribute('data-type'),
+            i, fn, p = c, arg;
+
+        if(c) {
+            if((i = c.indexOf(':')) !== -1) {
+                p = c.substring(0, i);
+                arg = primitive(c.substring(i+1, c.length));
+            }
+            if(fn = converters[p]) {
+                ele.textContent = fn(val, arg);
+                return ele;
+            }
+        }
+
+        ele.textContent = val || '';
+        return ele;
+    }
 
 }

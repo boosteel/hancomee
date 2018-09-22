@@ -1,18 +1,20 @@
+import "../../lib/core/component/toggle";
 import {$ready} from "../../lib/core/core";
-import {Selector} from "../../lib/core/dom/selector";
 import {SPA} from "../../lib/core/spa";
 import {List} from "./src/list";
 import {DOM} from "../../lib/core/dom";
 import className = DOM.className;
 import {CModule} from "./src/calendar";
-import select = Selector.select;
+import {HTML} from "../../lib/core/html";
+import select = HTML.select;
+import {View} from "./src/view";
 
 let {forEach, map, reduce} = Array.prototype;
 
 $ready(() => {
 
 
-    select(document.body, (aside, main) => {
+    select(document.body, (body: HTMLBodyElement, aside, main) => {
 
         let
             // 페이지
@@ -60,6 +62,7 @@ $ready(() => {
                 before(pathname) {
                     asideMenu(pathname);
                     main.className = 'load';
+                    window.scrollTo(0, 0);
                 },
                 onChange(ele, e) {
                     transfort(ele);
@@ -70,6 +73,7 @@ $ready(() => {
             })
                 .register('list', List)
                 .register('main', List)
+                .register('view', View)
                 .register('calendar', CModule)
                 .onHash();
 

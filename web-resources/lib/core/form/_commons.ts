@@ -1,19 +1,8 @@
 
-export let
-    r_number = /^\d+$/,
-    skipProps = 'name type';
-
-export function $$(obj) {
-    let p, v;
-    for (p in obj) {
-        if (typeof (v = obj[p]) === 'string')
-            obj[p] = obj[v];
-    }
-    return obj;
-}
+export let skipProps = 'name type';
 
 export function closest(target: HTMLElement, className: string) {
-    
+
 }
 
 

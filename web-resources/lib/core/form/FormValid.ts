@@ -1,13 +1,11 @@
-import {$$, each, eachChilds, r_number} from "./_commons";
+import {each, eachChilds} from "./_commons";
+import {_remap} from "../_func/remap";
+import {r_number} from "../_regexp/number";
 
 
 type RESULT_HANDLER<T> = (this: T, isValid: boolean, input: INPUTS, group: HTMLElement, form: HTMLFormElement) => void;
 
-
-function $find(opt, a, b, c) {
-    return opt[a + '.' + b + '.' + c] || opt[a + '.' + b] || opt[a];
-}
-
+let {map: $$map, forEach: $$forEach, reduce: $$reduce} = Array.prototype;
 
 /*
  *  폼 검증 결과로 제공하는 객체
@@ -87,9 +85,10 @@ class ValidForm extends VALID<HTMLFormElement> {
 
 
 /*
- *  폼을 검증하기 위한 Config 객체로 보면 된다.
- *  Default로 제공하는 것을 써도 되고,
- *  이 객체를 직접 생성해서 특수한 검증을 실행할 수 있다.
+ *  폼 검증을 위한 검증핸들러를 가진 객체.
+ *  엘리먼트를 받아 어트리뷰트값을 모두 순회하며, 등록된 검증핸들러를 찾는다.
+ *  핸들러가 존재하면 이를 통해 값을 검증한다.
+ *  그 결과로 VALID객체를 반환한다.
  */
 export class FormValid {
 
@@ -135,6 +134,7 @@ export class FormValid {
     }
 
 
+    // 각 key를 조합해 검증 핸들러를 찾는다.
     private _input(input: INPUTS, attrName: string, attrValue: string, type = input.type, name = input.name): boolean {
         let {inputs} = this,
             fn = inputs[attrName + '.' + type + '.' + name] ||
@@ -168,8 +168,9 @@ export namespace FormValid {
          *  ② attr.type
          *  ③ attr
          */
-        input_valid: INPUT_MAP = $$({
+        input_valid: INPUT_MAP = _remap({
 
+            // 두번째 인자값은 해당 어트리뷰트의 값
             required(target) {
                 return !!target.value;
             },
@@ -230,7 +231,7 @@ export namespace FormValid {
             }
         }),
 
-        group_valid: GROUP_MAP = $$({
+        group_valid: GROUP_MAP = _remap({
             min(ele: HTMLElement, val: string) {
             },
             max(ele: HTMLElement, val: string) {
@@ -264,8 +265,8 @@ export namespace FormValid {
      *  Default 설정을 사용할때는 아래 static 메서드를 사용하면 된다.
      *  특수한 검증이 필요할 경우에는 직접 FormValie 객체를 만들어서 사용하면 된다.
      */
-    export function inputs(inputs: INPUTS[]) {
-        return inputs.map(i => input(i));
+    export function inputs(inputs: ({[index: number]: INPUTS}) | NodeListOf<any>) {
+        return $$map.call(inputs, i => input(i));
     }
 
     export function input(input: INPUTS) {

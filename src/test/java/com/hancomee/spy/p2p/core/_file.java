@@ -15,7 +15,7 @@ public class _file extends _base {
     @Test
     public void run() throws Exception {
 
-        String path = "D:\\files\\Download\\180830";
+        String path = "D:\\files\\Download\\180916";
 
         forceThumb(path);
         videoInfo(path);

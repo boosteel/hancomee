@@ -15,7 +15,7 @@ export namespace Toggle {
             className(dropdown, r_open, flag);
             className(dropdown.querySelector('.dropdown-menu'), r_open, flag);
 
-            if(flag) active = dropdown;
+            if (flag) active = dropdown;
             else active = null;
         };
 
@@ -26,8 +26,8 @@ export namespace Toggle {
             let ele = <HTMLElement>e.target,
 
                 dropdown: HTMLElement,
-                btn = false,
-                dismiss = false;
+                btn = false,            // 토글버튼인지 확인
+                dismiss = false;        // dropdown 이하에 dismiss 설정 확인
 
             // 순회
             do {
@@ -47,24 +47,21 @@ export namespace Toggle {
                 }
             } while (ele = ele.parentElement);
 
-            // ① dropdown 객체일 경우
+            // 현재 활성화된게 있고, 찾은 dropdown과 다르다면 무조건 끈다.
+            if (active && active !== dropdown) act(active, false);
+
+
+            // ① dropdown 객체를 찾았을때
             if (dropdown) {
-                // 현재 열려진
+
+                // 현재 열려져있다면 dismiss 체킹이 되어있을때만 없앤다.
                 if (hasClass(dropdown, r_open)) {
                     dismiss && act(dropdown, false);
                 }
+                // 아니라면 btn을 클릭했을 경우에만 켠다.
                 else {
                     btn && act(dropdown, true);
                 }
-
-            }
-            // ① dropdown 객체가 아닌 경우에는 현재 열려진 거 닫기
-            else if(active) {
-                dropdown = active
-                while(dropdown = dropdown.parentElement) {
-                    hasClass(dropdown, r_dropdown) && (active = dropdown);
-                }
-                act(active, false);
             }
 
         });

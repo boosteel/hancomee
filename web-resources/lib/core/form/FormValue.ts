@@ -1,13 +1,19 @@
-import {$$, r_number} from "./_commons";
-
+import {r_number} from "../_regexp/number";
+import {_remap} from "../_func/remap";
+import {_date} from "../_func/datetime";
 
 export namespace FormValue {
 
-    let /*
+    let
+
+        {forEach} = Array.prototype,
+        dummy = {},
+        r_date = /\d{4}-\d{1,2}-\d{1,2}/,
+        /*
          *  ① type.name
          *  ② type
          */
-        DEFAULT_GETTER = $$({
+        DEFAULT_GETTER = _remap({
 
             file(input: HTMLInputElement) {
                 if (input.value) {
@@ -24,9 +30,13 @@ export namespace FormValue {
                 return array.length ? array : null;
 
             },
+            date(date: HTMLInputElement) {
+                let {value} = date;
+                if (value && r_date.test(value))
+                    return new Date(value);
+            },
             select(select: HTMLSelectElement) {
                 let {selectedIndex} = select;
-                console.log(selectedIndex);
                 if (selectedIndex !== -1) return select[selectedIndex].value;
                 return null;
             },
@@ -38,6 +48,11 @@ export namespace FormValue {
             checkbox(input: HTMLInputElement) {
                 if (input.checked) {
                     return input.value;
+                } else {
+                    let v = input.getAttribute('data-none');
+                    if (v) {
+                        return v === 'null' ? null : v;
+                    }
                 }
                 return null;
             },
@@ -51,9 +66,58 @@ export namespace FormValue {
             },
             textarea: 'text'
 
+        }),
+        DEFAULT_SETTER = _remap({
+
+            number(input: HTMLInputElement, val) {
+                if (typeof val === "number") val = val.toString();
+                else if (val == null || !r_number.test(val))
+                    val = '0';
+                input.value = val;
+            },
+            // null값이 들어올 수 있다.
+            date(input: HTMLInputElement, val) {
+                if (val == null) input.value = '';
+                else {
+                    if (val instanceof Date)
+                        input.value = _date(val);
+                    else input.value = val;
+                }
+            },
+            radio(input: HTMLInputElement, val) {
+                if (val == null) input.checked = false;
+                else {
+                    let value = input.getAttribute('value');
+                    if (Array.isArray(val))
+                        input.checked = val.indexOf(value) !== -1;
+                    else input.checked = value == val;
+                }
+            },
+            checkbox: 'radio',
+
+
         });
 
-    export function serialize(form: HTMLFormElement) {
+
+    export function reset(inputs: iEleArray, obj) {
+        if (obj == null) obj = dummy;
+        forEach.call(inputs, (v) => set(v, obj[v.name]))
+    }
+
+    export function set<T>(input: T, v: any): T {
+        let f = DEFAULT_SETTER[input['type']];
+        if (f) {
+            f(input, v);
+        } else {
+            input['value'] = v == null ? '' : v;
+        }
+
+        return input;
+    }
+
+    export function serialize(form: ArrayLike<HTMLElement>)
+    export function serialize(form: HTMLFormElement)
+    export function serialize(form) {
 
         let {length} = form, v, vv,
             input, name, type,
@@ -63,9 +127,8 @@ export namespace FormValue {
 
             input = form[length];
 
-            if (!input.disabled) {
+            if (!input.disabled && (name = input.name)) {
 
-                name = input.name;
                 type = input.type;
 
                 if (v = (DEFAULT_GETTER[type] && DEFAULT_GETTER[type](input))) {

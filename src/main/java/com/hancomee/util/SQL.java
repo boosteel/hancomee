@@ -1,11 +1,13 @@
 package com.hancomee.util;
 
-import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SQL {
 
@@ -55,6 +57,11 @@ public class SQL {
 
     // ****************
 
+    public static final String selectPrefix(String str, String prefix) {
+        prefix = prefix + ".";
+        return prefix + str.replaceAll("\\s+", ", " + prefix);
+    }
+
 
     // 컬럼명 기재
     public static StringBuffer columns(Iterable<String> keys) {
@@ -101,25 +108,62 @@ public class SQL {
         return readAll(rs, SQL::convert);
     }
 
+    public static final List<Map<String, Object>> readAllJSON(ResultSet rs) throws Exception {
+        return readAll(rs, SQL::convertJSON);
+    }
+
     public static final List<Map<String, Object>> readAll(ResultSet rs, CONVERT_HANDLER handler) throws Exception {
         List<Map<String, Object>> result = new ArrayList<>();
-        Map<String, Object> map = null;
-        ResultSetMetaData meta = null;
-        int len = -1;
 
-        do {
-            result.add(map = new LinkedHashMap<>());
-            meta = rs.getMetaData();
-            len = meta.getColumnCount() + 1;
-            while (len-- > 1) {
-                map.put(meta.getColumnLabel(len),
-                        handler.convert(rs, meta.getColumnTypeName(len),
-                                len));
-            }
+        if(rs.next()) {
+            ResultSetMetaData meta = rs.getMetaData();
+            do {
+                result.add($read(rs, meta, handler));
+            } while (rs.next());
         }
-        while (rs.next());
-
         return result;
+    }
+
+    public static final Map<String, Object> readJSON(ResultSet rs) throws Exception {
+        return read(rs, SQL::convertJSON);
+    }
+
+    public static final Map<String, Object> read(ResultSet rs) throws Exception {
+        return read(rs, SQL::convert);
+    }
+
+    public static final Map<String, Object> read(ResultSet rs, CONVERT_HANDLER handler) throws Exception {
+        return rs.next() ? $read(rs, rs.getMetaData(), handler) : Collections.EMPTY_MAP;
+    }
+
+    private static final Map<String, Object> $read(ResultSet rs, ResultSetMetaData meta, CONVERT_HANDLER handler) throws Exception {
+        Map<String, Object> map = new HashMap<>(), target;
+        int len = meta.getColumnCount() + 1;
+        String label = null;
+        String[] labels;
+
+        while (len-- > 1) {
+
+            // .으로 이루어진 건 하위맵으로
+            target = map;
+            label = meta.getColumnLabel(len);
+            labels = label.split("\\.");
+
+            int i = 0, l = labels.length - 1;
+            for (; i < l; i++) {
+                if (target.get(labels[i]) == null)
+                    target.put(labels[i], new HashMap<>());
+                target = (Map<String, Object>) target.get(label = labels[i]);
+            }
+
+            label = labels[i];
+
+            target.put(
+                    label,
+                    handler.convert(rs, meta.getColumnTypeName(len), len)
+            );
+        }
+        return map;
     }
 
 
@@ -147,7 +191,8 @@ public class SQL {
             case "DATE":
             case "TIME":
             case "YEAR":
-                return rs.getTimestamp(index).getTime();
+                Timestamp stamp = rs.getTimestamp(index);
+                return stamp == null ? null : stamp.getTime();
             default:
                 return convert(rs, dataType, index);
         }
@@ -182,23 +227,55 @@ public class SQL {
             case "DATE":
             case "TIME":
             case "YEAR":
-                return new Date(rs.getTimestamp(index).getTime());
+                Timestamp stamp = rs.getTimestamp(index);
+                return stamp == null ? null : new Date(stamp.getTime());
             default:
                 return rs.getString(index);
         }
     }
 
 
-    public static final class ValueMap {
-        public Map<String, Object> map = new LinkedHashMap<>();
+    private static final Pattern p = Pattern.compile("\\{(.*?)\\}");
 
-        public ValueMap put(String key, Object value) {
-            map.put(key, value);
-            return this;
+    public static final  Function<Map<String, Object>, String> dynamicSQL(String sql) {
+        List<Function<Map<String, Object>, String>> list = new ArrayList<>();
+        Matcher m = p.matcher(sql);
+
+        int pos = 0, s;
+
+        while (m.find()) {
+            if ((s = m.start()) != pos) {
+                String r = sql.substring(pos, s);
+                list.add((a) -> r);
+            }
+
+            String k = m.group(1);
+            list.add((map) -> {
+                Object v = map.get(k);
+                if (v == null) throw new RuntimeException("{" + k + "} 값이 없습니다.");
+                return SQL.convert(v);
+            });
+
+            pos = m.end();
         }
+
+        if (pos < sql.length()) {
+            String r = sql.substring(pos);
+            list.add((map) -> r);
+        }
+
+        return (map) -> {
+            StringBuilder builder = new StringBuilder();
+            for (Function<Map<String, Object>, String> h : list)
+                builder.append(h.apply(map));
+            return builder.toString();
+        };
     }
+
 
     public interface CONVERT_HANDLER {
         Object convert(ResultSet rs, String dataType, int index) throws Exception;
     }
+
+
 }

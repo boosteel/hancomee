@@ -6341,6 +6341,36 @@ body > main > div.page-out {
     opacity: 0;
     transform: translate(150px, 0); } }
 
+/* nanum-gothic-regular - korean_latin */
+@font-face {
+  font-family: 'Nanum Gothic';
+  font-style: normal;
+  font-weight: 400;
+  src: url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-regular.eot");
+  /* IE9 Compat Modes */
+  src: local("NanumGothic"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-regular.eot?#iefix") format("embedded-opentype"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-regular.woff2") format("woff2"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-regular.woff") format("woff"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-regular.ttf") format("truetype"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-regular.svg#NanumGothic") format("svg");
+  /* Legacy iOS */ }
+
+/* nanum-gothic-700 - korean_latin */
+@font-face {
+  font-family: 'Nanum Gothic';
+  font-style: normal;
+  font-weight: 700;
+  src: url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-700.eot");
+  /* IE9 Compat Modes */
+  src: local("NanumGothic Bold"), local("NanumGothic-Bold"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-700.eot?#iefix") format("embedded-opentype"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-700.woff2") format("woff2"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-700.woff") format("woff"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-700.ttf") format("truetype"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-700.svg#NanumGothic") format("svg");
+  /* Legacy iOS */ }
+
+/* nanum-gothic-800 - korean_latin */
+@font-face {
+  font-family: 'Nanum Gothic';
+  font-style: normal;
+  font-weight: 800;
+  src: url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-800.eot");
+  /* IE9 Compat Modes */
+  src: local("NanumGothic ExtraBold"), local("NanumGothic-ExtraBold"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-800.eot?#iefix") format("embedded-opentype"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-800.woff2") format("woff2"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-800.woff") format("woff"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-800.ttf") format("truetype"), url("/lib/fonts/nanum-gothic/nanum-gothic-v11-korean_latin-800.svg#NanumGothic") format("svg");
+  /* Legacy iOS */ }
+
 a {
   color: inherit; }
   a:hover, a:visited, a:active {
@@ -6351,9 +6381,13 @@ html, html body, html body > main, html body > main > div {
 
 body {
   overflow-x: hidden;
+  overflow-y: scroll;
   padding-left: 80px;
-  font-family: 'Nanum Gothic';
-  letter-spacing: -.01em; }
+  letter-spacing: -.01em;
+  background-color: #f5f5f5; }
+  body, body pre, body textarea {
+    font-family: 'Roboto', 'Nanum Gothic';
+    margin: 0; }
 
 aside {
   position: fixed;
@@ -6361,36 +6395,48 @@ aside {
   left: 0;
   bottom: 0;
   width: 80px;
-  z-index: 1041;
+  z-index: 1048;
   background-color: #222; }
+
+body > nav, body nav {
+  position: fixed;
+  top: 0;
+  left: 80px;
+  right: 0;
+  z-index: 1041;
+  height: 50px;
+  background-color: #444;
+  border-bottom: 1px solid #222; }
+
+body > main nav {
+  display: flex;
+  align-items: center;
+  z-index: 1042;
+  padding: 0 1rem 0 15px;
+  height: 50px;
+  color: #bfbfbf; }
 
 body > main {
   position: relative; }
-  body > main.load {
-    opacity: .4; }
   body > main > div, body > main > nav {
     top: 0;
     right: 0;
     left: 0; }
   body > main > div {
     display: none;
-    position: absolute; }
+    position: absolute;
+    z-index: 1042; }
     body > main > div.page-in, body > main > div.page-out, body > main > div.on {
       display: block; }
     body > main > div.page-in nav {
       left: 0; }
     body > main > div > div {
       padding-top: 50px; }
-  body > main nav {
-    display: flex;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 80px;
-    right: 0;
-    padding: 0 1rem 0 80px;
-    height: 50px;
-    background-color: #f1f1f1;
-    border-bottom: 1px solid gainsboro;
-    color: #555;
-    text-shadow: 0px 1px 0px white; }
+
+.d-form + * {
+  display: none; }
+
+.hide-input {
+  display: none; }
+  .form .hide-input {
+    display: block; }

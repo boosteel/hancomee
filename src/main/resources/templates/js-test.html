@@ -8,14 +8,120 @@
     <link rel="stylesheet" href="../static/dist/js-test.css">
     <link rel="stylesheet" href="../static/lib/style/bootstrap-submenu.min.css">
 
+    <script id="table" type="text/html">
+        <div class="box">
+            <button data-event="save">저장</button>
+            <button data-event="modify">수정</button>
+            <button data-event="cancel">취소</button>
+            <table>
+                <tbody>
+                <tr>
+                    <td>상호</td>
+                    <td colspan="3">
+                        <span data-name="name"></span>
+                        <input name="name">
+                    </td>
+                </tr>
+                <tr>
+                    <td>사업자번호</td>
+                    <td>
+                        <span data-name="biz_num"></span>
+                        <input name="biz_num">
+                    </td>
+                    <td>대표자</td>
+                    <td>
+                        <span data-name="ceo"></span>
+                        <input name="ceo">
+                    </td>
+                </tr>
+                <tr>
+                    <td>업태</td>
+                    <td>
+                        <span data-name="biz_con"></span>
+                        <input name="biz_con">
+                    </td>
+                    <td>종목</td>
+                    <td>
+                        <span data-name="biz_type"></span>
+                        <input name="biz_type">
+                    </td>
+                </tr>
+                <tr>
+                    <td>휴대전화</td>
+                    <td>
+                        <span data-name="mobile"></span>
+                        <input name="mobile">
+                    </td>
+                    <td>이메일</td>
+                    <td>
+                        <span data-name="email"></span>
+                        <input name="email">
+                    </td>
+                </tr>
+                <tr>
+                    <td>유선전화</td>
+                    <td>
+                        <span data-name="tel"></span>
+                        <input name="tel">
+                    </td>
+                    <td>팩스</td>
+                    <td>
+                        <span data-name="fax"></span>
+                        <input name="fax">
+                    </td>
+                </tr>
+                <tr>
+                    <td>주소</td>
+                    <td colspan="3">
+                        <span data-name="address"></span>
+                        <input name="address">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </script>
+
+
+    <script id="item-table" type="text/html">
+        <table>
+            <thead>
+            <tr>
+                <th>품목</th>
+                <th>규격</th>
+                <th>수량</th>
+                <th>단가</th>
+                <th>금액</th>
+                <th>부가세</th>
+                <th>비고</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="work-item">
+                <td data-name="title"></td>
+                <td data-name="detail"></td>
+                <td data-name="count"></td>
+                <td data-name="price"></td>
+                <td data-name="vat"></td>
+                <td data-name="total"></td>
+                <td data-name="memo"></td>
+            </tr>
+            </tbody>
+        </table>
+    </script>
+
 </head>
 <body>
-
 <nav>
 
 </nav>
 
-<main></main>
+<main>
+
+</main>
+
+<div id="list">
+</div>
 
 </body>
 </html>
