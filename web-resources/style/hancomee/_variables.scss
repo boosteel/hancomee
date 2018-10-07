@@ -1,5 +1,9 @@
 
 
+// variables는 functions를 이용하므로 반드시 앞에 붙어있어야 한다.
+@import "../../../node_modules/bootstrap/scss/functions";
+@import "../../../node_modules/bootstrap/scss/variables";
+
 $aside-width-thumb: 80px;
 $aside-width: 250px;
 

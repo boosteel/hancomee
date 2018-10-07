@@ -1,10 +1,13 @@
 @import "../variables";
+@import "../../mixins";
 @import "../../flex";
 @import "./_common/work-state";
 
 $color: #777;
 $border-color: #e8e8e8;
+$border-color-light: #eaeaea;
 
+// 버튼 양식
 .v-btn {
   display: inline-block;
   padding: 1px 5px;
@@ -25,8 +28,29 @@ $border-color: #e8e8e8;
 
 #view {
 
+  $textarea-color: #f1f1f1;
 
-  table {
+  textarea, input {
+    width: 100%;
+    color: $color;
+    background-color: #f3f3f3;
+    border: {
+      radius: 3px;
+    }
+
+    &[disabled] {
+      background-color: $textarea-color;
+    }
+  }
+
+  textarea {
+    padding: 15px;
+    &[disabled] {
+      border-color: $textarea-color;
+    }
+  }
+
+  table.table {
     border-collapse: collapse;
     > tbody, > thead {
       > tr {
@@ -34,8 +58,8 @@ $border-color: #e8e8e8;
           padding: 5px 10px;
           font-size: 16px;
           border: {
-            top: 1px solid $border-color;
-            bottom: 1px solid $border-color;
+            top: 1px solid $border-color-light;
+            bottom: 1px solid $border-color-light;
           }
         }
       }
@@ -52,7 +76,7 @@ $border-color: #e8e8e8;
     }
 
     // ********************* table 공통 설정 ********************* //
-    table {
+    table.table {
 
       width: 100%;
 
@@ -61,7 +85,7 @@ $border-color: #e8e8e8;
           > td {
             > input {
               padding: 0 10px;
-              border: 1px solid #efefef;
+              border: 1px solid $border-color-light;
               background-color: #fbfbfb;
               border-radius: 3px;
             }
@@ -93,7 +117,7 @@ $border-color: #e8e8e8;
           }
           &:last-child {
             > th, > td {
-              border-bottom: 0;
+              //border-bottom: 0;
             }
           }
         }
@@ -126,12 +150,22 @@ $border-color: #e8e8e8;
     $border-color: #cecece;
     background-color: white;
 
+    > .header, > .body, > .footer {
+      border: {
+        left: 1px solid $border-color;
+        right: 1px solid $border-color;
+        top: 1px solid $border-color-light;
+      }
+      &:first-child {
+        border-top: 2px solid $border-color;
+      }
+      &:last-child {
+        border-bottom: 1px solid $border-color;
+      }
+    }
+
     > .header {
       padding: 10px 25px;
-      border: 1px solid $border-color;
-      border-bottom: 1px solid #eaeaea;
-      border-top-width: 2px;
-
       .ctrl {
         float: right;
       }
@@ -146,28 +180,18 @@ $border-color: #e8e8e8;
 
     > .body {
       padding: 25px;
-      border: {
-        left: 1px solid $border-color;
-        right: 1px solid $border-color;
-        bottom: 1px solid $border-color;
-      }
     }
 
     > .footer {
       padding: 25px;
-      border: 1px solid $border-color;
-    }
-
-    > .body {
-      & + .footer {
-        border: {
-          top: 0;
-        }
-      }
     }
 
     // ******************** 제목 설정 ******************** //
     #title {
+
+      padding: {
+        bottom: 25px;
+      }
 
       // 고유번호와 날짜
       .info {
@@ -207,7 +231,10 @@ $border-color: #e8e8e8;
 
       .title {
 
-        margin-top: 28px;
+        margin-top: 20px;
+        padding: {
+          left: 15px;
+        }
 
         > .value, input {
           height: 46px;
@@ -217,36 +244,24 @@ $border-color: #e8e8e8;
           font-size: 16px;
         }
 
-        .value, .hide-input {
-          margin-top: 5px;
-        }
-
         .value {
           overflow: hidden;
           display: block;
-
+          letter-spacing: -2px;
           text-overflow: ellipsis;
           white-space: nowrap;
 
           > [data-name] {
-            font-size: 22px;
-            font-weight: 900;
+            font-size: 30px;
           }
           > * {
             vertical-align: middle;
           }
         }
 
-        .hide-input {
+        .h-block {
           > input {
             width: 80%;
-          }
-        }
-
-        // 수정시
-        &.form {
-          > .value {
-            display: none;
           }
         }
 
@@ -265,38 +280,70 @@ $border-color: #e8e8e8;
     // ******************** 합계금액 설정 ******************** //
     #sum {
 
-      border-top: 0;
       text-align: right;
 
       > table {
         > tbody {
           > tr {
             > th, > td {
+              width: 1%;
               padding: {
                 top: 0;
                 bottom: 0;
               }
+              border: 0;
+
+              &.total, &.price, &.vat {
+                white-space: nowrap;
+              }
+
             }
             > th {
               padding-right: 15px;
               background-color: transparent;
               text-align: right;
-              border: 0;
+              white-space: nowrap;
             }
 
             > td {
-              width: 1%;
-              white-space: nowrap;
-              font-size: 30px;
+
               > span {
                 vertical-align: middle;
               }
+
+              &.price, &.vat {
+                font-size: 30px;
+              }
+
+              &.work-text {
+                width: 100%;
+                text-align: left;
+
+                > div {
+                  .ctrl {
+                    float: right;
+                  }
+                }
+
+                > textarea {
+                  padding: 0;
+                  height: 130px;
+                  border-radius: 5px;
+                  border: 7px solid #f3f3f3;
+                }
+              }
+            }
+
+            textarea {
+              margin-top: 10px;
+              height: 150px;
             }
           }
         }
 
         .count {
           display: inline-block;
+          margin-right: 10px;
           width: 46px;
           height: 46px;
           font-size: 24px;
@@ -320,8 +367,11 @@ $border-color: #e8e8e8;
           > th {
             width: 120px;
           }
-          > th, > td {
-            height: 46px;
+          > td {
+            height: 54px;
+            input {
+              height: 36px;
+            }
           }
         }
       }
@@ -335,7 +385,24 @@ $border-color: #e8e8e8;
       > thead {
         > tr {
           > th {
+
+            height: 36px;
             border-bottom: 1px solid $border-color;
+
+            // 아이템 테이블 열 사이즈
+
+            $size: 20 20 5 10 10 10 20;
+
+            @for $i from 1 through length($size) {
+              &:nth-child(#{$i}) {
+                width: nth($size, $i) * 1%;
+              }
+            }
+          }
+        }
+        &:nth-child(2n+0) {
+          > td {
+            background-color: #f8f8f8
           }
         }
       }
@@ -343,7 +410,6 @@ $border-color: #e8e8e8;
       > tbody, > thead {
         > tr {
           > td, > th {
-            height: 46px;
           }
         }
       }
@@ -351,8 +417,37 @@ $border-color: #e8e8e8;
       > tbody {
         > tr {
           > td {
+
+            height: 54px;
+
+            border-right: 1px solid #f3f3f3;
+
+            &:last-child {
+              border-right: 0;
+            }
+
             &[data-type="number"] {
               text-align: right;
+            }
+
+            &.ctrl {
+              white-space: nowrap;
+            }
+
+            input {
+              height: 36px;
+            }
+          }
+
+          // 수정용 행
+          &.work-item-form {
+            [data-event="$confirm"] {
+              display: none;
+            }
+            &.change {
+              [data-event="$confirm"] {
+                display: inline-block;
+              }
             }
           }
         }
@@ -361,6 +456,16 @@ $border-color: #e8e8e8;
   }
 
   #work-memo {
+
+    $textarea-border-color: #e6e6e6;
+
+    textarea {
+      background-color: #f7f7f7;
+    }
+
+    textarea, .confirm {
+      border: 1px solid $textarea-border-color;
+    }
 
     .list {
       > div {
@@ -378,8 +483,9 @@ $border-color: #e8e8e8;
           padding-bottom: 0;
         }
 
-        .ctrl {
-          margin-top: 15px;
+        .datetime {
+          margin-top: 10px;
+          display: inline-block;
         }
 
         pre {
@@ -388,28 +494,22 @@ $border-color: #e8e8e8;
       }
     }
 
-    // 등록 창
+    // 신규등록 창
     .form {
       display: table;
       width: 100%;
 
       .textarea, .confirm {
         display: table-cell;
-        border: 1px solid #ddd;
       }
 
+
       .textarea {
-        width: 100%;
-        background-color: #fbfbfb;
         height: 131px;
-        color: #6d6d6d;
 
         > textarea {
-          padding: 15px;
-          width: 100%;
           height: 100%;
-          border: 0;
-          background-color: #fbfbfb;
+          border-radius: 0;
           &:focus {
             outline: 0;
           }
@@ -426,5 +526,118 @@ $border-color: #e8e8e8;
         cursor: pointer;
       }
     }
+  }
+
+  #work-ref {
+
+    .body {
+
+      > div {
+
+        @include clearfix();
+
+        ul {
+          float: left;
+          margin: 0;
+          padding: 0 15px;
+          list-style: none;
+          width: 25%;   // cols 4
+
+          li, a {
+            display: block;
+            word-break: break-word;   // 영문도 줄바꿈 되도록
+            text-align: center;
+          }
+
+          [data-name="size"] {
+            color: #5685ce;
+          }
+
+          // 썸네일
+          a {
+            width: 80%;
+            margin: 0 auto 15px;
+            height: 100px;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+// 이미지 창
+.img-screen {
+
+  $header-height: 60px;
+  $thumb-width: 250px;
+
+  .header, .screen {
+    position: fixed;
+    left: 0;
+    right: 0;
+  }
+  .header {
+    top: 0;
+    padding: 0 30px;
+    height: $header-height;
+    background-color: #111;
+    border-bottom: #141414;
+    line-height: $header-height;
+    text-align: center;
+    color: #ddd;
+
+    .title {
+      font-size: 20px;
+    }
+
+    .count {
+      font-size: 22px;
+      color: #ffd120;
+      font-weight: bold;
+      margin-left: 15px;
+    }
+
+    .close {
+      float: right;
+    }
+  }
+
+  .screen {
+    top: $header-height + 20;
+    bottom: 20px;
+    left: 100px;
+    right: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    > img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+
+  .before, .after {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    margin-top: -50px;
+    height: 100px;
+
+    color: white;
+    font-size: 100px;
+    line-height: 100px;
+    cursor: pointer;
+
+    &.disabled {
+      cursor: default;
+      color: #2f2f2f !important;
+    }
+  }
+  .before {
+    left: 30px;
+  }
+  .after {
+    right: 30px;
   }
 }

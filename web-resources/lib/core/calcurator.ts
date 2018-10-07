@@ -1,6 +1,5 @@
 export namespace Calcurator {
 
-
     // num1이 num1c로 변할때 num2의 값
     export function ratio(num1: number, num1c: number, num2: number) {
         return num2 + (num2 * ((num1c - num1) / num1))

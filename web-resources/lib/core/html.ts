@@ -3,11 +3,44 @@ import "../../lib/core/component/toggle";
 import {Formats} from "./format";
 import {_date, _dateFormat, _datetime} from "./_func/datetime";
 import {Access} from "./access";
+import read = Access.read;
+import {_forEach} from "./_func/array";
+import {_newApply} from "./_func/newApply";
+import number = Formats.number;
+import fileSize = Formats.fileSize;
+import primitive = Access.primitive;
+import {r_number} from "./_regexp/number";
 
-let
-    {forEach, reduce, map} = Array.prototype,
-    dummy = {};
+let dummy = {},
+    r = /{{(.*?)}}/g,
+    r_compile_var = /{{[^{}]+}}/,
+    r_filter_split = / \| | : /,
+    r_script = /script/i,
+    r_template = /template/i,
+    defaultFilter = {
+        number: number,
+        date: _dateFormat,
+        filesize: fileSize
+    };
 
+function $setText(ele: HTMLElement, val) {
+    let c = ele.getAttribute('data-type'),
+        i, fn, p = c, arg;
+
+    if (c) {
+        if ((i = c.indexOf(':')) !== -1) {
+            p = c.substring(0, i);
+            arg = primitive(c.substring(i + 1, c.length));
+        }
+        if (fn = defaultFilter[p]) {
+            ele.textContent = fn(val, arg);
+            return ele;
+        }
+    }
+
+    ele.textContent = val || '';
+    return ele;
+}
 
 export class EleMap {
 
@@ -19,17 +52,20 @@ export class EleMap {
             els = context.querySelectorAll('[' + attrName + ']'),
             keys = this.keys = [];
 
-        forEach.call(els, (e, i) => {
+        _forEach(els, (e, i) => {
             keys[i] = e.getAttribute(attrName);
             this[i] = e;
         });
         this.length = keys.length;
     }
 
-    setText(obj = dummy) {
-        let {length: l, keys} = this, {setText} = HTML, i = 0;
-        for (; i < l; i++)
-            setText(this[i], obj[keys[i]]);
+    setText(obj = dummy, directive = dummy) {
+        let {length: l, keys} = this, i = 0, key;
+        for (; i < l; i++) {
+            if (directive[key = keys[i]]) directive[key](this[i], obj);
+            else $setText(this[i], read(key, obj));
+        }
+
         return this;
     }
 
@@ -46,76 +82,136 @@ export class EleMap {
 
         return this;
     }
+}
 
+export namespace EleMap {
+    export function textHandler(e: HTMLElement, name: string, obj) {
+        HTML.setText(e, read(name, obj));
+    }
 }
 
 export namespace HTML {
-    import number = Formats.number;
-    import fileSize = Formats.fileSize;
-    import primitive = Access.primitive;
+
     export let unCamelCase = (function (r_data, r_up, fn) {
         return (s: string) => s.replace(r_data, '').replace(r_up, fn);
     })(/^data-/, /-([^-])/g, (_, i) => i.toUpperCase());
 
 
-    let
-        r = /{{(.*?)}}/g,
-        r_compile_test = /{{[^{}]+}}/,
-        r_filter_split = / \| | : /;
-
+    /*
+     *  =로 시작하는 문자열의 경우 특정 엘리먼트의 innerHTML 문자열로 치환된다.
+     */
     function pipe(str: string) {
         if (str[0] === '=') {
-            if (str[1] === '#') str = document.getElementById(str.substring(2)).innerHTML
-            else str = document.querySelector(str.substring(1)).innerHTML
+            if (str[1] === '#') str = document.getElementById(str.substring(2)).innerText
+            else str = document.querySelector(str.substring(1))['innerText']
         }
         return str;
     }
 
+    // 정방향
+    function cEach(children: ArrayLike<Node>, n: number) {
+        let l = children.length, i= 0, pos = 1;
+        for(;i<l;i++) {
+            if(children[i].nodeType === 1) {
+                if(pos++ === n) return children[i];
+            }
+        }
+        return null;
+    }
+    // 역방향
+    function cEachReverse(children: ArrayLike<Node>, n: number) {
+        let l = children.length, pos = 1;
+        while(l-- > 0) {
+            if(children[l].nodeType === 1) {
+                if(pos++ === n) return children[l];
+            }
+        }
+        return null;
+    }
+    // nth-child(?) 찾기
+    /*
+     *  젓같은 ie에서는 fragment에 children이 없다. 따라서 childNodes로 한다..
+     */
+    export function nthChildren(context: Element, nth: number) {
+        if(nth < 0) return cEachReverse(context.childNodes, nth * -1);
+        else return cEach(context.childNodes, nth === 0 ? 1 : nth);
+    }
 
-    export function select<T>(ele: DocumentFragment, handler: (this: DocumentFragment, ...arg: any[]) => T, ...arg: (string | Element)[]): T
-    export function select<T, P extends HTMLElement>(ele: HTMLElement, handler: (this: P, ...arg: any[]) => T, ...arg: (string | Element)[]): T
-    export function select<T>(ele: string, handler: (this: HTMLElement, ...arg: any[]) => T, ...arg: (string | Element)[]): T
-    export function select<T>(ele, handler, ...arg: string[]): T {
+    export function select(context, selector: string) {
+        let sChar = selector[0],
+            l = selector.length - 1;
+
+        if (sChar === '=') {
+            return createFragment(selector.substring(1));
+        }
+        // ① 'select[]'  ==> querySelectorAll()
+        else if (selector[l] === ']' && selector[l - 1] === '[') {
+            return context.querySelectorAll(selector.substring(0, l - 1))
+        }
+        // 특수문자
+        else if (sChar === ':') {
+            /*
+             *  퍽킹 ie에서는 fragment에서 firsElementChild를 지원하지 않는다.
+             */
+            let s = selector.slice(1);
+
+            if(r_number.test(s))
+                return nthChildren(context, parseInt(s));
+
+            switch (s) {
+                case 'first-child':
+                    return nthChildren(context, 1);
+                case 'last-child':
+                    return nthChildren(context, -1);
+                case 'childs':
+                    return context.children;
+                case 'self':
+                    return context;
+            }
+        }
+        // ② 'select{attrName}' ==>  {attrName: ele, attrName: ele}
+        else if (sChar === '{' && selector[l] === '}') {
+            return new EleMap(context, selector.substring(1, l));
+        }
+        // ③ querySelector()
+        else {
+            if (sChar === '#' && selector.indexOf(' ') === -1)
+                return document.getElementById(selector.slice(1));
+            else
+                return context.querySelector(selector);
+        }
+    }
+    
+    export function _Q(ele, selector: string) {
+        return ele.querySelector(selector);
+    }
+
+    export function selectAll<T>(ele, arg: any[]): T
+    export function selectAll(ele, arg: any[]): any[]
+    export function selectAll<T>(ele, arg: any[], handler: (...args: any[]) => T): T
+    export function selectAll(ele, arg, handler?) {
         let
             element = typeof ele === 'string' ?
                 (ele.indexOf('<') === -1 ? document.querySelector(ele) : createFragment(ele)) :
                 ele,
-            args = [element], index = 1, i = 0, l = arg.length,
-            str;
+            args = [element], index = 1, i = 0, l = arg.length, str;
 
         for (; i < l; i++) {
-
             str = arg[i];
 
             // (1) 문자열일 경우
             if (typeof str === 'string') {
-
-                let l = str.length - 1;
-
-                if (str[0] === ':') {
-                    args[index++] = createFragment(str.substring(1));
-                }
-                // ① 'select[]'  ==> querySelectorAll()
-                else if (str[l] === ']' && str[l - 1] === '[') {
-                    args[index++] = element.querySelectorAll(str.substring(0, l - 1))
-                }
-
-                // ② 'select{attrName}' ==>  {attrName: ele, attrName: ele}
-                else if (str[0] === '{' && str[l] === '}') {
-                    args[index++] = new EleMap(ele, str.substring(1, l));
-                }
-                // ③ querySelector()
-                else {
-                    args[index++] = element.querySelector(str);
-                }
+                args[index++] = select(element, str);
             }
-
+            // (2) 함수일 경우, ele와 바로 앞의 arg를 넣어준다.
+            else if(typeof str === 'function')
+                args[index++] = str(ele, args[index]);
             // (2) 문자열이 아닐 경우 그대로 결과값
             else {
                 args[index++] = str;
             }
         }
-        return handler.apply(element, args);
+        return handler ? handler.apply(element, args) : args;
     };
 
 
@@ -129,17 +225,11 @@ export namespace HTML {
         })
     }
 
-    export let defaultFilter = {
-        number: number,
-        date: _dateFormat,
-        filesize: fileSize
-    };
-
     export function compile(str: string, filter = defaultFilter) {
 
         str = pipe(str);
 
-        if (!r_compile_test.test(str)) return () => str;
+        if (!r_compile_var.test(str)) return () => str;
 
         let i = 0, l = str.length,
             s = 0, e = 0,
@@ -220,6 +310,7 @@ export namespace HTML {
         }
     }
 
+    export function createFragment(ele: Element): DocumentFragment
     export function createFragment(children: HTMLCollection): DocumentFragment
     export function createFragment(html: string): DocumentFragment
     export function createFragment(html): DocumentFragment {
@@ -228,6 +319,9 @@ export namespace HTML {
         if (typeof html === 'string') {
             html = pipe(html);
             create(html, (v) => frag.appendChild(v));
+        }
+        else if (typeof html.nodeType === 'number') {
+            frag.appendChild(html);
         }
         else {
             let l = html.length;
@@ -241,8 +335,6 @@ export namespace HTML {
         doc: { [index: string]: DocumentFragment }
     }
 
-    let r_script = /script/i,
-        r_template = /template/i;
 
     export function templateMap(html: string): TemplateMap {
         let result: TemplateMap = {doc: {}, com: {}},
@@ -434,12 +526,46 @@ export namespace HTML {
 
         // 변수 표현식에서 쉽게 표기하기 위해 배열로 내보낸다.
         /*
-         *  let [create, {val1, val2}] = htmlParse()
+         *  let [newInstance, {val1, val2}] = htmlParse()
          */
         let [$c, result] = parseIndex.getResult();
         parseIndex = null;
         return typeof handler === 'function' ? handler($c, result) : [$c, result];
     }
+
+
+    /*
+     *  복제 생산해야 하는 템플릿을 편리하게 이용하게 해주는 로직
+     *  select() 함수의 context만 미리 만들어둔다고 생각하면 된다.
+     */
+    interface Factory<T> {
+        $select: string[]
+
+        new(...args: any[]): T
+    }
+
+    type SD = string | DocumentFragment
+
+    // 팩토리 함수에서 생성자 arguments를 미리 정의할 수 있도록
+    export function createTemplate<T, A, B, C, D, E>(html: SD, clazz: Factory<T>): (a: A, b: B, c: C, d: D, e: E) => T
+    export function createTemplate<T, A, B, C, D>(html: SD, clazz: Factory<T>): (a: A, b: B, c: C, d: D) => T
+    export function createTemplate<T, A, B, C>(html: SD, clazz: Factory<T>): (a: A, b: B, c: C) => T
+    export function createTemplate<T, A, B>(html: SD, clazz: Factory<T>): (a: A, b: B) => T
+    export function createTemplate<T, A>(html: SD, clazz: Factory<T>): (a: A) => T
+    export function createTemplate<T>(html: SD, clazz: Factory<T>): () => T
+    export function createTemplate(html, clazz) {
+        let frag = typeof html === 'string' ? createFragment(html) : html;
+        return function (...args: any[]) {
+            let {$select} = clazz, l = $select.length, i = 0,
+                clone = frag.cloneNode(true), pos = args.length;
+
+            for (; i < l; i++) {
+                args[pos++] = select(clone, $select[i]);
+            }
+            return _newApply(clazz, args);
+        }
+    }
+
 
     export function createElement(str: string): HTMLElement {
         let div = document.createElement('div'),
@@ -456,6 +582,19 @@ export namespace HTML {
         return <any>e;
     }
 
+
+    export function reduceFragment<T>(values: ArrayLike<T>, handler: (t: T, index: number) => Element): DocumentFragment {
+        let frag = document.createDocumentFragment(),
+            i = 0, l = values.length, v;
+
+        while (i < l) {
+            if (v = handler(values[i], i++))
+                frag.appendChild(v);
+        }
+
+        return frag;
+    }
+
     export function innerHTML(ele: HTMLElement, html: string) {
         let clone = <HTMLElement>ele.cloneNode(false);
         clone.innerHTML = html;
@@ -463,32 +602,6 @@ export namespace HTML {
         return clone;
     }
 
-    let
-        converters = {
-            number: number,
-            date(val, regex = 'yyyy-MM-dd HH:mm:ss') {
-                if (val instanceof Date) return _dateFormat(val, regex);
-                return '';
-            },
-        };
-
-    export function setText(ele: HTMLElement, val) {
-        let c = ele.getAttribute('data-type'),
-            i, fn, p = c, arg;
-
-        if(c) {
-            if((i = c.indexOf(':')) !== -1) {
-                p = c.substring(0, i);
-                arg = primitive(c.substring(i+1, c.length));
-            }
-            if(fn = converters[p]) {
-                ele.textContent = fn(val, arg);
-                return ele;
-            }
-        }
-
-        ele.textContent = val || '';
-        return ele;
-    }
+    export let setText = $setText;
 
 }

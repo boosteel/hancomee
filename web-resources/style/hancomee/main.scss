@@ -1,10 +1,14 @@
-@import "../../../node_modules/bootstrap/scss/bootstrap";
+@import "../mixins";
 @import "variables";
+// bootstrap@4.1.1 - scss
+@import "../bagic-bootstrap";
 @import "main/aside";
 @import "main/nav";
+@import "main/file-icon";
+@import "../utilities";
+@import "./_component/file-upload";
 @import "../lib/animation/fade-page";
 @import "fonts";
-
 
 a {
   color: inherit;
@@ -18,7 +22,6 @@ html {
     height: 100%;
   }
 }
-
 
 body {
 
@@ -37,7 +40,6 @@ body {
   }
 }
 
-
 aside {
   position: fixed;
   top: 0;
@@ -49,6 +51,11 @@ aside {
   background: {
     color: #222;
   }
+
+  .screen & {
+    z-index: 1;
+  }
+
 }
 
 body {
@@ -67,6 +74,9 @@ body {
   }
 
   > main {
+
+    position: relative;
+
     nav {
       display: flex;
       align-items: center;
@@ -76,16 +86,6 @@ body {
       height: $nav-height;
 
       color: #bfbfbf;
-    }
-  }
-
-
-  > main {
-
-    position: relative;
-
-    &.load {
-      //opacity: .4;
     }
 
     > div, > nav {
@@ -107,7 +107,7 @@ body {
       &.page-in {
         @extend %page-in;
         nav {
-          left: 0;  // fade 애니메이션시 위치 보정
+          left: 0; // fade 애니메이션시 위치 보정
         }
       }
 
@@ -125,16 +125,44 @@ body {
   }
 }
 
-// 수정폼 엘리먼트.
-.d-form {
-  & + * {
-    display: none;
-  }
-}
+/*
 
-.hide-input {
-  display: none;
-  .form & {
-    display: block;
+ 모든 모듈은 ① .loading  ② .popup 엘리먼트를 가진다.
+ ① .loading : 서버 통신시 사용
+ ② .popup : 특정한 작업 사용
+
+ */
+
+main {
+
+  .loading, .popup {
+
+    display: none;
+    z-index: 1043;
+    padding: {
+      left: $aside-width-thumb;
+    }
+
+    align-items: center;
+    justify-content: center;
+
+    &, &:before {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+
+    &:before {
+      z-index: -1;
+      opacity: .85;
+      content: '';
+      background-color: black;
+    }
+
+    &.on {
+      display: flex;
+    }
   }
 }

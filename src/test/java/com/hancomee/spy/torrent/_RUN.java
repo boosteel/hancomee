@@ -11,7 +11,7 @@ public class _RUN {
             for(Path p : stream) {
                 String type = Files.probeContentType(p);
                 if(type != null && type.contains("video"))
-                    out(VideoInfo.create(p));
+                    out(VideoInfo.newInstance(p));
             }
         }*/
         //out(FFMPEG.stringToInt("02:29:41"));

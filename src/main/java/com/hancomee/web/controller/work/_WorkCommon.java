@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component()
 public class _WorkCommon {
 
-    public DB db = new DB("jdbc:mariadb://115.23.187.44:3306/hellofunc", "root", "ko9984");
+    public DB db = new DB("jdbc:mariadb://115.23.187.44:3306/hancomee", "root", "ko9984");
 
     public TableInfo customer = TableInfo.create("hancomee_customer", db),
             work = TableInfo.create("hancomee_work", db),

@@ -8,7 +8,7 @@ import format = Calendar.format;
 import {Formats} from "../../../lib/core/format";
 import number = Formats.number;
 import {Events} from "../../../lib/core/events";
-import select = HTML.select;
+import selectAll = HTML.selectAll;
 
 
 let
@@ -51,12 +51,15 @@ export class List extends GenericModule<Q> {
 
     $init(container, frag, templates) {
 
+
         let {view, view: {length: l}} = this;
 
         // 현황판 만들기
         view[l++] = htmlParser(templates.state, (c, {li}) => {
 
-            return select(frag, (frag, workState) => {
+            return selectAll(frag,
+                ['.work-state', '.navi'],
+                (frag, workState) => {
 
                 Events.propertyMap(workState, 'click', {
                     move: (v: { state: number }) => {
@@ -79,13 +82,14 @@ export class List extends GenericModule<Q> {
                         }).join('')
                     })
                 }
-            }, '.work-state', '.navi')
+            })
 
 
         }, expFilter);
 
         // 네비 만들기
         view[l++] = htmlParser(templates.navi, (c, {}) => {
+
             let navi = frag.querySelector('.navi');
 
             Events.propertyMap(navi, 'click', {
@@ -106,9 +110,12 @@ export class List extends GenericModule<Q> {
             }
         }, expFilter);
 
+
         // 리스트 만들기
         view[l++] = htmlParser(templates.work, (c, {li}) => {
-            let list = frag.getElementById('list');
+
+            let list = frag.querySelector('#list');
+
             return (a: ServerData<Work>) => {
                 let {values} = a;
                 list.innerHTML = values.map(a => c({

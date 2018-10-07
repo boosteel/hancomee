@@ -131,6 +131,10 @@ public class VvideoController {
             this.pick = pick;
         }
 
+        public void setShot(int shot) {
+            this.shot = shot;
+        }
+
         public String[] SQL() {
 
             String from = "FROM vvideo WHERE blind = " + blind + " AND favorite >= " + favorite;

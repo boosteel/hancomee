@@ -31,9 +31,10 @@ export namespace FormValue {
 
             },
             date(date: HTMLInputElement) {
-                let {value} = date;
+                let value = date.value;
                 if (value && r_date.test(value))
                     return new Date(value);
+                return null;
             },
             select(select: HTMLSelectElement) {
                 let {selectedIndex} = select;
@@ -57,8 +58,11 @@ export namespace FormValue {
                 return null;
             },
             number(input: HTMLInputElement) {
-                if (r_number.test(input.value))
-                    return parseInt(input.value);
+
+                let value = input.value;
+
+                if (r_number.test(value))
+                    return parseInt(value);
                 return 0;
             },
             text(input: HTMLInputElement) {
@@ -99,8 +103,7 @@ export namespace FormValue {
         });
 
 
-    export function reset(inputs: iEleArray, obj) {
-        if (obj == null) obj = dummy;
+    export function reset(inputs: iEleArray, obj = dummy) {
         forEach.call(inputs, (v) => set(v, obj[v.name]))
     }
 
@@ -131,7 +134,8 @@ export namespace FormValue {
 
                 type = input.type;
 
-                if (v = (DEFAULT_GETTER[type] && DEFAULT_GETTER[type](input))) {
+                if (DEFAULT_GETTER[type]) {
+                    v = DEFAULT_GETTER[type](input)
                     if (vv = obj[name]) {
                         if (!Array.isArray(vv)) obj[name] = vv = [vv];
                         vv.push(v);

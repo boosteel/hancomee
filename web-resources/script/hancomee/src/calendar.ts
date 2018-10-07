@@ -5,7 +5,7 @@ import {$extend} from "../../../lib/core/core";
 import {StringBuffer} from "../../../lib/core/support/StringBuffer";
 import {Events} from "../../../lib/core/events";
 import htmlParser = HTML.htmlParser;
-import select = HTML.select;
+import selectAll = HTML.selectAll;
 
 type NormalizeValues = { [index: string]: DATA[] }
 
@@ -260,7 +260,9 @@ export class CModule extends GenericModule<CalSearch> {
         let {handlers} = this, l = handlers.length;
 
         // 표그리기
-        handlers[l++] = select(frag, (frag, main, screen) => {
+        handlers[l++] = selectAll(frag,
+            ['main', frag.getElementById('screen')],
+            (frag, main, screen) => {
 
 
             // main 엘리먼트 이벤트
@@ -300,10 +302,12 @@ export class CModule extends GenericModule<CalSearch> {
                     xhr.send(null);
                 });
             };
-        }, 'main', frag.getElementById('screen'));
+        });
 
         // nav 업데이트
-        handlers[l++] = select(frag.querySelector('nav'), function (nav, r, c) {
+        handlers[l++] = selectAll(frag.querySelector('nav'),
+            ['#refresh-btn', '#date-current'],
+            function (nav, r, c) {
             let temp: Month;
 
             this.addEventListener('click', (e) => {
@@ -321,7 +325,7 @@ export class CModule extends GenericModule<CalSearch> {
                 c.textContent = temp.toString();
 
             };
-        }, '#refresh-btn', '#date-current');
+        });
 
     }
 

@@ -10,6 +10,7 @@ import "../../lib/core/component/toggle";
 import {Branch} from "../../lib/core/component/Branch";
 import createTree = Branch.createTree;
 import select = HTML.select;
+import selectAll = HTML.selectAll;
 
 
 let xhr = {
@@ -161,7 +162,9 @@ $ready(() => {
 
         // *************************  <nav>  ************************* //
         nav =
-            select('nav', function(nav, count, current, pager, fav, pick, pickOut, list) {
+            selectAll('nav',
+                ['.count', '.current', '.pager', '.favorite', '.pick', '.pick-out', '.list'],
+                function(nav, count, current, pager, fav, pick, pickOut, list) {
 
                 let
                     pickNum,
@@ -215,7 +218,7 @@ $ready(() => {
                 });
 
                 return ctrl;
-            }, '.count', '.current', '.pager', '.favorite', '.pick', '.pick-out', '.list'),
+            }),
 
 
         // *************************  리스트 넘김 이벤트  ************************* //

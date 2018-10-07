@@ -40,7 +40,7 @@ public class ListController {
     @RequestMapping()
     @ResponseBody
     public Object values(Query query) throws Exception {
-        return workDB.doWork((con) -> {
+        return workDB.doWorkR((con) -> {
             return new ListResult(query.page, query.size, query.state)
                     .setArray(workDB.execute(con, query.StateSQL(), this::parseState))
                     .setValues(workDB.execute(con, query.SQL(listSelect), SQL::readAllJSON));

@@ -1,30 +1,23 @@
 package com.hancomee;
 
-import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import com.hancomee.util.DB;
-import com.hancomee.util.Patterns;
 import com.hancomee.util.SQL;
-import com.hancomee.util.db.TableInfo;
-import com.hancomee.web.WebApplication;
-import com.hancomee.web.controller.AudioBay;
-import com.zaxxer.hikari.HikariConfig;
+import com.hancomee.util.db.*;
+import com.hancomee.util.db.anno.Query;
+import com.hancomee.util.db.anno.Save;
+import com.hancomee.util.db.anno.Value;
+import com.hancomee.util.db.anno.Stmt;
+import com.hancomee.util.reflect.DataBean;
+import com.hancomee.web.controller.work.domain.Customer;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DBTest {
 
-    DB db = new DB("jdbc:mariadb://115.23.187.44:3306/hellofunc", "root", "ko9984");
+    DB db = new DB("jdbc:mariadb://115.23.187.44:3306/hancomee", "root", "ko9984");
 
     Set<Connection> cons = new HashSet<>();
 
@@ -36,69 +29,79 @@ public class DBTest {
     @Test
     public void test() throws Exception {
 
+        Magic m = RepositoryFactory.createRepository(Magic.class, db.dataSource);
+        Customer customer = new Customer();
+        customer.address = "asdfasdfasdf";
+        customer.biz_con = "뚠따";
+        customer.id = 10;
+
+        DataBean db = DataBean.getBeanData(Customer.class);
+        out(db.dynamicUpdate("hancomee_customer", customer));
+    }
+
+    public static class Work {
+        int id;
+        String name;
+        @Override
+        public String toString() {
+            return id + " / " + name;
+        }
+    }
+
+    public static class M {
+        long datetime;
     }
 
 
+    public interface Magic {
 
 
-    public Connection getCon() throws SQLException {
-        return DriverManager.getConnection("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
+        @Query("SELECT * FROM test1 $ WHERE $.name LIKE :%name%")
+        Work get(Work work);
+
+        @Save
+        @Query("UPDATE test1 SET name = '뿐따' WHERE id = 1")
+        void workMemo();
+
+        @Query("INSERT INTO test1 (old, datetime, name) VALUES (:old[i], :datetime[d], :name)")
+        long test(Connection con, @Value("datetime") Date date, @Value("old") int old, @Value("name") String name);
+
+        @Stmt("INSERT INTO test1 (old, datetime, name) VALUES (:old[i], :datetime[d], :name)")
+        long test2(Connection con, @Value("datetime") Date date, @Value("old") int old, @Value("name") String name);
     }
 
-    public List<LinkedHashMap<String, Object>> read(ResultSet rs) throws SQLException {
+    public void memo_len() throws Exception {
+        class D {
+            long id;
+            String updateTime;
 
-        List<LinkedHashMap<String, Object>> list = new ArrayList<>();
-        LinkedHashMap<String, Object> result = null;
-        ResultSetMetaData meta = null;
+            public D(long id, String updateTime) {
+                this.id = id;
+                this.updateTime = updateTime;
+            }
 
-        while (rs.next()) {
-            list.add(result = new LinkedHashMap<>());
-            meta = rs.getMetaData();
-            int i = 1, count = meta.getColumnCount() + 1;
-            for (; i < count; i++) {
-                result.put(meta.getColumnLabel(i), $read(rs, meta.getColumnTypeName(i), i));
+            @Override
+            public String toString() {
+                return this.updateTime;
             }
         }
-        return list;
 
+        db.doStmt((s, c) -> {
+            Set<D> set = SQL.reduce(s.executeQuery("SELECT id, updatetime FROM hancomee_work"),
+                    new HashSet<>(),
+                    (l, rs, i) -> {
+                        l.add(new D(rs.getLong("id"), rs.getString("updatetime")));
+                    });
+
+            for (D d : set) {
+                s.executeUpdate("UPDATE hancomee_work SET memo_len = " +
+                        db.getInt(s, "SELECT COUNT(id) FROM hancomee_workmemo WHERE work_id = " + d.id) +
+                        " WHERE id = " + d.id);
+            }
+
+        }, false);
     }
 
-
-    // my
-    public Object $read(ResultSet rs, String dataType, int index) throws SQLException {
-        switch (dataType) {
-            case "BIT":
-            case "TINYINT":
-            case "SMALLINT":
-            case "MEDIUMINT":
-            case "INT":
-            case "INTEGER":
-                return rs.getInt(index);
-            case "BIGINT":
-                return rs.getLong(index);
-            case "BOOL":
-            case "BOOLEAN":
-                return rs.getBoolean(index);
-            case "DECIMAL":
-            case "DEC":
-            case "NUMERIC":
-            case "FIXED":
-                return rs.getBigDecimal(index);
-            case "DOUBLE":
-            case "DOUBLE PRECISION":
-                return rs.getDouble(index);
-            case "FLOAT":
-                return rs.getFloat(index);
-            case "DATE":
-            case "DATETIME":
-            case "TIMESTAMP":
-            case "TIME":
-            case "YEAR":
-                return rs.getDate(index);
-            default:
-                return rs.getString(index);
-        }
-    }
 
     private <T> T out(T obj) {
         System.out.println(obj);

@@ -1,0 +1,124 @@
+
+@import "../../mixins";
+
+$slide-bar-height: 30px;
+
+.file-upload {
+
+  width: 40%;
+  box-shadow: 1px 3px 10px #636363;
+
+  // .header .body .footer
+  > div {
+
+    padding: 25px;
+    background-color: white;
+
+    &:first-child {
+      border-top-right-radius: 5px;
+      border-top-left-radius: 5px;
+    }
+
+    &:last-child {
+      border-bottom-right-radius: 5px;
+      border-bottom-left-radius: 5px;
+    }
+
+    & + div {
+      border-top: 1px solid #ececec;
+    }
+
+    &.header {
+      padding-bottom: 15px;
+    }
+  }
+
+  .slide {
+
+    overflow: hidden;
+    position: relative;
+
+    height: $slide-bar-height;
+    background-color: #ddd;
+    border-radius: $slide-bar-height / 2;
+
+    .slide-bar {
+      position: relative;
+      width: 0;
+      height: inherit;
+      background-color: #4188ce;
+
+      transition: .05s ease width;
+    }
+
+    & + .slide {
+      margin-top: 20px;
+    }
+
+    .info {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      color: white;
+      line-height: $slide-bar-height;
+      text-align: center;
+    }
+  }
+
+  .footer {
+
+    .list {
+      overflow: auto;
+      height: 200px;
+
+      > div {
+        @include clearfix();
+        padding: 3px 10px;
+
+        &.active {
+          background-color: #e1f1f9;
+        }
+
+        & + div {
+          border-top: 1px solid #f3f3f3;
+        }
+      }
+      span {
+        display: inline-block;
+        line-height: 30px;
+        vertical-align: middle;
+        white-space: nowrap;;
+
+        &[data-name="name"] {
+          display: block;
+          padding: 0 10px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        &[data-name="index"], &.icon-file {
+          float: left;
+        }
+
+        &[data-name="index"] {
+          width: 30px;
+          text-align: center;
+          color: #999;
+        }
+
+        &.icon-file {
+          width: 30px;
+          height: 30px;
+        }
+
+        &[data-name="size"] {
+          float: right;
+          color: #5685ce;
+        }
+      }
+    }
+  }
+}

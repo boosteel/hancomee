@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 32);
+/******/ 	return __webpack_require__(__webpack_require__.s = 36);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -353,28 +353,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, number_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Access;
     (function (Access) {
         // dot으로 구분된 프로퍼티 읽어오기
-        Access.read = (function () {
-            function ___read(prop, data) {
-                var value = data[prop];
-                return typeof value === 'function' ? value.call(data) : value;
+        function read(p, obj) {
+            var names = typeof p === 'string' ? p.split('.') : p, length = names.length, i = 0;
+            for (; i < length; i++) {
+                if ((obj = obj[names[i]]) == null)
+                    return null;
             }
-            return function (prop, data, nullSafeVal) {
-                if (nullSafeVal === void 0) { nullSafeVal = null; }
-                var props = prop.split(/\./), i = 0, l = props.length, result = data;
-                for (; i < l; i++) {
-                    result = ___read(props[i], result);
-                    if (result == null)
-                        return nullSafeVal;
-                }
-                return Access.primitive(result);
-            };
-        })();
+            return obj;
+        }
+        Access.read = read;
         Access.primitive = (function () {
             var r_boolean = /^true$|^false$/, r_string = /^['"][^"']+['"]$/, r_date = /^\d{4}-\d{2}-\d{2}$|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/, r_string_replace = /["']/g;
             return function (val) {
@@ -414,6 +407,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.r_number = /^[+-]?\d+$/;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -625,19 +630,122 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.r_number = /^[+-]?\d+$/;
+    function _makeArray(obj) {
+        var r = [], l = obj.length;
+        while (l-- > 0)
+            r[l] = obj[l];
+        return r;
+    }
+    exports._makeArray = _makeArray;
+    function _forEach(obj, h) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (h(obj[i], i++) === false)
+                break;
+        }
+        return obj;
+    }
+    exports._forEach = _forEach;
+    function _forEachReverse(obj, h) {
+        var i = obj.length;
+        while (i-- > 0) {
+            if (h(obj[i], i) === false)
+                break;
+        }
+        return obj;
+    }
+    exports._forEachReverse = _forEachReverse;
+    function _reduce(obj, h, r) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            r = h(r, obj[i], i++);
+        }
+        return r;
+    }
+    exports._reduce = _reduce;
+    function _map(obj, h) {
+        var r = [], i = 0, l = obj.length;
+        while (i < l) {
+            r[i] = h(obj[i], i++);
+        }
+        return r;
+    }
+    exports._map = _map;
+    function _colMap(values, size, handler) {
+        var r = [], v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
+        while (index < l) {
+            if (index % size === 0) {
+                v && (r[rIndex] = handler(v, rIndex++));
+                v = [];
+                vIndex = 0;
+            }
+            v[vIndex++] = values[index++];
+        }
+        v && (r[rIndex] = handler(v, rIndex++));
+        return r;
+    }
+    exports._colMap = _colMap;
+    function _colReduce(values, size, handler, r) {
+        var v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
+        while (index < l) {
+            if (index % size === 0) {
+                v && (r = handler(r, v, rIndex++));
+                v = [];
+                vIndex = 0;
+            }
+            v[vIndex++] = values[index++];
+        }
+        v && (r = handler(r, v, rIndex++));
+        return r;
+    }
+    exports._colReduce = _colReduce;
+    function _in(obj, filter, r) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === r)
+                return r;
+        }
+        return !r;
+    }
+    // true가 하나라도 있으면
+    function _inTrue(obj, filter) {
+        return _in(obj, filter, true);
+    }
+    exports._inTrue = _inTrue;
+    function _inFalse(obj, filter) {
+        return _in(obj, filter, false);
+    }
+    exports._inFalse = _inFalse;
+    function _everyTrue(obj, filter) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === false)
+                return false;
+        }
+        return true;
+    }
+    exports._everyTrue = _everyTrue;
+    function _everyFalse(obj, filter) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === true)
+                return false;
+        }
+        return true;
+    }
+    exports._everyFalse = _everyFalse;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -788,28 +896,122 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(9), __webpack_require__(8), __webpack_require__(6), __webpack_require__(1), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var _a = Array.prototype, forEach = _a.forEach, reduce = _a.reduce, map = _a.map, dummy = {};
+    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
+    // 숫자 자리수 맞추기
+    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
+        'yyyy': function (d) { return d.getFullYear(); },
+        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
+        'M': function (d) { return d.getMonth() + 1; },
+        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
+        'd': function (d) { return d.getDate(); },
+        'dd': function (d) { return zeroFill(d.getDate()); },
+        'E': function (d) { return __day[d.getDay()]; },
+        'HH': function (d) { return zeroFill(d.getHours()); },
+        'hh': function (d) { return zeroFill(d.getHours()); },
+        'mm': function (d) { return zeroFill(d.getMinutes()); },
+        'ss': function (d) { return zeroFill(d.getSeconds()); },
+        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
+    };
+    function _toKor(date, now) {
+        if (now === void 0) { now = new Date().getTime(); }
+        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
+        if (duration > day)
+            return Math.floor(duration / day) + '일 전';
+        if (duration > hour)
+            return Math.floor(duration / hour) + '시간 전';
+        if (duration > minute)
+            return Math.floor(duration / minute) + '분 전';
+        if (duration > second)
+            return Math.floor(duration / second) + '초 전';
+    }
+    exports._toKor = _toKor;
+    function _dateFormat(_date, f) {
+        if (!_date)
+            return '';
+        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
+        if (!f)
+            return _datetime(d);
+        return f.replace(r_datetime, function ($1) {
+            if (temp = _switch[$1])
+                return temp(d);
+            else
+                return $1;
+        });
+    }
+    exports._dateFormat = _dateFormat;
+    ;
+    function _datetime(val) {
+        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
+            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
+    }
+    exports._datetime = _datetime;
+    function _date(val) {
+        var m = val.getMonth() + 1, d = val.getDate();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
+    }
+    exports._date = _date;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10), __webpack_require__(9), __webpack_require__(6), __webpack_require__(1), __webpack_require__(4), __webpack_require__(12), __webpack_require__(2), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var read = access_1.Access.read;
+    var number = format_1.Formats.number;
+    var fileSize = format_1.Formats.fileSize;
+    var primitive = access_1.Access.primitive;
+    var dummy = {}, r = /{{(.*?)}}/g, r_compile_var = /{{[^{}]+}}/, r_filter_split = / \| | : /, r_script = /script/i, r_template = /template/i, defaultFilter = {
+        number: number,
+        date: datetime_1._dateFormat,
+        filesize: fileSize
+    };
+    function $setText(ele, val) {
+        var c = ele.getAttribute('data-type'), i, fn, p = c, arg;
+        if (c) {
+            if ((i = c.indexOf(':')) !== -1) {
+                p = c.substring(0, i);
+                arg = primitive(c.substring(i + 1, c.length));
+            }
+            if (fn = defaultFilter[p]) {
+                ele.textContent = fn(val, arg);
+                return ele;
+            }
+        }
+        ele.textContent = val || '';
+        return ele;
+    }
     var EleMap = /** @class */ (function () {
         function EleMap(context, attrName) {
             var _this = this;
             var els = context.querySelectorAll('[' + attrName + ']'), keys = this.keys = [];
-            forEach.call(els, function (e, i) {
+            array_1._forEach(els, function (e, i) {
                 keys[i] = e.getAttribute(attrName);
                 _this[i] = e;
             });
             this.length = keys.length;
         }
-        EleMap.prototype.setText = function (obj) {
+        EleMap.prototype.setText = function (obj, directive) {
             if (obj === void 0) { obj = dummy; }
-            var _a = this, l = _a.length, keys = _a.keys, setText = HTML.setText, i = 0;
-            for (; i < l; i++)
-                setText(this[i], obj[keys[i]]);
+            if (directive === void 0) { directive = dummy; }
+            var _a = this, l = _a.length, keys = _a.keys, i = 0, key;
+            for (; i < l; i++) {
+                if (directive[key = keys[i]])
+                    directive[key](this[i], obj);
+                else
+                    $setText(this[i], read(key, obj));
+            }
             return this;
         };
         EleMap.prototype.each = function (h, obj, map) {
@@ -827,29 +1029,109 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         return EleMap;
     }());
     exports.EleMap = EleMap;
+    (function (EleMap) {
+        function textHandler(e, name, obj) {
+            HTML.setText(e, read(name, obj));
+        }
+        EleMap.textHandler = textHandler;
+    })(EleMap = exports.EleMap || (exports.EleMap = {}));
+    exports.EleMap = EleMap;
     var HTML;
     (function (HTML) {
-        var number = format_1.Formats.number;
-        var fileSize = format_1.Formats.fileSize;
-        var primitive = access_1.Access.primitive;
         HTML.unCamelCase = (function (r_data, r_up, fn) {
             return function (s) { return s.replace(r_data, '').replace(r_up, fn); };
         })(/^data-/, /-([^-])/g, function (_, i) { return i.toUpperCase(); });
-        var r = /{{(.*?)}}/g, r_compile_test = /{{[^{}]+}}/, r_filter_split = / \| | : /;
+        /*
+         *  =로 시작하는 문자열의 경우 특정 엘리먼트의 innerHTML 문자열로 치환된다.
+         */
         function pipe(str) {
             if (str[0] === '=') {
                 if (str[1] === '#')
-                    str = document.getElementById(str.substring(2)).innerHTML;
+                    str = document.getElementById(str.substring(2)).innerText;
                 else
-                    str = document.querySelector(str.substring(1)).innerHTML;
+                    str = document.querySelector(str.substring(1))['innerText'];
             }
             return str;
         }
-        function select(ele, handler) {
-            var arg = [];
-            for (var _i = 2; _i < arguments.length; _i++) {
-                arg[_i - 2] = arguments[_i];
+        // 정방향
+        function cEach(children, n) {
+            var l = children.length, i = 0, pos = 1;
+            for (; i < l; i++) {
+                if (children[i].nodeType === 1) {
+                    if (pos++ === n)
+                        return children[i];
+                }
             }
+            return null;
+        }
+        // 역방향
+        function cEachReverse(children, n) {
+            var l = children.length, pos = 1;
+            while (l-- > 0) {
+                if (children[l].nodeType === 1) {
+                    if (pos++ === n)
+                        return children[l];
+                }
+            }
+            return null;
+        }
+        // nth-child(?) 찾기
+        /*
+         *  젓같은 ie에서는 fragment에 children이 없다. 따라서 childNodes로 한다..
+         */
+        function nthChildren(context, nth) {
+            if (nth < 0)
+                return cEachReverse(context.childNodes, nth * -1);
+            else
+                return cEach(context.childNodes, nth === 0 ? 1 : nth);
+        }
+        HTML.nthChildren = nthChildren;
+        function select(context, selector) {
+            var sChar = selector[0], l = selector.length - 1;
+            if (sChar === '=') {
+                return createFragment(selector.substring(1));
+            }
+            // ① 'select[]'  ==> querySelectorAll()
+            else if (selector[l] === ']' && selector[l - 1] === '[') {
+                return context.querySelectorAll(selector.substring(0, l - 1));
+            }
+            // 특수문자
+            else if (sChar === ':') {
+                /*
+                 *  퍽킹 ie에서는 fragment에서 firsElementChild를 지원하지 않는다.
+                 */
+                var s = selector.slice(1);
+                if (number_1.r_number.test(s))
+                    return nthChildren(context, parseInt(s));
+                switch (s) {
+                    case 'first-child':
+                        return nthChildren(context, 1);
+                    case 'last-child':
+                        return nthChildren(context, -1);
+                    case 'childs':
+                        return context.children;
+                    case 'self':
+                        return context;
+                }
+            }
+            // ② 'select{attrName}' ==>  {attrName: ele, attrName: ele}
+            else if (sChar === '{' && selector[l] === '}') {
+                return new EleMap(context, selector.substring(1, l));
+            }
+            // ③ querySelector()
+            else {
+                if (sChar === '#' && selector.indexOf(' ') === -1)
+                    return document.getElementById(selector.slice(1));
+                else
+                    return context.querySelector(selector);
+            }
+        }
+        HTML.select = select;
+        function _Q(ele, selector) {
+            return ele.querySelector(selector);
+        }
+        HTML._Q = _Q;
+        function selectAll(ele, arg, handler) {
             var element = typeof ele === 'string' ?
                 (ele.indexOf('<') === -1 ? document.querySelector(ele) : createFragment(ele)) :
                 ele, args = [element], index = 1, i = 0, l = arg.length, str;
@@ -857,31 +1139,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 str = arg[i];
                 // (1) 문자열일 경우
                 if (typeof str === 'string') {
-                    var l_1 = str.length - 1;
-                    if (str[0] === ':') {
-                        args[index++] = createFragment(str.substring(1));
-                    }
-                    // ① 'select[]'  ==> querySelectorAll()
-                    else if (str[l_1] === ']' && str[l_1 - 1] === '[') {
-                        args[index++] = element.querySelectorAll(str.substring(0, l_1 - 1));
-                    }
-                    // ② 'select{attrName}' ==>  {attrName: ele, attrName: ele}
-                    else if (str[0] === '{' && str[l_1] === '}') {
-                        args[index++] = new EleMap(ele, str.substring(1, l_1));
-                    }
-                    // ③ querySelector()
-                    else {
-                        args[index++] = element.querySelector(str);
-                    }
+                    args[index++] = select(element, str);
                 }
+                // (2) 함수일 경우, ele와 바로 앞의 arg를 넣어준다.
+                else if (typeof str === 'function')
+                    args[index++] = str(ele, args[index]);
                 // (2) 문자열이 아닐 경우 그대로 결과값
                 else {
                     args[index++] = str;
                 }
             }
-            return handler.apply(element, args);
+            return handler ? handler.apply(element, args) : args;
         }
-        HTML.select = select;
+        HTML.selectAll = selectAll;
         ;
         function byId(s) {
             return document.getElementById(s);
@@ -893,15 +1163,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             });
         }
         HTML.replaceHTML = replaceHTML;
-        HTML.defaultFilter = {
-            number: number,
-            date: datetime_1._dateFormat,
-            filesize: fileSize
-        };
         function compile(str, filter) {
-            if (filter === void 0) { filter = HTML.defaultFilter; }
+            if (filter === void 0) { filter = defaultFilter; }
             str = pipe(str);
-            if (!r_compile_test.test(str))
+            if (!r_compile_var.test(str))
                 return function () { return str; };
             var i = 0, l = str.length, s = 0, e = 0, array = [], size = 0;
             var _loop_1 = function () {
@@ -973,6 +1238,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 html = pipe(html);
                 create(html, function (v) { return frag.appendChild(v); });
             }
+            else if (typeof html.nodeType === 'number') {
+                frag.appendChild(html);
+            }
             else {
                 var l = html.length;
                 while (l-- > 0)
@@ -981,7 +1249,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return frag;
         }
         HTML.createFragment = createFragment;
-        var r_script = /script/i, r_template = /template/i;
         function templateMap(html) {
             var result = { doc: {}, com: {} }, array = createChildren(html), l = array.length, e;
             while (l-- > 0) {
@@ -1126,6 +1393,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return typeof handler === 'function' ? handler($c, result) : [$c, result];
         }
         HTML.htmlParser = htmlParser;
+        function createTemplate(html, clazz) {
+            var frag = typeof html === 'string' ? createFragment(html) : html;
+            return function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                var $select = clazz.$select, l = $select.length, i = 0, clone = frag.cloneNode(true), pos = args.length;
+                for (; i < l; i++) {
+                    args[pos++] = select(clone, $select[i]);
+                }
+                return newApply_1._newApply(clazz, args);
+            };
+        }
+        HTML.createTemplate = createTemplate;
         function createElement(str) {
             var div = document.createElement('div'), child;
             div.innerHTML = str;
@@ -1139,6 +1421,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return e;
         }
         HTML.pick = pick;
+        function reduceFragment(values, handler) {
+            var frag = document.createDocumentFragment(), i = 0, l = values.length, v;
+            while (i < l) {
+                if (v = handler(values[i], i++))
+                    frag.appendChild(v);
+            }
+            return frag;
+        }
+        HTML.reduceFragment = reduceFragment;
         function innerHTML(ele, html) {
             var clone = ele.cloneNode(false);
             clone.innerHTML = html;
@@ -1146,107 +1437,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return clone;
         }
         HTML.innerHTML = innerHTML;
-        var converters = {
-            number: number,
-            date: function (val, regex) {
-                if (regex === void 0) { regex = 'yyyy-MM-dd HH:mm:ss'; }
-                if (val instanceof Date)
-                    return datetime_1._dateFormat(val, regex);
-                return '';
-            },
-        };
-        function setText(ele, val) {
-            var c = ele.getAttribute('data-type'), i, fn, p = c, arg;
-            if (c) {
-                if ((i = c.indexOf(':')) !== -1) {
-                    p = c.substring(0, i);
-                    arg = primitive(c.substring(i + 1, c.length));
-                }
-                if (fn = converters[p]) {
-                    ele.textContent = fn(val, arg);
-                    return ele;
-                }
-            }
-            ele.textContent = val || '';
-            return ele;
-        }
-        HTML.setText = setText;
+        HTML.setText = $setText;
     })(HTML = exports.HTML || (exports.HTML = {}));
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
-    // 숫자 자리수 맞추기
-    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
-        'yyyy': function (d) { return d.getFullYear(); },
-        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
-        'M': function (d) { return d.getMonth() + 1; },
-        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
-        'd': function (d) { return d.getDate(); },
-        'dd': function (d) { return zeroFill(d.getDate()); },
-        'E': function (d) { return __day[d.getDay()]; },
-        'HH': function (d) { return zeroFill(d.getHours()); },
-        'hh': function (d) { return zeroFill(d.getHours()); },
-        'mm': function (d) { return zeroFill(d.getMinutes()); },
-        'ss': function (d) { return zeroFill(d.getSeconds()); },
-        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
-    };
-    function _toKor(date, now) {
-        if (now === void 0) { now = new Date().getTime(); }
-        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
-        if (duration > day)
-            return Math.floor(duration / day) + '일 전';
-        if (duration > hour)
-            return Math.floor(duration / hour) + '시간 전';
-        if (duration > minute)
-            return Math.floor(duration / minute) + '분 전';
-        if (duration > second)
-            return Math.floor(duration / second) + '초 전';
-    }
-    exports._toKor = _toKor;
-    function _dateFormat(_date, f) {
-        if (!_date)
-            return '';
-        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
-        if (!f)
-            return _datetime(d);
-        return f.replace(r_datetime, function ($1) {
-            if (temp = _switch[$1])
-                return temp(d);
-            else
-                return $1;
-        });
-    }
-    exports._dateFormat = _dateFormat;
-    ;
-    function _datetime(val) {
-        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
-            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
-    }
-    exports._datetime = _datetime;
-    function _date(val) {
-        var m = val.getMonth() + 1, d = val.getDate();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
-    }
-    exports._date = _date;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, dom_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, dom_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Toggle;
@@ -1305,10 +1506,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1, number_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
@@ -1434,7 +1635,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -1480,7 +1681,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1496,7 +1697,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12), __webpack_require__(4), __webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, NameMap_1, arrays_1, core_1, access_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(14), __webpack_require__(5), __webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, NameMap_1, arrays_1, core_1, access_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Events = /** @class */ (function () {
@@ -1818,7 +2019,23 @@ var __extends = (this && this.__extends) || (function () {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var bind = Function.prototype.bind;
+    function _newApply(cons, args) {
+        return new (bind.apply(cons, [null].concat(args)));
+    }
+    exports._newApply = _newApply;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -2016,10 +2233,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var NameMap = /** @class */ (function () {
@@ -2064,11 +2281,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 13 */,
-/* 14 */,
 /* 15 */,
 /* 16 */,
-/* 17 */
+/* 17 */,
+/* 18 */,
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, datetime_1) {
@@ -2310,8 +2527,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 18 */,
-/* 19 */,
 /* 20 */,
 /* 21 */,
 /* 22 */,
@@ -2324,7 +2539,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 29 */,
 /* 30 */,
 /* 31 */,
-/* 32 */
+/* 32 */,
+/* 33 */,
+/* 34 */,
+/* 35 */,
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = (this && this.__extends) || (function () {
@@ -2337,7 +2556,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(17), __webpack_require__(11), __webpack_require__(2), __webpack_require__(10), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, calendar_1, location_1, dom_1, events_1, html_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(19), __webpack_require__(13), __webpack_require__(3), __webpack_require__(11), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, calendar_1, location_1, dom_1, events_1, html_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var className = dom_1.DOM.className;

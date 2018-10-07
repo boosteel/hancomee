@@ -1,14 +1,10 @@
 package com.hancomee.util;
 
 import com.hancomee.util.db.TableInfo;
-import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.jdbc.core.JdbcTemplate;
-import sun.swing.BakedArrayList;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,20 +37,58 @@ public class DB {
         this.dataSource = dataSource;
     }
 
-    public void doWork(DoWork doWork) {
-        try (Connection con = getCon()) {
-            doWork.accept(con);
+
+    public void threadRun(ThreadRun run) {
+        try {
+            ThreadLocal<Connection> local = new ThreadLocal<>();
+            local.set(getCon());
+            run.run();
+            local.remove();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public <T> T doWork(DoWorkR<T> doWork) {
-        try (Connection con = getCon()) {
-            return doWork.accept(con);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public void doStmt(DoStatement doWork) {
+        doStmt(doWork, true);
+    }
+
+    public void doStmt(DoStatement doWork, boolean autoCommit) {
+        transaction((con) -> {
+            try (Statement s = con.createStatement()) {
+                doWork.accept(s, con);
+            }
+            return null;
+        }, autoCommit);
+    }
+
+    public <T> T doStmtR(DoStatementR<T> doWork) {
+        return doStmtR(doWork, true);
+    }
+    public <T> T doStmtR(DoStatementR<T> doWork, boolean autoCommit) {
+        return transaction((con) -> {
+            try (Statement s = con.createStatement()) {
+                return doWork.accept(s, con);
+            }
+        }, autoCommit);
+    }
+
+    public void doWork(DoWork doWork) {
+        this.doWork(doWork, true);
+    }
+    public void doWork(DoWork doWork, boolean autoCommit) {
+
+        transaction((con) -> {
+            doWork.accept(con);
+            return null;
+        }, autoCommit);
+    }
+
+    public <T> T doWorkR(DoWorkR<T> doWork) {
+        return this.doWorkR(doWork, true);
+    }
+    public <T> T doWorkR(DoWorkR<T> doWork, boolean autoCommit) {
+        return transaction((con) -> doWork.accept(con), autoCommit);
     }
 
     public <T> T execute(String sql, ACCEPT_RS<T> e) {
@@ -131,40 +165,6 @@ public class DB {
         }
     }
 
-    /*public <T> List<T> executeAll(String sql, EXECUTE_RETURN<T> e) {
-        try(Connection con = getCon()) {
-            return executeAll(con, sql, e);
-        } catch (Exception a) {
-            throw new RuntimeException(a);
-        }
-    }
-    public <T> List<T> executeAll(Connection con, String sql, EXECUTE_RETURN<T> e) {
-        List<T> list = new ArrayList<>();
-        T r = null;
-        try (Statement s = con.createStatement();
-             ResultSet rs = s.executeQuery(sql)) {
-            int i = 0;
-            while (rs.next())
-                if ((r = e.execute(rs, i)) != null) list.add(r);
-        } catch (Exception a) {
-            throw new RuntimeException(a);
-        }
-        return list;
-    }
-
-    public DB executeAll(String sql, EXECUTE e) {
-        try (Connection con = getCon();
-             Statement s = con.createStatement();
-             ResultSet rs = s.executeQuery(sql)) {
-            int i = 0;
-            while (rs.next())
-                e.execute(rs, i);
-        } catch (Exception a) {
-            throw new RuntimeException(a);
-        }
-        return this;
-    }*/
-
 
     public TableInfo getTableInfo(String tableName) {
         return TableInfo.create(tableName, this);
@@ -178,9 +178,28 @@ public class DB {
     }
 
     public long save(String sql) {
+        return save(sql, false);
+    }
+
+    public long save(String sql, boolean last_id) {
         try (Connection con = getCon();
              Statement s = con.createStatement()) {
-            return s.executeUpdate(sql);
+            return save(s, sql, last_id);
+        } catch (Exception a) {
+            throw new RuntimeException(a);
+        }
+    }
+
+    public long save(Statement s, String sql, boolean last_id) {
+        try {
+            long i = s.executeUpdate(sql);
+            if (last_id) {
+                try (ResultSet rs = s.executeQuery("SELECT LAST_INSERT_ID()")) {
+                    rs.next();
+                    i = rs.getLong(1);
+                }
+            }
+            return i;
         } catch (Exception a) {
             throw new RuntimeException(a);
         }
@@ -204,6 +223,54 @@ public class DB {
         }
     }
 
+    private <T> T transaction(DoWorkR<T> d, boolean autoCommit) {
+        try (Connection con = getCon()) {
+
+            if (autoCommit) {
+                return d.accept(con);
+            } else {
+                try {
+                    con.setAutoCommit(false);
+                    T r = d.accept(con);
+                    con.commit();
+                    return r;
+                } catch (Exception e) {
+                    con.rollback();
+                    throw e;
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public long getLong(Statement s, String sql) throws SQLException {
+        ResultSet rs = s.executeQuery(sql);
+        return rs.next() ? rs.getLong(1) : null;
+    }
+
+    public int getInt(Statement s, String sql) throws SQLException {
+        ResultSet rs = s.executeQuery(sql);
+        return rs.next() ? rs.getInt(1) : null;
+    }
+
+    public String getString(Statement s, String sql) throws SQLException {
+        ResultSet rs = s.executeQuery(sql);
+        return rs.next() ? rs.getString(1) : null;
+    }
+
+    public Date getDate(Statement s, String sql) throws SQLException {
+        ResultSet rs = s.executeQuery(sql);
+        return rs.next() ? new Date(rs.getTimestamp(1).getTime()) : null;
+    }
+
+
+    public interface ThreadRun {
+        void run() throws Exception;
+    }
+
     public interface ACCEPT {
         void execute(ResultSet rs) throws Exception;
     }
@@ -224,7 +291,24 @@ public class DB {
         void accept(Connection con) throws Exception;
     }
 
+
     public interface DoWorkR<T> {
         T accept(Connection con) throws Exception;
+    }
+
+    public interface DoStatement {
+        void accept(Statement s, Connection con) throws Exception;
+    }
+
+    public interface DoStatementR<T> {
+        T accept(Statement s, Connection con) throws Exception;
+    }
+
+    public interface DoPrepare {
+        void accept(PreparedStatement s) throws Exception;
+    }
+
+    public interface DoPrepareR<T> {
+        T accept(PreparedStatement s) throws Exception;
     }
 }

@@ -1,10 +1,11 @@
-package com.hancomee.servlet.filter;
+package com.hancomee.web.filter;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
+
 
 /*
  * ?attachment=파일명
@@ -31,8 +32,8 @@ public class ResourceDisposition implements Filter {
 
         if (value != null) {
             HttpServletResponse response = (HttpServletResponse) res;
-            value = URLEncoder.encode(value, "utf-8").replaceAll("\\+", "%20");
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + value + "\";");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" +
+                    URLEncoder.encode(value, "utf-8").replaceAll("\\+", "%20") + "\";");
         }
 
         chain.doFilter(req, res);

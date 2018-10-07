@@ -38,9 +38,9 @@ interface iEleMap extends ArrayLike<HTMLElement> {
 
     length: number
 
-    setText(obj?): this
+    setText(obj?, map?): this
 
-    each(h: (e: HTMLElement, name: string, obj) => void, value?, each?: iEleMapEach): this
+    each<T>(h: (e: HTMLElement, name: string, obj: T) => void, value?: T, each?: iEleMapEach): this
 
 }
 

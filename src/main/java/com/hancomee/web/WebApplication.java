@@ -31,9 +31,8 @@ public class WebApplication extends SpringBootServletInitializer implements WebM
 
 
     @RequestMapping
-    @ResponseBody
     public String intro() {
-        return "hello";
+        return "intro.html";
     }
 
     @RequestMapping(value="templates/**/*")

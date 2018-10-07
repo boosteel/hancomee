@@ -74,7 +74,7 @@ export function isPlainObject(obj) {
 
     proto = getProto(obj);
 
-    // Objects with no prototype (e.g., `Object.create( null )`) are plain
+    // Objects with no prototype (e.g., `Object.newInstance( null )`) are plain
     if (!proto) {
         return true;
     }

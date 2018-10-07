@@ -340,8 +340,7 @@ export namespace Events {
     }
 
     type FACTORY<T> = new(e: Event) => T
-    type HANDLER<T> = (t: T, e: Event) => any
-    type HANDLERS<T> = { [index: string]: HANDLER<T> }
+    type HANDLERS<T> = { [index: string]: any | ((t: T, e: Event) => any) }
 
     // 데이터가 있을때만
     export function propertyMap<T>(target: HTMLElement, type: string, handlers: HANDLERS<T>, factory?: FACTORY<T>) {

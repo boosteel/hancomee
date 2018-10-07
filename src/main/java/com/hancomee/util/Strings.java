@@ -20,20 +20,28 @@ public class Strings {
         String replace(String[] groups, int index) throws Exception;
     }
 
-    public static final String replace(Pattern pattern, String target, REPLACE_HANDLER handler) throws Exception {
+    public static final String replace(String target, String pattern, REPLACE_HANDLER handler) {
+        return replace(target, Pattern.compile(pattern), handler);
+    }
+    public static final String replace(String target, Pattern pattern, REPLACE_HANDLER handler) {
         Matcher m = pattern.matcher(target);
         StringBuffer buf = new StringBuffer();
         int count = 0, len;
         String[] values;
 
-        while (m.find()) {
-            len = m.groupCount() + 1;
-            values = new String[len];
-            for (int i = 0; i < len; i++) {
-                values[i] = m.group(i);
+        try {
+            while (m.find()) {
+                len = m.groupCount() + 1;
+                values = new String[len];
+                for (int i = 0; i < len; i++) {
+                    values[i] = m.group(i);
+                }
+                m.appendReplacement(buf, handler.replace(values, count++));
             }
-            m.appendReplacement(buf, handler.replace(values, count++));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
 
         m.appendTail(buf);
         return buf.toString();

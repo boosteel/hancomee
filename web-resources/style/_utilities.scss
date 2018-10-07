@@ -1,0 +1,41 @@
+
+// 수정폼 엘리먼트.
+.d-form {
+  & + * {
+    display: none;
+  }
+}
+
+.h-block, .h-inline-block {
+  display: none !important;
+}
+
+.form {
+  .h-block {
+    display: block !important;;
+  }
+  .h-inline-block {
+    display: inline-block !important;
+  }
+  .h-hidden {
+    display: none !important;
+  }
+}
+
+textarea, input {
+  &:focus {
+    outline: 0;
+  }
+}
+textarea {resize: none}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+.hide {
+  display: none !important;
+}

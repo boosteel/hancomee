@@ -6,24 +6,17 @@ import {r_number} from "./_regexp/number";
 export namespace Access {
 
     // dot으로 구분된 프로퍼티 읽어오기
-    export let read = (function () {
-        function ___read(prop: string, data: {}) {
-            let value = data[prop];
-            return typeof value === 'function' ? value.call(data) : value;
-        }
 
-        return (prop: string, data: {}, nullSafeVal = null) => {
-            let props = prop.split(/\./),
-                i = 0, l = props.length,
-                result: any = data;
-
-            for (; i < l; i++) {
-                result = ___read(props[i], result);
-                if (result == null) return nullSafeVal;
-            }
-            return primitive(result);
+    export function read(p: string, obj)
+    export function read(p: string[], obj)
+    export function read(p, obj) {
+        let names = typeof p === 'string' ? p.split('.') : p,
+            length = names.length, i = 0;
+        for (; i < length; i++) {
+            if ((obj = obj[names[i]]) == null) return null;
         }
-    })();
+        return obj;
+    }
 
 
     export let primitive = (function () {
@@ -39,7 +32,7 @@ export namespace Access {
                 if (r_string.test(val)) return val.replace(r_string_replace, '');
                 if (r_number.test(val)) return parseInt(val);
                 if (r_boolean.test(val)) return val === 'true';
-                if(r_date.test(val)) return new Date(val)
+                if (r_date.test(val)) return new Date(val)
             }
             return val;
         };

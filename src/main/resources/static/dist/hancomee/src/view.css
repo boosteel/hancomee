@@ -33,40 +33,51 @@
   .v-btn:active {
     background-color: #555; }
 
-#view table {
+#view textarea, #view input {
+  width: 100%;
+  color: #777;
+  background-color: #f3f3f3;
+  border-radius: 3px; }
+  #view textarea[disabled], #view input[disabled] {
+    background-color: #f1f1f1; }
+
+#view textarea {
+  padding: 15px; }
+  #view textarea[disabled] {
+    border-color: #f1f1f1; }
+
+#view table.table {
   border-collapse: collapse; }
-  #view table > tbody > tr > td, #view table > tbody > tr > th, #view table > thead > tr > td, #view table > thead > tr > th {
+  #view table.table > tbody > tr > td, #view table.table > tbody > tr > th, #view table.table > thead > tr > td, #view table.table > thead > tr > th {
     padding: 5px 10px;
     font-size: 16px;
-    border-top: 1px solid #e8e8e8;
-    border-bottom: 1px solid #e8e8e8; }
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea; }
 
 #view main {
   padding-bottom: 100px; }
   #view main, #view main pre, #view main input {
     color: #777; }
-  #view main table {
+  #view main table.table {
     width: 100%; }
-    #view main table > thead > tr > td > input, #view main table > tbody > tr > td > input {
+    #view main table.table > thead > tr > td > input, #view main table.table > tbody > tr > td > input {
       padding: 0 10px;
-      border: 1px solid #efefef;
+      border: 1px solid #eaeaea;
       background-color: #fbfbfb;
       border-radius: 3px; }
-    #view main table > thead > tr > th, #view main table > tbody > tr > th {
+    #view main table.table > thead > tr > th, #view main table.table > tbody > tr > th {
       text-align: center;
       font-weight: normal;
       background-color: #f8f8f8; }
-    #view main table > thead > tr > th:first-child, #view main table > thead > tr > td:first-child, #view main table > tbody > tr > th:first-child, #view main table > tbody > tr > td:first-child {
+    #view main table.table > thead > tr > th:first-child, #view main table.table > thead > tr > td:first-child, #view main table.table > tbody > tr > th:first-child, #view main table.table > tbody > tr > td:first-child {
       border-left: 0; }
-    #view main table > thead > tr > th:last-child, #view main table > thead > tr > td:last-child, #view main table > tbody > tr > th:last-child, #view main table > tbody > tr > td:last-child {
+    #view main table.table > thead > tr > th:last-child, #view main table.table > thead > tr > td:last-child, #view main table.table > tbody > tr > th:last-child, #view main table.table > tbody > tr > td:last-child {
       border-right: 0; }
-    #view main table > thead > tr:first-child > th, #view main table > thead > tr:first-child > td, #view main table > tbody > tr:first-child > th, #view main table > tbody > tr:first-child > td {
+    #view main table.table > thead > tr:first-child > th, #view main table.table > thead > tr:first-child > td, #view main table.table > tbody > tr:first-child > th, #view main table.table > tbody > tr:first-child > td {
       border-top: 0; }
-    #view main table > thead > tr:last-child > th, #view main table > thead > tr:last-child > td, #view main table > tbody > tr:last-child > th, #view main table > tbody > tr:last-child > td {
-      border-bottom: 0; }
-    #view main table.form > tbody > tr > td > span {
+    #view main table.table.form > tbody > tr > td > span {
       display: none; }
-      #view main table.form > tbody > tr > td > span.v-btn {
+      #view main table.table.form > tbody > tr > td > span.v-btn {
         display: inline-block; }
 
 #view .row {
@@ -74,92 +85,105 @@
 
 #view .panel {
   background-color: white; }
+  #view .panel > .header, #view .panel > .body, #view .panel > .footer {
+    border-left: 1px solid #cecece;
+    border-right: 1px solid #cecece;
+    border-top: 1px solid #eaeaea; }
+    #view .panel > .header:first-child, #view .panel > .body:first-child, #view .panel > .footer:first-child {
+      border-top: 2px solid #cecece; }
+    #view .panel > .header:last-child, #view .panel > .body:last-child, #view .panel > .footer:last-child {
+      border-bottom: 1px solid #cecece; }
   #view .panel > .header {
-    padding: 10px 25px;
-    border: 1px solid #cecece;
-    border-bottom: 1px solid #eaeaea;
-    border-top-width: 2px; }
+    padding: 10px 25px; }
     #view .panel > .header .ctrl {
       float: right; }
     #view .panel > .header > .title {
       font-size: 16px;
       font-weight: bold; }
   #view .panel > .body {
-    padding: 25px;
-    border-left: 1px solid #cecece;
-    border-right: 1px solid #cecece;
-    border-bottom: 1px solid #cecece; }
+    padding: 25px; }
   #view .panel > .footer {
-    padding: 25px;
-    border: 1px solid #cecece; }
-  #view .panel > .body + .footer {
-    border-top: 0; }
-  #view .panel #title .info > .state {
-    float: right; }
-    #view .panel #title .info > .state .value {
-      font-size: 14px;
-      font-weight: bold; }
-    #view .panel #title .info > .state .arrow {
-      font-size: 12px; }
-  #view .panel #title .info > span {
-    display: inline-block;
-    vertical-align: middle;
-    font-size: 16px; }
-    #view .panel #title .info > span.uuid {
-      padding-right: 10px;
-      margin-right: 5px;
-      border-right: 1px solid #ddd; }
-      #view .panel #title .info > span.uuid > i {
-        display: inline-block;
-        margin-right: 5px;
-        font-style: normal; }
-  #view .panel #title .title {
-    margin-top: 28px; }
-    #view .panel #title .title > .value, #view .panel #title .title input {
-      height: 46px; }
-    #view .panel #title .title .customer {
+    padding: 25px; }
+  #view .panel #title {
+    padding-bottom: 25px; }
+    #view .panel #title .info > .state {
+      float: right; }
+      #view .panel #title .info > .state .value {
+        font-size: 14px;
+        font-weight: bold; }
+      #view .panel #title .info > .state .arrow {
+        font-size: 12px; }
+    #view .panel #title .info > span {
+      display: inline-block;
+      vertical-align: middle;
       font-size: 16px; }
-    #view .panel #title .title .value, #view .panel #title .title .hide-input {
-      margin-top: 5px; }
-    #view .panel #title .title .value {
-      overflow: hidden;
-      display: block;
-      text-overflow: ellipsis;
-      white-space: nowrap; }
-      #view .panel #title .title .value > [data-name] {
-        font-size: 22px;
-        font-weight: 900; }
-      #view .panel #title .title .value > * {
-        vertical-align: middle; }
-    #view .panel #title .title .hide-input > input {
-      width: 80%; }
-    #view .panel #title .title.form > .value {
-      display: none; }
-    #view .panel #title .title > input {
-      padding-left: 10px;
-      padding-right: 10px;
-      width: 80%;
-      font-size: 16px;
-      border: 1px solid #cecece; }
+      #view .panel #title .info > span.uuid {
+        padding-right: 10px;
+        margin-right: 5px;
+        border-right: 1px solid #ddd; }
+        #view .panel #title .info > span.uuid > i {
+          display: inline-block;
+          margin-right: 5px;
+          font-style: normal; }
+    #view .panel #title .title {
+      margin-top: 20px;
+      padding-left: 15px; }
+      #view .panel #title .title > .value, #view .panel #title .title input {
+        height: 46px; }
+      #view .panel #title .title .customer {
+        font-size: 16px; }
+      #view .panel #title .title .value {
+        overflow: hidden;
+        display: block;
+        letter-spacing: -2px;
+        text-overflow: ellipsis;
+        white-space: nowrap; }
+        #view .panel #title .title .value > [data-name] {
+          font-size: 30px; }
+        #view .panel #title .title .value > * {
+          vertical-align: middle; }
+      #view .panel #title .title .h-block > input {
+        width: 80%; }
+      #view .panel #title .title > input {
+        padding-left: 10px;
+        padding-right: 10px;
+        width: 80%;
+        font-size: 16px;
+        border: 1px solid #cecece; }
   #view .panel #sum {
-    border-top: 0;
     text-align: right; }
     #view .panel #sum > table > tbody > tr > th, #view .panel #sum > table > tbody > tr > td {
+      width: 1%;
       padding-top: 0;
-      padding-bottom: 0; }
+      padding-bottom: 0;
+      border: 0; }
+      #view .panel #sum > table > tbody > tr > th.total, #view .panel #sum > table > tbody > tr > th.price, #view .panel #sum > table > tbody > tr > th.vat, #view .panel #sum > table > tbody > tr > td.total, #view .panel #sum > table > tbody > tr > td.price, #view .panel #sum > table > tbody > tr > td.vat {
+        white-space: nowrap; }
     #view .panel #sum > table > tbody > tr > th {
       padding-right: 15px;
       background-color: transparent;
       text-align: right;
-      border: 0; }
-    #view .panel #sum > table > tbody > tr > td {
-      width: 1%;
-      white-space: nowrap;
+      white-space: nowrap; }
+    #view .panel #sum > table > tbody > tr > td > span {
+      vertical-align: middle; }
+    #view .panel #sum > table > tbody > tr > td.price, #view .panel #sum > table > tbody > tr > td.vat {
       font-size: 30px; }
-      #view .panel #sum > table > tbody > tr > td > span {
-        vertical-align: middle; }
+    #view .panel #sum > table > tbody > tr > td.work-text {
+      width: 100%;
+      text-align: left; }
+      #view .panel #sum > table > tbody > tr > td.work-text > div .ctrl {
+        float: right; }
+      #view .panel #sum > table > tbody > tr > td.work-text > textarea {
+        padding: 0;
+        height: 130px;
+        border-radius: 5px;
+        border: 7px solid #f3f3f3; }
+    #view .panel #sum > table > tbody > tr textarea {
+      margin-top: 10px;
+      height: 150px; }
     #view .panel #sum > table .count {
       display: inline-block;
+      margin-right: 10px;
       width: 46px;
       height: 46px;
       font-size: 24px;
@@ -173,17 +197,55 @@
 #view #customer table > tbody > tr > th {
   width: 120px; }
 
-#view #customer table > tbody > tr > th, #view #customer table > tbody > tr > td {
-  height: 46px; }
+#view #customer table > tbody > tr > td {
+  height: 54px; }
+  #view #customer table > tbody > tr > td input {
+    height: 36px; }
 
 #view #work-item table > thead > tr > th {
+  height: 36px;
   border-bottom: 1px solid #e8e8e8; }
+  #view #work-item table > thead > tr > th:nth-child(1) {
+    width: 20%; }
+  #view #work-item table > thead > tr > th:nth-child(2) {
+    width: 20%; }
+  #view #work-item table > thead > tr > th:nth-child(3) {
+    width: 5%; }
+  #view #work-item table > thead > tr > th:nth-child(4) {
+    width: 10%; }
+  #view #work-item table > thead > tr > th:nth-child(5) {
+    width: 10%; }
+  #view #work-item table > thead > tr > th:nth-child(6) {
+    width: 10%; }
+  #view #work-item table > thead > tr > th:nth-child(7) {
+    width: 20%; }
 
-#view #work-item table > tbody > tr > td, #view #work-item table > tbody > tr > th, #view #work-item table > thead > tr > td, #view #work-item table > thead > tr > th {
-  height: 46px; }
+#view #work-item table > thead:nth-child(2n+0) > td {
+  background-color: #f8f8f8; }
 
-#view #work-item table > tbody > tr > td[data-type="number"] {
-  text-align: right; }
+#view #work-item table > tbody > tr > td {
+  height: 54px;
+  border-right: 1px solid #f3f3f3; }
+  #view #work-item table > tbody > tr > td:last-child {
+    border-right: 0; }
+  #view #work-item table > tbody > tr > td[data-type="number"] {
+    text-align: right; }
+  #view #work-item table > tbody > tr > td.ctrl {
+    white-space: nowrap; }
+  #view #work-item table > tbody > tr > td input {
+    height: 36px; }
+
+#view #work-item table > tbody > tr.work-item-form [data-event="$confirm"] {
+  display: none; }
+
+#view #work-item table > tbody > tr.work-item-form.change [data-event="$confirm"] {
+  display: inline-block; }
+
+#view #work-memo textarea {
+  background-color: #f7f7f7; }
+
+#view #work-memo textarea, #view #work-memo .confirm {
+  border: 1px solid #e6e6e6; }
 
 #view #work-memo .list > div {
   padding: 15px 0; }
@@ -193,8 +255,9 @@
     padding-top: 0; }
   #view #work-memo .list > div:last-child {
     padding-bottom: 0; }
-  #view #work-memo .list > div .ctrl {
-    margin-top: 15px; }
+  #view #work-memo .list > div .datetime {
+    margin-top: 10px;
+    display: inline-block; }
   #view #work-memo .list > div pre {
     font-size: 16px; }
 
@@ -202,19 +265,12 @@
   display: table;
   width: 100%; }
   #view #work-memo .form .textarea, #view #work-memo .form .confirm {
-    display: table-cell;
-    border: 1px solid #ddd; }
+    display: table-cell; }
   #view #work-memo .form .textarea {
-    width: 100%;
-    background-color: #fbfbfb;
-    height: 131px;
-    color: #6d6d6d; }
+    height: 131px; }
     #view #work-memo .form .textarea > textarea {
-      padding: 15px;
-      width: 100%;
       height: 100%;
-      border: 0;
-      background-color: #fbfbfb; }
+      border-radius: 0; }
       #view #work-memo .form .textarea > textarea:focus {
         outline: 0; }
   #view #work-memo .form .confirm {
@@ -224,3 +280,81 @@
     vertical-align: middle;
     border-left: 0;
     cursor: pointer; }
+
+#view #work-ref .body > div::after {
+  display: block;
+  clear: both;
+  content: ""; }
+
+#view #work-ref .body > div ul {
+  float: left;
+  margin: 0;
+  padding: 0 15px;
+  list-style: none;
+  width: 25%; }
+  #view #work-ref .body > div ul li, #view #work-ref .body > div ul a {
+    display: block;
+    word-break: break-word;
+    text-align: center; }
+  #view #work-ref .body > div ul [data-name="size"] {
+    color: #5685ce; }
+  #view #work-ref .body > div ul a {
+    width: 80%;
+    margin: 0 auto 15px;
+    height: 100px; }
+
+.img-screen .header, .img-screen .screen {
+  position: fixed;
+  left: 0;
+  right: 0; }
+
+.img-screen .header {
+  top: 0;
+  padding: 0 30px;
+  height: 60px;
+  background-color: #111;
+  border-bottom: #141414;
+  line-height: 60px;
+  text-align: center;
+  color: #ddd; }
+  .img-screen .header .title {
+    font-size: 20px; }
+  .img-screen .header .count {
+    font-size: 22px;
+    color: #ffd120;
+    font-weight: bold;
+    margin-left: 15px; }
+  .img-screen .header .close {
+    float: right; }
+
+.img-screen .screen {
+  top: 80px;
+  bottom: 20px;
+  left: 100px;
+  right: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+  .img-screen .screen > img {
+    max-width: 100%;
+    max-height: 100%; }
+
+.img-screen .before, .img-screen .after {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  margin-top: -50px;
+  height: 100px;
+  color: white;
+  font-size: 100px;
+  line-height: 100px;
+  cursor: pointer; }
+  .img-screen .before.disabled, .img-screen .after.disabled {
+    cursor: default;
+    color: #2f2f2f !important; }
+
+.img-screen .before {
+  left: 30px; }
+
+.img-screen .after {
+  right: 30px; }

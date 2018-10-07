@@ -25,7 +25,7 @@ public class ViewController {
     @Autowired
     DB db;
 
-    Function<Map<String, Object>, String>
+    SQL.DQuery
             SQL_work,
             SQL_refs,
             SQL_items,
@@ -43,12 +43,12 @@ public class ViewController {
 
         String STR_work = "SELECT " + String.join(", ", select) + " FROM hancomee_work w " +
                 "INNER JOIN hancomee_customer c ON w.customer_id = c.id " +
-                "WHERE w.uuid = {uuid}",
-                STR_refs = "SELECT * FROM hancomee_workfile f INNER JOIN hancomee_workfile_ref r USING(id) WHERE r.work_id = {id}",
-                STR_items = "SELECT * FROM hancomee_workitem WHERE work_id = {id}",
-                STR_draft = "SELECT * FROM hancomee_workfile f INNER JOIN hancomee_workfile_draft r USING(id) WHERE r.item_id = {id}",
-                STR_print = "SELECT * FROM hancomee_workfile f INNER JOIN hancomee_workfile_print r USING(id) WHERE r.item_id = {id}",
-                STR_memo = "SELECT * FROM hancomee_workmemo WHERE work_id = {id}";
+                "WHERE w.uuid = :uuid",
+                STR_refs = "SELECT * FROM hancomee_workfile f INNER JOIN hancomee_workfile_ref r USING(id) WHERE r.work_id = :id[i]",
+                STR_items = "SELECT * FROM hancomee_workitem WHERE work_id = :id[i]",
+                STR_draft = "SELECT * FROM hancomee_workfile f INNER JOIN hancomee_workfile_draft r USING(id) WHERE r.item_id = :id[i]",
+                STR_print = "SELECT * FROM hancomee_workfile f INNER JOIN hancomee_workfile_print r USING(id) WHERE r.item_id = :id[i]",
+                STR_memo = "SELECT * FROM hancomee_workmemo WHERE work_id = :id[i]";
 
         SQL_work = dynamicSQL(STR_work);
         SQL_refs = dynamicSQL(STR_refs);
@@ -69,7 +69,7 @@ public class ViewController {
         k.put("work", null);
         k.put("items", null);
 
-        return db.doWork((con) -> {
+        return db.doWorkR((con) -> {
 
             // work, work.customer
             Map<String, Object> result = db.execute(con, SQL_work.apply(k), SQL::readJSON);

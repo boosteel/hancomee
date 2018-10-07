@@ -1,17 +1,23 @@
 package com.hancomee.util;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import com.hancomee.util.db.NamedPreparedStatementFactory;
+import com.hancomee.util.db.NamedTuple;
+
+import java.sql.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.hancomee.util.DataConverter.exp_to_sql;
+
 public class SQL {
 
 
+    /*
+     *  Map이 가지고 있는 properties를 이용해 SQL을 작성한다.
+     *  Map의 value값이 가진 Java타입에 따라 SQL 데이터타입이 결정된다.
+     */
     public static final String insert(String tableName, Map<String, Object> value) {
         List<Map<String, Object>> values = new ArrayList<>();
         values.add(value);
@@ -46,11 +52,11 @@ public class SQL {
                 .append(" SET ");
 
         for (Map.Entry<String, Object> entry : value.entrySet()) {
-            buf.append(entry.getKey()).append(" = ").append(convert(entry.getValue())).append(", ");
+            buf.append(entry.getKey()).append(" = ").append(DataConverter.sql_by_jType(entry.getValue())).append(", ");
         }
 
         return buf.delete(buf.length() - 2, buf.length())
-                .append(" WHERE id = " + id)
+                .append(" WHERE id = " + id)        // 이거 없으면 진짜 개좆되는 수가 있다.
                 .toString();
     }
 
@@ -89,7 +95,7 @@ public class SQL {
     public static StringBuffer values(Set<String> keys, Map<String, Object> values, StringBuffer buffer) {
         buffer.append("(");
         for (String key : keys) {
-            buffer.append(convert(values.get(key))).append(",");
+            buffer.append(DataConverter.sql_by_jType(values.get(key))).append(",");
         }
         buffer.delete(buffer.length() - 1, buffer.length()).append(")");
         return buffer;
@@ -103,19 +109,41 @@ public class SQL {
     }
 
 
+    public static final <T> T reduce(ResultSet rs, T d, ReduceHandlerR<T> handler) {
+        int index = 0;
+        try {
+            while (rs.next())
+                d = handler.accept(d, rs, index++);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return d;
+    }
+
+    public static final <T> T reduce(ResultSet rs, T d, ReduceHandler<T> handler) {
+        int index = 0;
+        try {
+            while (rs.next())
+                handler.accept(d, rs, index++);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return d;
+    }
+
     // 먼저 rs.next() 이후에 넣어줘야 한다.
     public static final List<Map<String, Object>> readAll(ResultSet rs) throws Exception {
-        return readAll(rs, SQL::convert);
+        return readAll(rs, DataConverter::data_by_dType);
     }
 
     public static final List<Map<String, Object>> readAllJSON(ResultSet rs) throws Exception {
-        return readAll(rs, SQL::convertJSON);
+        return readAll(rs, DataConverter::convertJSON);
     }
 
     public static final List<Map<String, Object>> readAll(ResultSet rs, CONVERT_HANDLER handler) throws Exception {
         List<Map<String, Object>> result = new ArrayList<>();
 
-        if(rs.next()) {
+        if (rs.next()) {
             ResultSetMetaData meta = rs.getMetaData();
             do {
                 result.add($read(rs, meta, handler));
@@ -125,11 +153,11 @@ public class SQL {
     }
 
     public static final Map<String, Object> readJSON(ResultSet rs) throws Exception {
-        return read(rs, SQL::convertJSON);
+        return read(rs, DataConverter::convertJSON);
     }
 
     public static final Map<String, Object> read(ResultSet rs) throws Exception {
-        return read(rs, SQL::convert);
+        return read(rs, DataConverter::data_by_dType);
     }
 
     public static final Map<String, Object> read(ResultSet rs, CONVERT_HANDLER handler) throws Exception {
@@ -167,81 +195,71 @@ public class SQL {
     }
 
 
-    // java type ==> sql type
-    public static String convert(Object val) {
-        if (val == null) return "null";
-
-        Class<?> clazz = val.getClass();
-
-        if (CharSequence.class.isAssignableFrom(clazz))
-            return "'" + val.toString().replaceAll("'", "\\\\'") + "'";
-
-        if (Date.class.isAssignableFrom(clazz))
-            return "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) val) + "'";
-
-        return val.toString();
-    }
 
 
-    // sql type ==> java type
-    public static Object convertJSON(ResultSet rs, String dataType, int index) throws Exception {
-        switch (dataType) {
-            case "TIMESTAMP":
-            case "DATETIME":
-            case "DATE":
-            case "TIME":
-            case "YEAR":
-                Timestamp stamp = rs.getTimestamp(index);
-                return stamp == null ? null : stamp.getTime();
-            default:
-                return convert(rs, dataType, index);
+
+
+
+
+    // ************************************** SQL 작성용  ************************************** //
+
+    private static final Pattern
+            p = Pattern.compile(":([^:\\s,()]+)");
+
+
+    /*
+     *  preparedStatement의 ?를 :name으로 사용하기 위한 parsing 로직
+     *
+     */
+    public static NamedPreparedStatementFactory newPrepared(String sql) {
+
+        StringBuffer buf = new StringBuffer();
+        List<NamedTuple> order = new ArrayList<>();
+
+        Matcher m = p.matcher(sql);
+        int index = 1, t1;
+
+        while (m.find()) {
+
+            // :name ==> ?
+            m.appendReplacement(buf, "?");
+
+            String val = m.group(1), type = "";
+
+            // 타입이 있을 경우
+            if ((t1 = val.indexOf("[")) != -1) {
+                type = val.substring(t1 + 1, val.indexOf("]"));
+                val = val.substring(0, t1);
+            }
+            // like
+            else if (val.contains("%")) {
+                if (val.startsWith("%")) {
+                    if (val.endsWith("%")) {
+                        type = "%like%";
+                    } else type = "%like";
+                } else {
+                    type = "like%";
+                }
+
+                val = val.replaceAll("%", "");
+
+            }
+
+            order.add(new NamedTuple(val, index++, type));
         }
-    }
 
-    public static Object convert(ResultSet rs, String dataType, int index) throws Exception {
-        switch (dataType) {
-            case "TINYINT":
-            case "SMALLINT":
-            case "MEDIUMINT":
-            case "INT":
-            case "INTEGER":
-                return rs.getInt(index);
-            case "BIGINT":
-                return rs.getLong(index);
-            case "BIT":
-            case "BOOL":
-            case "BOOLEAN":
-                return rs.getBoolean(index);
-            case "DECIMAL":
-            case "DEC":
-            case "NUMERIC":
-            case "FIXED":
-                return rs.getBigDecimal(index);
-            case "DOUBLE":
-            case "DOUBLE PRECISION":
-                return rs.getDouble(index);
-            case "FLOAT":
-                return rs.getFloat(index);
-            case "TIMESTAMP":
-            case "DATETIME":
-            case "DATE":
-            case "TIME":
-            case "YEAR":
-                Timestamp stamp = rs.getTimestamp(index);
-                return stamp == null ? null : new Date(stamp.getTime());
-            default:
-                return rs.getString(index);
-        }
+        m.appendTail(buf);
+        sql = buf.toString();
+
+        return new NamedPreparedStatementFactory(sql, order);
     }
 
 
-    private static final Pattern p = Pattern.compile("\\{(.*?)\\}");
-
-    public static final  Function<Map<String, Object>, String> dynamicSQL(String sql) {
+    public static final DQuery dynamicSQL(String sql) {
         List<Function<Map<String, Object>, String>> list = new ArrayList<>();
         Matcher m = p.matcher(sql);
 
-        int pos = 0, s;
+        int pos = 0, s, t1;
 
         while (m.find()) {
             if ((s = m.start()) != pos) {
@@ -249,11 +267,30 @@ public class SQL {
                 list.add((a) -> r);
             }
 
-            String k = m.group(1);
+            final String group = m.group(1), val, type;
+
+            // 타입이 있을 경우
+            if ((t1 = group.indexOf("[")) != -1) {
+                val = group.substring(0, t1);
+                type = group.substring(t1 + 1, group.indexOf("]"));
+            }
+            // like
+            else if (group.contains("%")) {
+                if (group.startsWith("%")) {
+                    type = group.endsWith("%") ? "%like%" : "%like";
+                } else {
+                    type = "like%";
+                }
+                val = group.replaceAll("%", "");
+            } else {
+                val = group;
+                type = "varchar";
+            }
+
             list.add((map) -> {
-                Object v = map.get(k);
-                if (v == null) throw new RuntimeException("{" + k + "} 값이 없습니다.");
-                return SQL.convert(v);
+                Object v = Access.read(map, val);
+                if (v == null) throw new RuntimeException("{" + val + "} 값이 없습니다.");
+                return exp_to_sql(type, v);
             });
 
             pos = m.end();
@@ -272,10 +309,20 @@ public class SQL {
         };
     }
 
+    public interface ReduceHandler<T> {
+        void accept(T t, ResultSet rs, int index) throws Exception;
+    }
+
+    public interface ReduceHandlerR<T> {
+        T accept(T t, ResultSet rs, int index) throws Exception;
+    }
 
     public interface CONVERT_HANDLER {
         Object convert(ResultSet rs, String dataType, int index) throws Exception;
     }
 
+    public interface DQuery {
+        String apply(Map<String, Object> map);
+    }
 
 }

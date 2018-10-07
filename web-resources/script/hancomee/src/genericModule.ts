@@ -2,12 +2,20 @@ import {SPA} from "../../../lib/core/spa";
 import {HTML} from "../../../lib/core/html";
 import compile = HTML.compile;
 import htmlParser = HTML.htmlParser;
+import {DOM} from "../../../lib/core/dom";
+import className = DOM.className;
+import {Events} from "../../../lib/core/events";
+import propertyMap = Events.propertyMap;
+import {_reduce} from "../../../lib/core/_func/array";
 
 
 export abstract class GenericModule<T> implements iSPA.module<T> {
     private _resolve: Promise<HTMLElement>
     protected element: HTMLElement
     protected q: T
+
+    private loadingElement: HTMLElement
+    private popElement: HTMLElement
 
     /*
      *   이미 로드된 상황 (초기화)이고
@@ -20,23 +28,63 @@ export abstract class GenericModule<T> implements iSPA.module<T> {
 
         div.id = id;
         this.element = div;
+
+        /*
+         *  모든 모듈이 공통적으로 가지는 
+         *  ① 로딩 엘리먼트
+         *  ② 팝업 엘리먼트
+         */
+        div.innerHTML = '<div class="loading"></div><div class="popup"></div>';
+        this.loadingElement = div.querySelector('.loading');
+        this.popElement = div.querySelector('.popup');
+
         this._resolve = Promise.all([
+
+            // style과 html 로딩딩
             SPA.getStyle('/dist/hancomee/src/' + id + '.css'),
             SPA.getElement('hancomee/src/' + id)
+
         ]).then(([style, frag]) => {
+
             div.appendChild(style);
-            let templates = {};
 
-            Array.prototype.forEach.call(frag.querySelectorAll('script[type="text/html"]'),
-                (v) => {
-                    frag.removeChild(v);
-                    v.id && (templates[v.id] = v.innerHTML);
-                });
+            // <script>로 작성된 template html
+            /*
+             *  존나 알 수 없는 일.
+             *  병신같은 ie에서는 innerText와 (textConent, innerHTML) 값이 다르다..ㄷㄷ
+             */
+            let templates = _reduce(frag.querySelectorAll('script[type="text/html"]'), (r, v) => {
+                frag.removeChild(v);
+                v.id && (r[v.id] = v['innerText']);
+                return r;
+            }, {});
 
+            // 하위 모듈 로직
             this.$init(div, frag, templates);
+
             div.appendChild(frag);
             return div;
         });
+    }
+
+    // 로딩바
+    protected loading(flag: boolean) {
+        className(this.loadingElement, 'on', flag);
+        className(document.body, 'screen', flag);
+        return this;
+    }
+
+    // 팝업창
+    protected pop(element?: HTMLElement | DocumentFragment) {
+        let {popElement} = this,
+        isOpen = !!element;
+
+        popElement.textContent = '';
+        isOpen && popElement.appendChild(element);
+        className(popElement, 'on', isOpen);
+        className(document.body, 'screen', isOpen);
+
+        return this;
     }
 
     init(): Promise<HTMLElement> {
