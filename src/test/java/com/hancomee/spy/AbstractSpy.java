@@ -1,6 +1,6 @@
 package com.hancomee.spy;
 
-import com.hancomee.util.DB;
+import com.hancomee.util.db.DB;
 import com.hancomee.util.HTTP;
 import com.hancomee.util.Patterns;
 

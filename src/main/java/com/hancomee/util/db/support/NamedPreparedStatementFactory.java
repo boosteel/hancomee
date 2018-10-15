@@ -1,10 +1,8 @@
-package com.hancomee.util.db;
+package com.hancomee.util.db.support;
 
 import java.sql.Connection;
 import java.util.*;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class NamedPreparedStatementFactory {
 

@@ -1,0 +1,110 @@
+@import "../mixins";
+@import "variables";
+// bootstrap@4.1.1 - scss
+@import "../bagic-bootstrap";
+@import "../../../node_modules/bootstrap/scss/forms";
+
+@import "fonts";
+
+a {
+  color: inherit;
+  &:hover, &:visited, &:active {
+    text-decoration: none;
+  }
+}
+
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: {
+    top: $nav-height;
+  }
+
+  letter-spacing: -.01em;
+  background-color: $main-color-sm;
+
+  &, pre, textarea {
+    font-family: 'Roboto', 'Nanum Gothic';
+    margin: 0;
+  }
+}
+
+
+body {
+
+  > nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1041;
+
+    height: $nav-height;
+
+    background-color: $main-color-lx;
+    border-bottom: 1px solid darken($main-color-lx, 5%);
+
+    .brand {
+      display: inline-block;
+      margin-top: .5rem;
+
+      font-size: 1.4rem;
+      font-family: 'Play';
+      font-weight: 700;
+      color: white;
+    }
+  }
+
+}
+
+
+.check-btn {
+
+  width: 0;
+  height: 0;
+  opacity: 0;
+  font-size: 0;
+
+  label + & {
+    margin-left: 15px;
+  }
+
+
+  & + label {
+
+    margin-top: .5rem;
+
+    &, &:before {
+      cursor: pointer;
+    }
+
+    &:before {
+      display: inline-block;
+      margin: {
+        top: -1px;
+        right: 5px;
+      }
+      width: 18px;
+      height: 18px;
+      content: '';
+      vertical-align: middle;
+      background-image: url(/img/check_btn_off.png);
+    }
+  }
+
+  &:checked {
+    & + label {
+      &:before {
+        background-image: url(/img/check_btn_on.png);
+      }
+    }
+  }
+}

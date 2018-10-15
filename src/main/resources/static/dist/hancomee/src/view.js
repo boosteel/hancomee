@@ -132,7 +132,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return false;
         }
         proto = getProto(obj);
-        // Objects with no prototype (e.g., `Object.create( null )`) are plain
+        // Objects with no prototype (e.g., `Object.newInstance( null )`) are plain
         if (!proto) {
             return true;
         }
@@ -427,6 +427,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     var DOM;
     (function (DOM) {
         var doc = document;
+        function contains(parent, target) {
+            var p;
+            while (p = target.parentNode) {
+                if (parent === p)
+                    return true;
+            }
+            return false;
+        }
+        DOM.contains = contains;
         function closest(target, handler, limit) {
             if (limit === void 0) { limit = null; }
             var index = 0;
@@ -636,6 +645,72 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
+    // 숫자 자리수 맞추기
+    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
+        'yyyy': function (d) { return d.getFullYear(); },
+        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
+        'M': function (d) { return d.getMonth() + 1; },
+        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
+        'd': function (d) { return d.getDate(); },
+        'dd': function (d) { return zeroFill(d.getDate()); },
+        'E': function (d) { return __day[d.getDay()]; },
+        'HH': function (d) { return zeroFill(d.getHours()); },
+        'hh': function (d) { return zeroFill(d.getHours()); },
+        'mm': function (d) { return zeroFill(d.getMinutes()); },
+        'ss': function (d) { return zeroFill(d.getSeconds()); },
+        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
+    };
+    function _toKor(date, now) {
+        if (now === void 0) { now = new Date().getTime(); }
+        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
+        if (duration > day)
+            return Math.floor(duration / day) + '일 전';
+        if (duration > hour)
+            return Math.floor(duration / hour) + '시간 전';
+        if (duration > minute)
+            return Math.floor(duration / minute) + '분 전';
+        if (duration > second)
+            return Math.floor(duration / second) + '초 전';
+    }
+    exports._toKor = _toKor;
+    function _dateFormat(_date, f) {
+        if (!_date)
+            return '';
+        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
+        if (!f)
+            return _datetime(d);
+        return f.replace(r_datetime, function ($1) {
+            if (temp = _switch[$1])
+                return temp(d);
+            else
+                return $1;
+        });
+    }
+    exports._dateFormat = _dateFormat;
+    ;
+    function _datetime(val) {
+        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
+            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
+    }
+    exports._datetime = _datetime;
+    function _date(val) {
+        var m = val.getMonth() + 1, d = val.getDate();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
+    }
+    exports._date = _date;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function _makeArray(obj) {
         var r = [], l = obj.length;
         while (l-- > 0)
@@ -745,7 +820,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -896,76 +971,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
-    // 숫자 자리수 맞추기
-    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
-        'yyyy': function (d) { return d.getFullYear(); },
-        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
-        'M': function (d) { return d.getMonth() + 1; },
-        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
-        'd': function (d) { return d.getDate(); },
-        'dd': function (d) { return zeroFill(d.getDate()); },
-        'E': function (d) { return __day[d.getDay()]; },
-        'HH': function (d) { return zeroFill(d.getHours()); },
-        'hh': function (d) { return zeroFill(d.getHours()); },
-        'mm': function (d) { return zeroFill(d.getMinutes()); },
-        'ss': function (d) { return zeroFill(d.getSeconds()); },
-        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
-    };
-    function _toKor(date, now) {
-        if (now === void 0) { now = new Date().getTime(); }
-        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
-        if (duration > day)
-            return Math.floor(duration / day) + '일 전';
-        if (duration > hour)
-            return Math.floor(duration / hour) + '시간 전';
-        if (duration > minute)
-            return Math.floor(duration / minute) + '분 전';
-        if (duration > second)
-            return Math.floor(duration / second) + '초 전';
-    }
-    exports._toKor = _toKor;
-    function _dateFormat(_date, f) {
-        if (!_date)
-            return '';
-        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
-        if (!f)
-            return _datetime(d);
-        return f.replace(r_datetime, function ($1) {
-            if (temp = _switch[$1])
-                return temp(d);
-            else
-                return $1;
-        });
-    }
-    exports._dateFormat = _dateFormat;
-    ;
-    function _datetime(val) {
-        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
-            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
-    }
-    exports._datetime = _datetime;
-    function _date(val) {
-        var m = val.getMonth() + 1, d = val.getDate();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
-    }
-    exports._date = _date;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10), __webpack_require__(9), __webpack_require__(6), __webpack_require__(1), __webpack_require__(4), __webpack_require__(12), __webpack_require__(2), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(9), __webpack_require__(10), __webpack_require__(4), __webpack_require__(1), __webpack_require__(5), __webpack_require__(11), __webpack_require__(2), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var read = access_1.Access.read;
@@ -978,18 +987,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         filesize: fileSize
     };
     function $setText(ele, val) {
-        var c = ele.getAttribute('data-type'), i, fn, p = c, arg;
-        if (c) {
-            if ((i = c.indexOf(':')) !== -1) {
-                p = c.substring(0, i);
-                arg = primitive(c.substring(i + 1, c.length));
+        if (val !== void 0) {
+            var c = ele.getAttribute('data-type'), i = void 0, fn = void 0, p = c, arg = void 0;
+            if (c) {
+                if ((i = c.indexOf(':')) !== -1) {
+                    p = c.substring(0, i);
+                    arg = primitive(c.substring(i + 1, c.length));
+                }
+                if (fn = defaultFilter[p]) {
+                    ele.textContent = fn(val, arg);
+                    return ele;
+                }
             }
-            if (fn = defaultFilter[p]) {
-                ele.textContent = fn(val, arg);
-                return ele;
-            }
+            ele.textContent = val == null ? '' : val;
         }
-        ele.textContent = val || '';
         return ele;
     }
     var EleMap = /** @class */ (function () {
@@ -1386,7 +1397,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             // 변수 표현식에서 쉽게 표기하기 위해 배열로 내보낸다.
             /*
-             *  let [create, {val1, val2}] = htmlParse()
+             *  let [newInstance, {val1, val2}] = htmlParse()
              */
             var _a = parseIndex.getResult(), $c = _a[0], result = _a[1];
             parseIndex = null;
@@ -1507,6 +1518,52 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var StringBuffer = /** @class */ (function () {
+        function StringBuffer(init) {
+            this.array = [];
+            this.i = 0;
+            if (init)
+                this.append(init);
+        }
+        StringBuffer.prototype.reset = function () {
+            this.array = [];
+            this.i = 0;
+            return this;
+        };
+        StringBuffer.prototype.prepend = function (v) {
+            this.array.unshift(v);
+            this.i++;
+            return this;
+        };
+        StringBuffer.prototype.append = function (v) {
+            var array = this.array;
+            if (!Array.isArray(v))
+                array[this.i++] = v;
+            else {
+                var i = 0, u = this.i, l = v.length;
+                while (i < l)
+                    array[u++] = v[i++];
+                this.i = u;
+            }
+            return this;
+        };
+        StringBuffer.prototype.toString = function () {
+            return this.array.join('');
+        };
+        return StringBuffer;
+    }());
+    exports.StringBuffer = StringBuffer;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1, number_1) {
@@ -1635,53 +1692,23 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var StringBuffer = /** @class */ (function () {
-        function StringBuffer(init) {
-            this.array = [];
-            this.i = 0;
-            if (init)
-                this.append(init);
-        }
-        StringBuffer.prototype.reset = function () {
-            this.array = [];
-            this.i = 0;
-            return this;
-        };
-        StringBuffer.prototype.prepend = function (v) {
-            this.array.unshift(v);
-            this.i++;
-            return this;
-        };
-        StringBuffer.prototype.append = function (v) {
-            var array = this.array;
-            if (!Array.isArray(v))
-                array[this.i++] = v;
-            else {
-                var i = 0, u = this.i, l = v.length;
-                while (i < l)
-                    array[u++] = v[i++];
-                this.i = u;
-            }
-            return this;
-        };
-        StringBuffer.prototype.toString = function () {
-            return this.array.join('');
-        };
-        return StringBuffer;
-    }());
-    exports.StringBuffer = StringBuffer;
+    var bind = Function.prototype.bind;
+    function _newApply(cons, args) {
+        return new (bind.apply(cons, [null].concat(args)));
+    }
+    exports._newApply = _newApply;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1697,7 +1724,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(14), __webpack_require__(5), __webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, NameMap_1, arrays_1, core_1, access_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(14), __webpack_require__(6), __webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, NameMap_1, arrays_1, core_1, access_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Events = /** @class */ (function () {
@@ -2019,22 +2046,6 @@ var __extends = (this && this.__extends) || (function () {
 
 
 /***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var bind = Function.prototype.bind;
-    function _newApply(cons, args) {
-        return new (bind.apply(cons, [null].concat(args)));
-    }
-    exports._newApply = _newApply;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2236,7 +2247,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var NameMap = /** @class */ (function () {
@@ -2282,10 +2293,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 /* 15 */,
-/* 16 */
+/* 16 */,
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17), __webpack_require__(3), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, spa_1, dom_1, array_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(18), __webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, spa_1, dom_1, array_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var className = dom_1.DOM.className;
@@ -2306,9 +2318,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
              *  ① 로딩 엘리먼트
              *  ② 팝업 엘리먼트
              */
-            div.innerHTML = '<div class="loading"></div><div class="popup"></div>';
+            div.innerHTML = '<div class="loading"></div><div id="pop1" class="popup"></div><div id="pop2" class="popup"></div>';
             this.loadingElement = div.querySelector('.loading');
-            this.popElement = div.querySelector('.popup');
+            this.popElement = div.querySelector('#pop1');
+            this.pop2Element = div.querySelector('#pop2');
             this._resolve = Promise.all([
                 // style과 html 로딩딩
                 spa_1.SPA.getStyle('/dist/hancomee/src/' + id + '.css'),
@@ -2347,6 +2360,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             className(document.body, 'screen', isOpen);
             return this;
         };
+        // 팝업창
+        GenericModule.prototype.pop2 = function (element) {
+            var pop2Element = this.pop2Element, isOpen = !!element;
+            pop2Element.textContent = '';
+            isOpen && pop2Element.appendChild(element);
+            className(pop2Element, 'on', isOpen);
+            className(document.body, 'screen', isOpen);
+            return this;
+        };
         GenericModule.prototype.init = function () {
             return this._resolve;
         };
@@ -2369,7 +2391,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13), __webpack_require__(0), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, location_1, core_1, html_1) {
@@ -2512,12 +2534,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 18 */,
 /* 19 */,
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(4), __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, array_1, datetime_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(5), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, array_1, datetime_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function $get(url) {
@@ -2568,13 +2589,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
     var $$extend = {
         activetime: function (v) {
-            return new Date(v);
+            if (!v)
+                return null;
+            return v instanceof Date ? v : new Date(v);
         },
         datetime: function (v) {
-            return new Date(v);
+            if (!v)
+                return null;
+            return v instanceof Date ? v : new Date(v);
         },
         updatetime: function (v) {
-            return new Date(v);
+            if (!v)
+                return null;
+            return v instanceof Date ? v : new Date(v);
         },
         // list용
         customer: function (v) {
@@ -2602,25 +2629,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         },
     }, 
     // 객체를 json data로 변경할때
-    $$json = {
-        activetime: function (v) {
-            return datetime_1._datetime(v);
-        },
-        datetime: function (v) {
-            return datetime_1._datetime(v);
-        },
-        updatetime: function (v) {
-            return datetime_1._datetime(v);
-        },
-        // work객체는 work_id로 바꾼다.
-        work: function (v) {
-            console.log('asdfasdf');
-            v && (this['work_id'] = v.id);
-        },
-        // draft, print는 json 변환에는 제외시킨다.
-        print: false,
-        draft: false
-    };
+    $$json = (function () {
+        var $$ = {
+            activetime: function (v) {
+                return datetime_1._datetime(v);
+            },
+            datetime: function (v) {
+                return datetime_1._datetime(v);
+            },
+            updatetime: function (v) {
+                return datetime_1._datetime(v);
+            },
+            // work객체는 work_id로 바꾼다.
+            work: function (v) {
+                v && (this['work_id'] = v.id);
+            },
+            // draft, print는 json 변환에는 제외시킨다.
+            print: false,
+            draft: false
+        };
+        return function (data) { return core_1.$extend({}, data, $$); };
+    })();
     //********************** 작업 그룹 **********************//
     var Work = /** @class */ (function () {
         function Work(data) {
@@ -2643,7 +2672,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         // 리스트 로딩
         function list(query) {
             return $get('/hancomee/list?' + query).then(function (e) {
-                e.values = e.values.map(function (a) {
+                e.contents = e.contents.map(function (a) {
                     var work = new Work(a);
                     // 이미지가 같이 담겨온다.
                     work.img = new WorkFile(a.draft);
@@ -2681,8 +2710,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
      * 메모 입출력은 그냥 간단하게 하자
      */
     (function (WorkMemo) {
-        function save(memo) {
-            return $post('/hancomee/db/memo/', core_1.$extend({}, memo, $$json))
+        function save(workId, memo) {
+            return $post('/hancomee/db/memo/' + workId, $$json(memo))
                 .then(function (id) {
                 memo.id = id;
                 return memo;
@@ -2725,12 +2754,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }());
     exports.WorkItem = WorkItem;
     (function (WorkItem) {
-        function save(v) {
-            return $post('/hancomee/db/item/', core_1.$extend({}, v, $$json))
-                .then(function (id) {
-                v.id = id;
-                return v;
-            });
+        function save(v, workId) {
+            return $post('/hancomee/db/item/' + workId, $$json(v));
         }
         WorkItem.save = save;
         function remove(v) {
@@ -2753,7 +2778,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     exports.Customer = Customer;
     (function (Customer) {
         function save(customer) {
-            return $post('/hancomee/db/customer', core_1.$extend({}, customer, $$json))
+            return $post('/hancomee/db/customer', $$json(customer))
                 .then(function (id) { return customer.setId(id); });
         }
         Customer.save = save;
@@ -2767,29 +2792,31 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }());
     exports.WorkFile = WorkFile;
     (function (WorkFile) {
-        function $get(xhr, id) {
+        // 서버 송출하는 upload 진행도가 전체에서 차지할 비율
+        var up = .4, send = 1 - up, rr = 100 * up;
+        function $get(id) {
             return new Promise(function (o, x) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/upload/progress' + (id ? '/' + id : ''));
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
+                            console.log('돼써!!!');
                             o(id ? parseInt(xhr.responseText) : xhr.responseText);
                         }
                     }
                 };
-                xhr.open('GET', '/upload/progress' + (id ? '/' + id : ''));
                 xhr.send(null);
             });
         }
-        // 서버 송출하는 upload 진행도가 전체에서 차지할 비율
-        var up = .4, send = 1 - up, rr = 100 * up;
         // File Upload Logic
-        function $upload(data, xhr, pXhr, handler) {
+        function $upload(data, handler) {
             // ① 고유 키를 받아온다.
-            return $get(xhr).then(function (id) {
-                var total = 0, time = 10, 
+            return $get().then(function (id) {
+                var total = 0, time = 10, xhr = new XMLHttpRequest(), 
                 // 서버측 다운로드 경과
                 tHandler = function () {
-                    $get(pXhr, id).then(function (d) {
+                    $get(id).then(function (d) {
                         if (total !== -1 && total !== d) {
                             handler.loading(rr + Math.floor(d / total * 100 * send));
                             setTimeout(tHandler, time);
@@ -2809,6 +2836,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     setTimeout(tHandler, time);
                 };
                 return new Promise(function (o, x) {
+                    xhr.open('POST', '/upload/file/' + id);
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState === 4) {
                             if (xhr.status === 200) {
@@ -2817,24 +2845,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                             }
                         }
                     };
-                    xhr.open('POST', '/upload/file/' + id);
                     xhr.send(data);
                 });
             });
         }
-        function uploadRef(files, handler) {
-            var xhr = new XMLHttpRequest(), pXhr = new XMLHttpRequest();
+        function uploadFile(path, files, handler) {
             return array_1._reduce(files, function (promise, file, i) {
                 return promise.then(function () {
                     var formData = new FormData();
-                    formData.append('path', 'D:/work/files');
+                    formData.append('path', 'D:/work/' + path);
                     formData.append('file', file);
                     handler.start(file, i);
-                    return $upload(formData, xhr, pXhr, handler).then(function () { return handler.complete(file, i); });
+                    return $upload(formData, handler).then(function (id) { return handler.done(file, id, i); });
                 });
-            }, Promise.resolve()).then(function () { return handler.done(); });
+            }, Promise.resolve()).then(function () { return handler.complete(); });
         }
-        WorkFile.uploadRef = uploadRef;
+        WorkFile.uploadFile = uploadFile;
+        function saveFile(type, ownId, workFile) {
+            return $post('/hancomee/db/' + type + '/' + ownId, $$json(workFile));
+        }
+        WorkFile.saveFile = saveFile;
+        function removeFile(type, id) {
+            return $delete('/hancomee/db/' + type + '/' + id);
+        }
+        WorkFile.removeFile = removeFile;
     })(WorkFile = exports.WorkFile || (exports.WorkFile = {}));
     exports.WorkFile = WorkFile;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -2882,7 +2916,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(16), __webpack_require__(20), __webpack_require__(13), __webpack_require__(7), __webpack_require__(11), __webpack_require__(31), __webpack_require__(3), __webpack_require__(32), __webpack_require__(4), __webpack_require__(33), __webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, genericModule_1, Work_1, location_1, html_1, events_1, FormValue_1, dom_1, Watcher_1, array_1, FormValid_1, core_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17), __webpack_require__(20), __webpack_require__(13), __webpack_require__(7), __webpack_require__(12), __webpack_require__(31), __webpack_require__(3), __webpack_require__(32), __webpack_require__(5), __webpack_require__(33), __webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, genericModule_1, Work_1, location_1, html_1, events_1, FormValue_1, dom_1, Watcher_1, array_1, FormValid_1, core_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var className = dom_1.DOM.className;
@@ -2893,6 +2927,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
     var createTemplate = html_1.HTML.createTemplate;
     var reduceFragment = html_1.HTML.reduceFragment;
     var createFragment = html_1.HTML.createFragment;
+    var select = html_1.HTML.select;
     var Q = /** @class */ (function (_super) {
         __extends(Q, _super);
         function Q() {
@@ -2935,9 +2970,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                     Item.$select = [':first-child', '{data-name}'];
                     return Item;
                 }());
-                var items, total, ctrl = {
+                var items, total, handler, ctrl = {
                     run: function (files) {
-                        items = [];
                         list.textContent = '';
                         list.appendChild(reduceFragment(files, function (f, i) {
                             return (items[i] = Item.create(f, i)).element;
@@ -2945,7 +2979,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                         total = items.length;
                         fb.style.width = fi.textContent = fsb.style.width = '0%';
                         fsi.textContent = '0 / ' + total;
-                        $self.pop(element);
+                        $self.pop2(element);
                         return this;
                     },
                     start: function (file, index) {
@@ -2959,24 +2993,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                     sending: function (progress) {
                         fb.style.width = fi.textContent = progress + '%';
                     },
-                    complete: function (file, index) {
-                        index++;
-                        fsi.textContent = index + ' / ' + total;
-                        fsb.style.width = Math.ceil(index / total * 100) + '%';
+                    done: function (file, uuid, index) {
+                        var name = file.name, i = name.lastIndexOf('.');
+                        return handler.done(new Work_1.WorkFile({
+                            datetime: new Date(), original_name: name.substring(0, i),
+                            filetype: name.substring(i + 1, name.length), save_name: uuid, size: file.size
+                        })).then(function () {
+                            fsi.textContent = index + ' / ' + total;
+                            fsb.style.width = Math.ceil(index / total * 100) + '%';
+                        });
                     },
-                    done: function () {
+                    complete: function () {
+                        handler.complete();
                     },
                     abort: function () {
                     },
                     on: function () {
-                        Work_1.WorkFile.uploadRef(items.map(function (v) { return v.file; }), this);
+                        Work_1.WorkFile.uploadFile($self.work.path, items.map(function (v) { return v.file; }), this);
                     },
                     off: function () {
-                        $self.pop();
+                        $self.pop2();
                     },
                 };
                 propertyMap(element, 'click', ctrl);
-                return ctrl;
+                return function (files, h) {
+                    handler = h;
+                    items = [];
+                    ctrl.run(files);
+                };
             });
             // ****************************** ▼ 제목 부분 ▼ ****************************** //
             watcher.map = selectAll(frag.querySelector('#title'), ['{data-name}', '.dropdown-menu li[]', '.state .value'], function (title, texts, dropdowns, sVal) {
@@ -3001,28 +3045,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                 };
             });
             // ****************************** ▼ 합계 및 견적 ▼ ****************************** //
-            watcher.map = selectAll(frag.querySelector('#sum'), ['{data-name}', '.work-text', '.work-text textarea'], function (f, texts, text, textarea) {
-                var $work, $text = {
+            watcher.map = selectAll(frag.querySelector('#sum'), ['.work-text', '.work-text textarea'], function (f, text, textarea) {
+                var $text = {
                     modify: function () {
                         className(text, 'form', true);
                         textarea.removeAttribute('disabled');
                     },
                     reset: function () {
                         textarea.setAttribute('disabled', 'true');
-                        textarea.value = $work.text;
+                        textarea.value = $self.work.text;
                         className(text, 'form', false);
                     },
                     confirm: function () {
-                        $work.text = textarea.value;
+                        $self.work.text = textarea.value;
                         this.reset();
                     }
                 };
                 propertyMap(text, 'click', $text);
                 return {
                     'work': function (work) {
-                        texts.setText($work = work);
                         $text.reset();
-                    }
+                    },
                 };
             });
             // ****************************** ▼ 거래처 정보 ▼ ****************************** //
@@ -3058,77 +3101,120 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                 events_1.Events.propertyMap(panel, 'click', ctrl);
                 return {
                     'work.customer': function (c) {
+                        console.log(c);
                         ctrl.data(c);
                     }
                 };
             });
             // ****************************** ▼ 작업 아이템 ▼ ****************************** //
-            watcher.map = selectAll(templates.itemTable, ['tbody'], function (container, tbody, itemTemplate, $con) {
+            watcher.map = selectAll(templates.itemTable, ['tbody'], function (container, tbody, itemTemplate, $con, texts) {
                 if (itemTemplate === void 0) { itemTemplate = createFragment(container.querySelector('.work-item')); }
                 if ($con === void 0) { $con = frag.querySelector('#work-item'); }
+                if (texts === void 0) { texts = select(frag.querySelector('#sum'), '{data-name}'); }
                 var Item = /** @class */ (function () {
-                    function Item(item, ele, names, p, toggle) {
+                    function Item(item, ele, names, p, printTexts) {
                         this.item = item;
                         this.ele = ele;
                         this.names = names;
-                        var print = item.print, length = item.print.length;
-                        toggle.textContent = length.toString();
+                        this.printTexts = printTexts;
                         // data-event에 쓰일 값 저장
                         ele.setAttribute('data-value', 'id:' + item.id);
-                        names.setText(item, this);
+                        this.render();
                     }
-                    Item.prototype.update = function (values) {
-                        core_1.$extend(this.item, values);
-                        this.names.setText(this.item);
+                    // 내용 수정하고
+                    Item.prototype.render = function (values) {
+                        var item = this.item;
+                        values && core_1.$extend(item, values);
+                        this.names.setText(item, this);
                     };
                     Item.prototype.remove = function () {
                         tbody.removeChild(this.ele);
                     };
+                    // setText directive용
                     Item.prototype.draft = function (e, item) {
-                        e.textContent = item.draft.length.toString();
+                        className(e, 'empty', !item.draft.length);
                     };
-                    Item.$select = ['.work-item', '{data-name}', '.print-file',
-                        '.print-file [data-toggle="dropdown"]'];
+                    Item.prototype.print = function (e, item) {
+                        var existsPrint = !!this.item.print.length;
+                        className(e, 'empty', !existsPrint);
+                        if (existsPrint)
+                            this.printTexts.setText(this.item.print[0], this);
+                    };
+                    Item.prototype.thumb = function (e, print) {
+                        e.setAttribute('data-icon-file', print.filetype);
+                    };
+                    Item.$select = ['.work-item', '{data-name}', '.draft-file', '{data-print}'];
                     Item.create = createTemplate(itemTemplate, Item);
                     return Item;
                 }());
-                var work, $$values, 
+                var $$values, 
                 // ---------------------- ▼ Image Screen ▼ ---------------------- //
-                $imgScreen = selectAll(templates.imgScreen, [':first-child', '.screen', '.title', '.count', '.before', '.after'], function (frag, ele, screen, title, count, before, after) {
-                    var $item, index, $images, $events = new events_1.EventsGroup()
+                $imgScreen = selectAll(templates.imgScreen, [':first-child', '.screen', '.title', '.count', '.before', '.after', 'input'], function (frag, ele, screen, title, count, before, after, input) {
+                    var $item, path, index, $images, 
+                    // 마우스휠로 이미지 이동
+                    $events = new events_1.EventsGroup()
                         .register(document, 'mousewheel', function (e) {
                         var next = index + (e['wheelDelta'] < 0 ? 1 : -1);
                         ctrl.select(next);
                         e.preventDefault();
                     }).off(), ctrl = {
-                        select: function (i) {
-                            if (!$images[i])
-                                return;
-                            var length = $images.length;
-                            index = i;
-                            screen.textContent = '';
-                            screen.appendChild($images[i++].img);
-                            this.reset(i, i === 1, !(i < length));
-                        },
-                        open: function (item) {
-                            var path = ($item = item).work.path;
+                        open: function (itemObject) {
+                            var _this = this;
+                            var item = ($item = itemObject).item;
+                            path = item.work.path;
+                            $images = [];
                             // 이미지 생성
-                            $images = item.draft.map(function (v, i) {
-                                var img = new Image;
-                                img.src = 'http://hancomee.com/workdata/' + path + '/' +
-                                    v.save_name + '.' + v.filetype;
-                                return { img: img, v: v };
-                            });
+                            item.draft.forEach(function (v) { return _this.add(v); });
                             // 초기화
                             screen.textContent = '';
                             title.textContent = item.subject +
                                 (item.detail ? ' (' + item.detail + ')' : '');
-                            this.reset(0, true, true).select(0);
+                            this.reset().select(0);
                             $self.pop(ele);
                             $events.on();
                         },
+                        add: function (draft) {
+                            var img = new Image;
+                            img.src = '/local/work/' + path + '/' +
+                                draft.save_name + '.' + draft.filetype;
+                            return $images.push(img) - 1;
+                        },
+                        select: function (i) {
+                            if (!$images[i])
+                                return;
+                            screen.textContent = '';
+                            index = i;
+                            this.reset(i, i === 0, !(i < $images.length));
+                            screen.appendChild($images[i++]);
+                        },
+                        // 이미지 삭제
+                        remove: function () {
+                            var _this = this;
+                            var workFile = $item.item.draft[index];
+                            if (!workFile)
+                                return;
+                            // 이미지 삭제
+                            Work_1.WorkFile.removeFile('draft', workFile.id).then(function () {
+                                $item.item.draft.splice(index, 1);
+                                $images.splice(index, 1);
+                                var length = $images.length;
+                                if (length) {
+                                    _this.select(index
+                                        < length ? index : length - 1);
+                                }
+                                else {
+                                    screen.textContent = '';
+                                    _this.reset();
+                                    index = -1;
+                                }
+                                $item.render();
+                            });
+                        },
                         reset: function (index, b, a) {
-                            count.textContent = index + ' / ' + length;
+                            if (index === void 0) { index = -1; }
+                            if (b === void 0) { b = true; }
+                            if (a === void 0) { a = true; }
+                            count.textContent = (index + 1) + ' / ' + $images.length;
                             className(before, 'disabled', b);
                             className(after, 'disabled', a);
                             return this;
@@ -3139,8 +3225,32 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                         close: function () {
                             $events.off();
                             $self.pop();
+                        },
+                        upload: function () {
+                            hiddenInput.on();
                         }
-                    };
+                    }, hiddenInput = (function () {
+                        var c = {
+                            on: function () {
+                                input.click();
+                            },
+                            complete: function () {
+                                $item.render(); // 이미지 버튼에 불 들어오게
+                            },
+                            done: function (workFile) {
+                                return Work_1.WorkFile.saveFile('draft', $item.item.id, workFile).then(function (id) {
+                                    workFile.id = id;
+                                    $item.item.draft.push(workFile);
+                                    ctrl.select(ctrl.add(workFile));
+                                });
+                            }
+                        };
+                        input.addEventListener('change', function () {
+                            var files = array_1._makeArray(input.files);
+                            fileUpload(files, c);
+                        });
+                        return c;
+                    })();
                     propertyMap(ele, 'click', ctrl);
                     return ctrl;
                 }), 
@@ -3185,39 +3295,55 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                         tbody.textContent = '';
                         $$values = {};
                         items.forEach(function (v) { return _this.add(v); });
-                        return ctrl;
+                        return ctrl.$compute();
                     },
                     add: function (item) {
                         tbody.appendChild(($$values[item.id] = Item.create(item)).ele);
                         return ctrl;
                     },
+                    // 총액 계산
+                    $compute: function () {
+                        var p, item, total = 0, price = 0, vat = 0, item_len = 0;
+                        for (p in $$values) {
+                            item = $$values[p].item;
+                            total += item.total;
+                            price += item.price;
+                            vat += item.vat;
+                            item_len++;
+                        }
+                        texts.setText({ total: total, price: price, vat: vat, item_len: item_len });
+                    },
                     // 아이템 추가버튼 클릭시
                     $create: function () {
-                        $modify.add(new Work_1.WorkItem().setWork(work));
+                        $modify.add(new Work_1.WorkItem().setWork($self.work));
                         modifyItem = null; // important sign!!
                     },
                     // 추가일지, 수정일지는 modifyItem 변수에 따라 다르다.
                     $confirm: function () {
-                        var values = $modify.values(), item = modifyItem ? modifyItem.item : new Work_1.WorkItem(values).setWork(work);
-                        Work_1.WorkItem.save(item).then(function () {
+                        var values = $modify.values(), item = modifyItem ? modifyItem.item : new Work_1.WorkItem(values).setWork($self.work);
+                        Work_1.WorkItem.save(values, $self.work.id).then(function () {
                             // update
                             if (modifyItem)
-                                modifyItem.update(values);
+                                modifyItem.render(values);
                             // save
                             else
                                 ctrl.add(item);
+                            ctrl.$compute();
                             $modify.close();
                         });
                     },
                     $remove: function (d) {
                         var item = $$values[d.id];
-                        Work_1.WorkItem.remove(item.item).then(function () { return item.remove(); });
+                        Work_1.WorkItem.remove(item.item).then(function () {
+                            item.remove();
+                            delete $$values[d.id];
+                            ctrl.$compute();
+                        });
                         return ctrl;
                     },
                     // 수정모드
                     $modify: function (d) {
                         modifyItem = $$values[d.id];
-                        console.log($modify);
                         $modify.attach(modifyItem);
                     },
                     // 수정모드 취소
@@ -3225,7 +3351,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                         $modify.close();
                     },
                     $img: function (d) {
-                        $imgScreen.open($$values[d.id].item);
+                        $imgScreen.open($$values[d.id]);
                     },
                 }; // ************** ▲ Modify Item Template ▲ ************** //
                 propertyMap($con, 'click', ctrl);
@@ -3233,7 +3359,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                 $con.querySelector('.body').appendChild(container);
                 return {
                     'items': function (items) {
-                        work = this.work;
                         ctrl.reset(items);
                     }
                 };
@@ -3262,14 +3387,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                     Memo.$select = [':1', '{data-name}'];
                     return Memo;
                 }());
-                var work, _a = selectAll(createElement(templates.workMemoForm), ['textarea']), modifyForm = _a[0], modifyText = _a[1], textareaValue, $values, activeMemo, ctrl = {
+                var _a = selectAll(createElement(templates.workMemoForm), ['textarea']), modifyForm = _a[0], modifyText = _a[1], textareaValue, $values, activeMemo, ctrl = {
                     create: function () {
                         if (!textareaValue)
                             return;
-                        Work_1.WorkMemo.save(new Work_1.WorkMemo({
+                        Work_1.WorkMemo.save($self.work.id, new Work_1.WorkMemo({
                             datetime: new Date().getTime(),
                             value: createText.value,
-                            work: work
                         })).then(function (m) {
                             createText.value = '';
                             ctrl.add(m);
@@ -3293,7 +3417,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                     },
                     update: function () {
                         var data = activeMemo.data, value = activeMemo.data.value, newVal = data.value = modifyText.value;
-                        Work_1.WorkMemo.save(data).then(function () {
+                        Work_1.WorkMemo.save($self.work.id, data).then(function () {
                             activeMemo.setValue(newVal);
                             ctrl.cancel();
                         });
@@ -3318,7 +3442,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                 return {
                     'work.memo': function (memo) {
                         // 초기화
-                        work = this.work;
                         className(createForm, 'active', false);
                         createText.value = '';
                         ctrl.reset(memo);
@@ -3354,7 +3477,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                      *  때문에 files 갯수를 확인해서 작동하도록 한다.
                      */
                     if (files.length) {
-                        fileUpload.run(files);
+                        fileUpload(files, {
+                            done: function (workfile) {
+                                return Work_1.WorkFile.saveFile('ref', $self.work.id, workfile).then(function (id) {
+                                    console.log(id);
+                                });
+                            },
+                            complete: function () {
+                            }
+                        });
                         fileInput.value = '';
                     }
                 });
@@ -3376,6 +3507,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
             if (!param.uuid)
                 return;
             return Work_1.Work.get(param.uuid).then(function (a) {
+                _this.work = a.work;
                 _this.watcher.apply(a);
             });
         };
@@ -3392,7 +3524,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
 /* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2), __webpack_require__(23), __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, number_1, remap_1, datetime_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2), __webpack_require__(23), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, number_1, remap_1, datetime_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var FormValue;
@@ -3538,7 +3670,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     // 얕은 비교

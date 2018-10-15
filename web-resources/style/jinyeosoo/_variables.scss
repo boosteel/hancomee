@@ -1,0 +1,12 @@
+
+
+// variables는 functions를 이용하므로 반드시 앞에 붙어있어야 한다.
+@import "../../../node_modules/bootstrap/scss/functions";
+@import "../../../node_modules/bootstrap/scss/variables";
+
+$aside-width: 200px;
+$nav-height: 50px;
+
+$main-color-lx: #564573;
+$main-color-md: #d5cae6;
+$main-color-sm: #faf7ff;

@@ -1,7 +1,8 @@
 package com.hancomee.web.controller.work;
 
-import com.hancomee.util.DB;
-import com.hancomee.util.SQL;
+import com.hancomee.util.db.DB;
+import com.hancomee.util.db.ResultSetAccess;
+import com.hancomee.util.db.SQL;
 import com.hancomee.web.controller.support.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,14 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-
 @Controller
 @RequestMapping("hancomee/customer")
 public class CustomerCtrl {
 
-    @Autowired
-    _WorkCommon workCommon;
 
     @Autowired
     DB workDB;
@@ -24,7 +21,7 @@ public class CustomerCtrl {
     @RequestMapping("get/{id}")
     @ResponseBody
     public Object get(@PathVariable("id") int id) throws Exception {
-        return workDB.execute("SELECT * FROM hancomee_customer WHERE id = " + id, SQL::readJSON);
+        return workDB.execute("SELECT * FROM hancomee_customer WHERE id = " + id, ResultSetAccess::readJSON);
     }
 
     @RequestMapping("values")
@@ -32,7 +29,7 @@ public class CustomerCtrl {
     public PageRequest values(Query query) throws Exception {
         String[] sql = query.SQL();
         return new PageRequest(
-                workDB.execute(sql[0], SQL::readAllJSON),
+                workDB.execute(sql[0], ResultSetAccess::readAllJSON),
                 workDB.execute(sql[1], 0l, (rs) -> rs.getLong(1)),
                 query.page,
                 query.size

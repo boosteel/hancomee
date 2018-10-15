@@ -1,4 +1,4 @@
-package com.hancomee.util;
+package com.hancomee.util.db;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -79,6 +79,33 @@ public class DataConverter {
         }
     }
 
+    /*
+     *  @INSERT 혹은 @UPDATE 용
+     */
+    public static String dType_to_string(String type, Object value) {
+        if (value == null) return null;
+
+        if (value instanceof String) return _dType_to_string(type, value.toString());
+        return sql_by_jType(value);
+
+    }
+
+    public static String _dType_to_string(String type, String value) {
+        switch (type) {
+            case "TIMESTAMP":
+            case "DATETIME":
+            case "DATE":
+            case "TIME":
+            case "YEAR":
+            case "CHAR":
+            case "VARCHAR":
+            case "TEXT":
+                return "'" + value + "'";
+            default:
+                return value;
+        }
+    }
+
 
     // db 데이터타입에 맞춰 데이터 변환하기
     public static Object data_by_dType(ResultSet rs, String dataType, int index) throws Exception {
@@ -105,19 +132,23 @@ public class DataConverter {
                 return rs.getDouble(index);
             case "FLOAT":
                 return rs.getFloat(index);
+
+            /*
+             *  JSON 변환을 위해 날짜타입은 숫자형으로 내보낸다.
+             */
             case "TIMESTAMP":
             case "DATETIME":
             case "DATE":
             case "TIME":
             case "YEAR":
                 Timestamp stamp = rs.getTimestamp(index);
-                return stamp == null ? null : new Date(stamp.getTime());
+                return stamp == null ? null : stamp.getTime();
             default:
                 return rs.getString(index);
         }
     }
 
-    private static String _(String s) {
+    private static String quite(String s) {
         return "'" + s + "'";
     }
 
@@ -161,9 +192,16 @@ public class DataConverter {
         return pstmt;
     }
 
-    // Statement용
-    public static String exp_to_sql(String type, Object value) {
-        if (value == null) return "null";
+    /*
+     *   Statement용 변환기
+     *   value가 String이어도 문제가 없다.
+     *
+     */
+    public static String sql_by_exp(String type, Object value) {
+        if (value == null) return null;
+
+        String v;
+
         switch (type) {
             case "d":
             case "date":
@@ -172,25 +210,25 @@ public class DataConverter {
                     case "long":
                     case "java.lang.Integer":
                     case "java.lang.Long":
-                        return _(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date((int) value)));
+                        return quite(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date((int) value)));
                     case "java.util.Date":
-                        return _(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) value));
+                        return quite(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) value));
                     default:
-                        return "null";
+                        return value.toString();
                 }
             case "%like%":
-                return _("%" + value.toString().replaceAll("(%|'|\\\\)", "\\\\$1") + "%");
+                return quite("%" + value.toString().replaceAll("(%|'|\\\\)", "\\\\$1") + "%");
             case "%like":
-                return _("%" + value.toString().replaceAll("(%|'|\\\\)", "\\\\$1"));
+                return quite("%" + value.toString().replaceAll("(%|'|\\\\)", "\\\\$1"));
             case "like%":
-                return _(value.toString().replaceAll("(%|'|\\\\)", "\\\\$1") + "%");
+                return quite(value.toString().replaceAll("(%|'|\\\\)", "\\\\$1") + "%");
             case "int":
             case "i":
             case "long":
             case "l":
                 return value.toString();
             default:
-                return _(value.toString().replaceAll("('|\\\\)", "\\\\$1"));
+                return quite(value.toString().replaceAll("('|\\\\)", "\\\\$1"));
         }
     }
 

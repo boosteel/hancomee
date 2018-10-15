@@ -1,10 +1,10 @@
-package com.hancomee.util;
+package com.hancomee.util.db;
 
-import com.hancomee.util.db.TableInfo;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,43 +38,36 @@ public class DB {
     }
 
 
-    public void threadRun(ThreadRun run) {
-        try {
-            ThreadLocal<Connection> local = new ThreadLocal<>();
-            local.set(getCon());
-            run.run();
-            local.remove();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public<T> T createRepository(Class<T> clazz) {
+        return RepositoryFactory.createRepository(clazz, this);
     }
 
     public void doStmt(DoStatement doWork) {
-        doStmt(doWork, true);
+        doStmt(doWork, false);
     }
 
     public void doStmt(DoStatement doWork, boolean autoCommit) {
         transaction((con) -> {
             try (Statement s = con.createStatement()) {
-                doWork.accept(s, con);
+                doWork.accept(s);
             }
             return null;
         }, autoCommit);
     }
 
     public <T> T doStmtR(DoStatementR<T> doWork) {
-        return doStmtR(doWork, true);
+        return doStmtR(doWork, false);
     }
     public <T> T doStmtR(DoStatementR<T> doWork, boolean autoCommit) {
         return transaction((con) -> {
             try (Statement s = con.createStatement()) {
-                return doWork.accept(s, con);
+                return doWork.accept(s);
             }
         }, autoCommit);
     }
 
     public void doWork(DoWork doWork) {
-        this.doWork(doWork, true);
+        this.doWork(doWork, false);
     }
     public void doWork(DoWork doWork, boolean autoCommit) {
 
@@ -85,7 +78,7 @@ public class DB {
     }
 
     public <T> T doWorkR(DoWorkR<T> doWork) {
-        return this.doWorkR(doWork, true);
+        return this.doWorkR(doWork, false);
     }
     public <T> T doWorkR(DoWorkR<T> doWork, boolean autoCommit) {
         return transaction((con) -> doWork.accept(con), autoCommit);
@@ -166,6 +159,7 @@ public class DB {
     }
 
 
+
     public TableInfo getTableInfo(String tableName) {
         return TableInfo.create(tableName, this);
     }
@@ -227,6 +221,7 @@ public class DB {
         try (Connection con = getCon()) {
 
             if (autoCommit) {
+                con.setAutoCommit(true);
                 return d.accept(con);
             } else {
                 try {
@@ -297,11 +292,11 @@ public class DB {
     }
 
     public interface DoStatement {
-        void accept(Statement s, Connection con) throws Exception;
+        void accept(Statement s) throws Exception;
     }
 
     public interface DoStatementR<T> {
-        T accept(Statement s, Connection con) throws Exception;
+        T accept(Statement s) throws Exception;
     }
 
     public interface DoPrepare {

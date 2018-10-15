@@ -1,11 +1,11 @@
 package com.hancomee.web.controller;
 
-import com.hancomee.util.DB;
-import com.hancomee.util.SQL;
+import com.hancomee.util.db.DB;
+import com.hancomee.util.db.ResultSetAccess;
+import com.hancomee.util.db.SQL;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +27,7 @@ public class P2PController {
     public Values values(Query query) throws Exception {
         String[] sql = query.SQL();
         return new Values(
-                db.execute(sql[0], SQL::readAllJSON),
+                db.execute(sql[0], ResultSetAccess::readAllJSON),
                 db.execute(sql[1], 0l, (rs) -> rs.getLong(1)),
                 query.page,
                 query.size

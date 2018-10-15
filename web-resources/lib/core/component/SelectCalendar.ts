@@ -10,17 +10,30 @@ let [$temp, {td, year, month}] = htmlParser(require("./SelectCalendar.html"));
 export class SelectCalendar {
 
     element = document.createElement('div');
+    private year: number
+    private month: number
+    private date: number
 
     onSelect
 
-    constructor(public year: number, public month: number, public date?: number) {
+    constructor(date: Date)
+    constructor(year: number, month: number, date?: number)
+    constructor(year, month?, date?) {
+
+        if(year instanceof Date) {
+            date = this.date = year.getDate();
+            month = this.month = year.getMonth();
+            year = year.getFullYear();
+        }
+
         this.element.addEventListener('click', (e) => {
             let target = <HTMLElement>e.target;
-            if(target.hasAttribute('data-move')) {
-                let [y,m] = target.getAttribute('data-move').split('-');
+            if (target.hasAttribute('data-move')) {
+                let [y, m] = target.getAttribute('data-move').split('-');
                 this.create(parseInt(y), parseInt(m) - 1);
+                e.stopPropagation();
             }
-            else if(target.hasAttribute('data-value')) {
+            else if (target.hasAttribute('data-value')) {
                 this.onSelect && this.onSelect(target.getAttribute('data-value'));
             }
         });
@@ -32,7 +45,7 @@ export class SelectCalendar {
     create(calendar: Calendar)
     create(year: number, month: number, date?: number)
     create(y, m?, d?) {
-        this.element.innerHTML = SelectCalendar.create(y,m,d);
+        this.element.innerHTML = SelectCalendar.create(y, m, d);
     }
 }
 

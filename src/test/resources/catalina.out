@@ -91,9 +91,9 @@ class java.sql.DriverManager
 2018-08-16 20:41:48.839 ERROR 203513 --- [nio-9061-exec-5] o.s.b.w.servlet.support.ErrorPageFilter  : Forwarding to error page from request [/calendar/get] due to exception [java.sql.SQLException: No suitable driver found for jdbc:mysql://183.111.100.230:3306/boosteel]
 
 java.lang.RuntimeException: java.sql.SQLException: No suitable driver found for jdbc:mysql://183.111.100.230:3306/boosteel
-	at com.hancomee.util.DB.createCon(DB.java:16) ~[classes/:na]
-	at com.hancomee.util.DB.getCon(DB.java:79) ~[classes/:na]
-	at com.hancomee.util.DB.execute(DB.java:33) ~[classes/:na]
+	at com.hancomee.util.db.DB.createCon(DB.java:16) ~[classes/:na]
+	at com.hancomee.util.db.DB.getCon(DB.java:79) ~[classes/:na]
+	at com.hancomee.util.db.DB.execute(DB.java:33) ~[classes/:na]
 	at com.hancomee.web.controller.CalendarCtrl.get(CalendarCtrl.java:42) ~[classes/:na]
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_45]
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_45]
@@ -157,7 +157,7 @@ java.lang.RuntimeException: java.sql.SQLException: No suitable driver found for 
 Caused by: java.sql.SQLException: No suitable driver found for jdbc:mysql://183.111.100.230:3306/boosteel
 	at java.sql.DriverManager.getConnection(DriverManager.java:689) ~[na:1.8.0_45]
 	at java.sql.DriverManager.getConnection(DriverManager.java:247) ~[na:1.8.0_45]
-	at com.hancomee.util.DB.createCon(DB.java:14) ~[classes/:na]
+	at com.hancomee.util.db.DB.createCon(DB.java:14) ~[classes/:na]
 	... 62 common frames omitted
 
 16-Aug-2018 20:43:26.356 정보 [main] org.apache.catalina.core.StandardServer.await A valid shutdown command was received via the shutdown port. Stopping the Server instance.
@@ -264,9 +264,9 @@ class java.sql.DriverManager
 2018-08-16 20:44:42.744 ERROR 206080 --- [nio-9061-exec-5] o.s.b.w.servlet.support.ErrorPageFilter  : Forwarding to error page from request [/calendar/get] due to exception [java.sql.SQLException: No suitable driver found for jdbc:mysql://183.111.100.230:3306/boosteel]
 
 java.lang.RuntimeException: java.sql.SQLException: No suitable driver found for jdbc:mysql://183.111.100.230:3306/boosteel
-	at com.hancomee.util.DB.createCon(DB.java:16) ~[classes/:na]
-	at com.hancomee.util.DB.getCon(DB.java:79) ~[classes/:na]
-	at com.hancomee.util.DB.execute(DB.java:33) ~[classes/:na]
+	at com.hancomee.util.db.DB.createCon(DB.java:16) ~[classes/:na]
+	at com.hancomee.util.db.DB.getCon(DB.java:79) ~[classes/:na]
+	at com.hancomee.util.db.DB.execute(DB.java:33) ~[classes/:na]
 	at com.hancomee.web.controller.CalendarCtrl.get(CalendarCtrl.java:42) ~[classes/:na]
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_45]
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_45]
@@ -330,6 +330,6 @@ java.lang.RuntimeException: java.sql.SQLException: No suitable driver found for 
 Caused by: java.sql.SQLException: No suitable driver found for jdbc:mysql://183.111.100.230:3306/boosteel
 	at java.sql.DriverManager.getConnection(DriverManager.java:689) ~[na:1.8.0_45]
 	at java.sql.DriverManager.getConnection(DriverManager.java:247) ~[na:1.8.0_45]
-	at com.hancomee.util.DB.createCon(DB.java:14) ~[classes/:na]
+	at com.hancomee.util.db.DB.createCon(DB.java:14) ~[classes/:na]
 	... 62 common frames omitted
 

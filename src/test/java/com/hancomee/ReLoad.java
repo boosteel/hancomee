@@ -1,12 +1,9 @@
 package com.hancomee;
 
-import com.hancomee.util.DB;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.sql.*;
-import java.util.*;
 
 public class ReLoad {
 

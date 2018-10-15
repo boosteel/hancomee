@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 47);
+/******/ 	return __webpack_require__(__webpack_require__.s = 51);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -133,7 +133,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return false;
         }
         proto = getProto(obj);
-        // Objects with no prototype (e.g., `Object.create( null )`) are plain
+        // Objects with no prototype (e.g., `Object.newInstance( null )`) are plain
         if (!proto) {
             return true;
         }
@@ -412,51 +412,134 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /***/ 10:
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1, number_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var StringBuffer = /** @class */ (function () {
-        function StringBuffer(init) {
-            this.array = [];
-            this.i = 0;
-            if (init)
-                this.append(init);
+    /**
+     * Created by hellofunc on 2017-03-01.
+     */
+    var Formats;
+    (function (Formats) {
+        var rr = /:([\w.]+)/g;
+        function replaceAll(str, val) {
+            var v;
+            if (val == null)
+                return str;
+            return str.replace(rr, function (_, prop) {
+                v = access_1.Access.access(val, prop);
+                return v == null ? '' : v;
+            });
         }
-        StringBuffer.prototype.reset = function () {
-            this.array = [];
-            this.i = 0;
-            return this;
-        };
-        StringBuffer.prototype.prepend = function (v) {
-            this.array.unshift(v);
-            this.i++;
-            return this;
-        };
-        StringBuffer.prototype.append = function (v) {
-            var array = this.array;
-            if (!Array.isArray(v))
-                array[this.i++] = v;
-            else {
-                var i = 0, u = this.i, l = v.length;
-                while (i < l)
-                    array[u++] = v[i++];
-                this.i = u;
+        Formats.replaceAll = replaceAll;
+        function replace(__value, rg, literal, matcher) {
+            var pos = 0, result = __value.replace(rg, function (all, match, index) {
+                if (index)
+                    literal(__value.substring(pos, index));
+                pos = index + all.length;
+                return matcher.apply(this, arguments);
+                ;
+            });
+            if (pos < __value.length)
+                literal(__value.substring(pos, __value.length));
+            return result;
+        }
+        Formats.replace = replace;
+        // 숫자 받아서 파일 크기로... (천단위 쉼표)
+        // unit은 단위를 덧붙일 것인지
+        Formats.fileSize = (function (array) {
+            var r = /\B(?=(?:\d{3})+(?!\d))/g;
+            return function (size, unit) {
+                if (unit === void 0) { unit = true; }
+                var t = typeof size;
+                if (t !== 'number') {
+                    if (t !== 'string' || !/^\d+$/.test(size))
+                        return '';
+                    size = parseInt(size);
+                }
+                if (size === 0)
+                    return '0 bytes';
+                var result = Math.floor(Math.log(size) / Math.log(1024));
+                return String((size / Math.pow(1024, result)).toFixed(2)).replace(r, ',')
+                    + (unit ? " " + array[result] : '');
+            };
+        })(['bytes', 'kB', 'MB', 'GB', 'TB', 'PB']);
+        Formats.moneyKr = (function (hanA, danA) {
+            return function (val) {
+                if (typeof val === 'number')
+                    val = val.toString();
+                if (typeof val === 'string' && /^\d+$/.test(val)) {
+                    var result = '', han = void 0, str = void 0, i = 0, l = val.length;
+                    for (; i < l; i++) {
+                        str = '';
+                        han = hanA[val[l - (i + 1)]];
+                        if (han != "")
+                            str = han + danA[i];
+                        if (i == 4)
+                            str += "만";
+                        if (i == 8)
+                            str += "억";
+                        result = str + result;
+                    }
+                    return result || '';
+                }
+                return '';
+            };
+        })(["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구", "십"], ["", "십", "백", "천", "", "십", "백", "천", "", "십", "백", "천"]);
+        // {{obj}}
+        function replaceByObj(str, obj) {
+            var f;
+            return str.replace(/{{[^{}]+}}/g, function (_, g) {
+                f = obj[g];
+                if (f == null)
+                    return '';
+                else if (typeof f === 'function')
+                    return f.call(obj);
+                else
+                    return '';
+            });
+        }
+        Formats.replaceByObj = replaceByObj;
+        // HTML 이스케이프
+        Formats._htmlEscape = (function () {
+            var escape = /&lt;|&gt;|&nbsp;|&amp;|&quot;|&apos;/g;
+            function _change(c) {
+                switch (c) {
+                    case '&lt;':
+                        return '<';
+                    case '&gt;':
+                        return '>';
+                    case '&nbsp;':
+                        return ' ';
+                    case '&amp;':
+                        return '&';
+                    case '&quot;':
+                        return '"';
+                    case '&apos;':
+                        return '\'';
+                    default:
+                        return c;
+                }
             }
-            return this;
+            return function (str) {
+                return str.replace(escape, function (s) { return _change(s); });
+            };
+        })();
+        var r_num_replace = /\B(?=(\d{3})+(?!\d))/g;
+        Formats.number = function (val) {
+            if (typeof val === 'number')
+                val = val.toString();
+            if (typeof val === 'string' && number_1.r_number.test(val))
+                return val.replace(r_num_replace, ",");
+            return '0';
         };
-        StringBuffer.prototype.toString = function () {
-            return this.array.join('');
-        };
-        return StringBuffer;
-    }());
-    exports.StringBuffer = StringBuffer;
+    })(Formats = exports.Formats || (exports.Formats = {}));
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
 
-/***/ 12:
+/***/ 11:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -495,6 +578,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     var DOM;
     (function (DOM) {
         var doc = document;
+        function contains(parent, target) {
+            var p;
+            while (p = target.parentNode) {
+                if (parent === p)
+                    return true;
+            }
+            return false;
+        }
+        DOM.contains = contains;
         function closest(target, handler, limit) {
             if (limit === void 0) { limit = null; }
             var index = 0;
@@ -705,6 +797,73 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
+    // 숫자 자리수 맞추기
+    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
+        'yyyy': function (d) { return d.getFullYear(); },
+        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
+        'M': function (d) { return d.getMonth() + 1; },
+        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
+        'd': function (d) { return d.getDate(); },
+        'dd': function (d) { return zeroFill(d.getDate()); },
+        'E': function (d) { return __day[d.getDay()]; },
+        'HH': function (d) { return zeroFill(d.getHours()); },
+        'hh': function (d) { return zeroFill(d.getHours()); },
+        'mm': function (d) { return zeroFill(d.getMinutes()); },
+        'ss': function (d) { return zeroFill(d.getSeconds()); },
+        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
+    };
+    function _toKor(date, now) {
+        if (now === void 0) { now = new Date().getTime(); }
+        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
+        if (duration > day)
+            return Math.floor(duration / day) + '일 전';
+        if (duration > hour)
+            return Math.floor(duration / hour) + '시간 전';
+        if (duration > minute)
+            return Math.floor(duration / minute) + '분 전';
+        if (duration > second)
+            return Math.floor(duration / second) + '초 전';
+    }
+    exports._toKor = _toKor;
+    function _dateFormat(_date, f) {
+        if (!_date)
+            return '';
+        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
+        if (!f)
+            return _datetime(d);
+        return f.replace(r_datetime, function ($1) {
+            if (temp = _switch[$1])
+                return temp(d);
+            else
+                return $1;
+        });
+    }
+    exports._dateFormat = _dateFormat;
+    ;
+    function _datetime(val) {
+        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
+            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
+    }
+    exports._datetime = _datetime;
+    function _date(val) {
+        var m = val.getMonth() + 1, d = val.getDate();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
+    }
+    exports._date = _date;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 5:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function _makeArray(obj) {
         var r = [], l = obj.length;
         while (l-- > 0)
@@ -815,10 +974,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 47:
+/***/ 51:
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(9), __webpack_require__(7), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, format_1, html_1, dom_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(10), __webpack_require__(7), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, format_1, html_1, dom_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var number = format_1.Formats.number;
@@ -884,77 +1043,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 6:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
-    // 숫자 자리수 맞추기
-    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
-        'yyyy': function (d) { return d.getFullYear(); },
-        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
-        'M': function (d) { return d.getMonth() + 1; },
-        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
-        'd': function (d) { return d.getDate(); },
-        'dd': function (d) { return zeroFill(d.getDate()); },
-        'E': function (d) { return __day[d.getDay()]; },
-        'HH': function (d) { return zeroFill(d.getHours()); },
-        'hh': function (d) { return zeroFill(d.getHours()); },
-        'mm': function (d) { return zeroFill(d.getMinutes()); },
-        'ss': function (d) { return zeroFill(d.getSeconds()); },
-        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
-    };
-    function _toKor(date, now) {
-        if (now === void 0) { now = new Date().getTime(); }
-        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
-        if (duration > day)
-            return Math.floor(duration / day) + '일 전';
-        if (duration > hour)
-            return Math.floor(duration / hour) + '시간 전';
-        if (duration > minute)
-            return Math.floor(duration / minute) + '분 전';
-        if (duration > second)
-            return Math.floor(duration / second) + '초 전';
-    }
-    exports._toKor = _toKor;
-    function _dateFormat(_date, f) {
-        if (!_date)
-            return '';
-        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
-        if (!f)
-            return _datetime(d);
-        return f.replace(r_datetime, function ($1) {
-            if (temp = _switch[$1])
-                return temp(d);
-            else
-                return $1;
-        });
-    }
-    exports._dateFormat = _dateFormat;
-    ;
-    function _datetime(val) {
-        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
-            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
-    }
-    exports._datetime = _datetime;
-    function _date(val) {
-        var m = val.getMonth() + 1, d = val.getDate();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
-    }
-    exports._date = _date;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
 /***/ 7:
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10), __webpack_require__(9), __webpack_require__(6), __webpack_require__(1), __webpack_require__(4), __webpack_require__(12), __webpack_require__(2), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(9), __webpack_require__(10), __webpack_require__(4), __webpack_require__(1), __webpack_require__(5), __webpack_require__(11), __webpack_require__(2), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var read = access_1.Access.read;
@@ -967,18 +1059,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         filesize: fileSize
     };
     function $setText(ele, val) {
-        var c = ele.getAttribute('data-type'), i, fn, p = c, arg;
-        if (c) {
-            if ((i = c.indexOf(':')) !== -1) {
-                p = c.substring(0, i);
-                arg = primitive(c.substring(i + 1, c.length));
+        if (val !== void 0) {
+            var c = ele.getAttribute('data-type'), i = void 0, fn = void 0, p = c, arg = void 0;
+            if (c) {
+                if ((i = c.indexOf(':')) !== -1) {
+                    p = c.substring(0, i);
+                    arg = primitive(c.substring(i + 1, c.length));
+                }
+                if (fn = defaultFilter[p]) {
+                    ele.textContent = fn(val, arg);
+                    return ele;
+                }
             }
-            if (fn = defaultFilter[p]) {
-                ele.textContent = fn(val, arg);
-                return ele;
-            }
+            ele.textContent = val == null ? '' : val;
         }
-        ele.textContent = val || '';
         return ele;
     }
     var EleMap = /** @class */ (function () {
@@ -1375,7 +1469,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             // 변수 표현식에서 쉽게 표기하기 위해 배열로 내보낸다.
             /*
-             *  let [create, {val1, val2}] = htmlParse()
+             *  let [newInstance, {val1, val2}] = htmlParse()
              */
             var _a = parseIndex.getResult(), $c = _a[0], result = _a[1];
             parseIndex = null;
@@ -1500,127 +1594,44 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /***/ 9:
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    /**
-     * Created by hellofunc on 2017-03-01.
-     */
-    var Formats;
-    (function (Formats) {
-        var rr = /:([\w.]+)/g;
-        function replaceAll(str, val) {
-            var v;
-            if (val == null)
-                return str;
-            return str.replace(rr, function (_, prop) {
-                v = access_1.Access.access(val, prop);
-                return v == null ? '' : v;
-            });
+    var StringBuffer = /** @class */ (function () {
+        function StringBuffer(init) {
+            this.array = [];
+            this.i = 0;
+            if (init)
+                this.append(init);
         }
-        Formats.replaceAll = replaceAll;
-        function replace(__value, rg, literal, matcher) {
-            var pos = 0, result = __value.replace(rg, function (all, match, index) {
-                if (index)
-                    literal(__value.substring(pos, index));
-                pos = index + all.length;
-                return matcher.apply(this, arguments);
-                ;
-            });
-            if (pos < __value.length)
-                literal(__value.substring(pos, __value.length));
-            return result;
-        }
-        Formats.replace = replace;
-        // 숫자 받아서 파일 크기로... (천단위 쉼표)
-        // unit은 단위를 덧붙일 것인지
-        Formats.fileSize = (function (array) {
-            var r = /\B(?=(?:\d{3})+(?!\d))/g;
-            return function (size, unit) {
-                if (unit === void 0) { unit = true; }
-                var t = typeof size;
-                if (t !== 'number') {
-                    if (t !== 'string' || !/^\d+$/.test(size))
-                        return '';
-                    size = parseInt(size);
-                }
-                if (size === 0)
-                    return '0 bytes';
-                var result = Math.floor(Math.log(size) / Math.log(1024));
-                return String((size / Math.pow(1024, result)).toFixed(2)).replace(r, ',')
-                    + (unit ? " " + array[result] : '');
-            };
-        })(['bytes', 'kB', 'MB', 'GB', 'TB', 'PB']);
-        Formats.moneyKr = (function (hanA, danA) {
-            return function (val) {
-                if (typeof val === 'number')
-                    val = val.toString();
-                if (typeof val === 'string' && /^\d+$/.test(val)) {
-                    var result = '', han = void 0, str = void 0, i = 0, l = val.length;
-                    for (; i < l; i++) {
-                        str = '';
-                        han = hanA[val[l - (i + 1)]];
-                        if (han != "")
-                            str = han + danA[i];
-                        if (i == 4)
-                            str += "만";
-                        if (i == 8)
-                            str += "억";
-                        result = str + result;
-                    }
-                    return result || '';
-                }
-                return '';
-            };
-        })(["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구", "십"], ["", "십", "백", "천", "", "십", "백", "천", "", "십", "백", "천"]);
-        // {{obj}}
-        function replaceByObj(str, obj) {
-            var f;
-            return str.replace(/{{[^{}]+}}/g, function (_, g) {
-                f = obj[g];
-                if (f == null)
-                    return '';
-                else if (typeof f === 'function')
-                    return f.call(obj);
-                else
-                    return '';
-            });
-        }
-        Formats.replaceByObj = replaceByObj;
-        // HTML 이스케이프
-        Formats._htmlEscape = (function () {
-            var escape = /&lt;|&gt;|&nbsp;|&amp;|&quot;|&apos;/g;
-            function _change(c) {
-                switch (c) {
-                    case '&lt;':
-                        return '<';
-                    case '&gt;':
-                        return '>';
-                    case '&nbsp;':
-                        return ' ';
-                    case '&amp;':
-                        return '&';
-                    case '&quot;':
-                        return '"';
-                    case '&apos;':
-                        return '\'';
-                    default:
-                        return c;
-                }
-            }
-            return function (str) {
-                return str.replace(escape, function (s) { return _change(s); });
-            };
-        })();
-        var r_num_replace = /\B(?=(\d{3})+(?!\d))/g;
-        Formats.number = function (val) {
-            if (typeof val === 'number')
-                val = val.toString();
-            if (typeof val === 'string' && number_1.r_number.test(val))
-                return val.replace(r_num_replace, ",");
-            return '0';
+        StringBuffer.prototype.reset = function () {
+            this.array = [];
+            this.i = 0;
+            return this;
         };
-    })(Formats = exports.Formats || (exports.Formats = {}));
+        StringBuffer.prototype.prepend = function (v) {
+            this.array.unshift(v);
+            this.i++;
+            return this;
+        };
+        StringBuffer.prototype.append = function (v) {
+            var array = this.array;
+            if (!Array.isArray(v))
+                array[this.i++] = v;
+            else {
+                var i = 0, u = this.i, l = v.length;
+                while (i < l)
+                    array[u++] = v[i++];
+                this.i = u;
+            }
+            return this;
+        };
+        StringBuffer.prototype.toString = function () {
+            return this.array.join('');
+        };
+        return StringBuffer;
+    }());
+    exports.StringBuffer = StringBuffer;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 

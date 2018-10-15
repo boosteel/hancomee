@@ -21,7 +21,7 @@ zip ais arj cab gz hgx jas lzh pak psz rar sea tgz zool;
 
     $name: nth($values, 1);
     @each $v in $values {
-      &.#{$v} {
+      &.#{$v}, &[data-icon-file="#{$v}"] {
         background-image: url('/img/icon/file/#{$name}.png');
       }
     }

@@ -6,7 +6,7 @@ import {Events, EventsGroup} from "../../../lib/core/events";
 import {FormValue} from "../../../lib/core/form/FormValue";
 import {DOM} from "../../../lib/core/dom";
 import {Watcher} from "../../../lib/core/support/Watcher";
-import {_colReduce, _everyTrue, _forEach, _inTrue} from "../../../lib/core/_func/array";
+import {_colReduce, _everyTrue, _forEach, _inTrue, _makeArray, _map} from "../../../lib/core/_func/array";
 import {FormValid} from "../../../lib/core/form/FormValid";
 import {ImageCal} from "../../../lib/core/calcurator";
 import className = DOM.className;
@@ -19,6 +19,7 @@ import createTemplate = HTML.createTemplate;
 import reduceFragment = HTML.reduceFragment;
 import createFragment = HTML.createFragment;
 import {$extend} from "../../../lib/core/core";
+import select = HTML.select;
 
 type H = HTMLElement;
 type HI = HTMLInputElement
@@ -33,6 +34,7 @@ class Q extends Search {
 export class View extends GenericModule<Q> {
 
     watcher = new Watcher<ViewData>();
+    work: Work
 
     constructor() {
         super('view', Q);
@@ -45,7 +47,6 @@ export class View extends GenericModule<Q> {
         let
             $self = this,
             {watcher} = this,
-
 
             // ---------------------------- ▼ 파일 업로드 창 ▼ ---------------------------- //
             fileUpload = selectAll(templates.fileUpload,
@@ -78,12 +79,16 @@ export class View extends GenericModule<Q> {
                         }
                     }
 
+                    type HANDLER = {
+                        done(workFile: WorkFile): Promise<any>
+                        complete(): void
+                    };
                     let
                         items: Item[], total: number,
-                        ctrl = {
-                            run(files: FileList) {
+                        handler: HANDLER,
 
-                                items = [];
+                        ctrl = {
+                            run(files: ArrayLike<File>) {
 
                                 list.textContent = '';
 
@@ -96,7 +101,7 @@ export class View extends GenericModule<Q> {
                                 fb.style.width = fi.textContent = fsb.style.width = '0%';
                                 fsi.textContent = '0 / ' + total;
 
-                                $self.pop(element);
+                                $self.pop2(element);
 
                                 return this;
                             },
@@ -112,30 +117,41 @@ export class View extends GenericModule<Q> {
                             sending(progress: number) {
                                 fb.style.width = fi.textContent = progress + '%';
                             },
-                            complete(file: File, index: number) {
-                                index++;
-                                fsi.textContent = index + ' / ' + total;
-                                fsb.style.width = Math.ceil(index / total * 100) + '%';
-                            },
-                            done() {
+                            done(file: File, uuid: string, index: number) {
+                                let {name} = file, i = name.lastIndexOf('.');
 
+                                return handler.done(new WorkFile({
+                                    datetime: new Date(), original_name: name.substring(0, i),
+                                    filetype: name.substring(i + 1, name.length), save_name: uuid, size: file.size
+                                })).then(() => {
+                                    fsi.textContent = index + ' / ' + total;
+                                    fsb.style.width = Math.ceil(index / total * 100) + '%';
+                                });
+
+                            },
+                            complete() {
+                                handler.complete();
                             },
                             abort() {
 
                             },
 
                             on() {
-                                WorkFile.uploadRef(items.map(v => v.file), this);
+                                WorkFile.uploadFile($self.work.path, items.map(v => v.file), this);
                             },
                             off() {
-                                $self.pop();
+                                $self.pop2();
                             },
 
                         };
 
                     propertyMap(element, 'click', <any>ctrl);
 
-                    return ctrl;
+                    return (files: ArrayLike<File>, h: HANDLER) => {
+                        handler = h;
+                        items = [];
+                        ctrl.run(files);
+                    };
 
                 })
 
@@ -172,11 +188,10 @@ export class View extends GenericModule<Q> {
 
         // ****************************** ▼ 합계 및 견적 ▼ ****************************** //
         watcher.map = selectAll(frag.querySelector('#sum'),
-            ['{data-name}', '.work-text', '.work-text textarea'],
-            (f, texts: iEleMap, text: H, textarea: HT) => {
+            ['.work-text', '.work-text textarea'],
+            (f, text: H, textarea: HT) => {
 
                 let
-                    $work: Work,
                     $text = {
                         modify() {
                             className(text, 'form', true);
@@ -184,11 +199,11 @@ export class View extends GenericModule<Q> {
                         },
                         reset() {
                             textarea.setAttribute('disabled', 'true');
-                            textarea.value = $work.text;
+                            textarea.value = $self.work.text;
                             className(text, 'form', false);
                         },
                         confirm() {
-                            $work.text = textarea.value;
+                            $self.work.text = textarea.value;
                             this.reset()
                         }
                     };
@@ -196,9 +211,8 @@ export class View extends GenericModule<Q> {
 
                 return {
                     'work'(work: Work) {
-                        texts.setText($work = work);
                         $text.reset()
-                    }
+                    },
                 }
             })
 
@@ -245,6 +259,7 @@ export class View extends GenericModule<Q> {
 
                 return {
                     'work.customer'(c: Customer) {
+                        console.log(c);
                         ctrl.data(c)
                     }
                 }
@@ -256,57 +271,72 @@ export class View extends GenericModule<Q> {
             ['tbody'],
             (container: DocumentFragment, tbody: H,
              itemTemplate = createFragment(container.querySelector('.work-item')),
-             $con = frag.querySelector('#work-item')
+             $con = frag.querySelector('#work-item'),
+             texts = <iEleMap>select(frag.querySelector('#sum'), '{data-name}')
             ) => {
 
                 type I = { id: number };
 
                 class Item {
 
-                    static $select = ['.work-item', '{data-name}', '.print-file',
-                        '.print-file [data-toggle="dropdown"]'];
+                    static $select = ['.work-item', '{data-name}', '.draft-file', '{data-print}'];
                     static create = createTemplate<Item, WorkItem>(itemTemplate, Item)
 
                     constructor(public item: WorkItem,
-                                public ele: H, private names: iEleMap, p: H, toggle: H) {
-
-                        let {print, print: {length}} = item;
-
-                        toggle.textContent = length.toString();
+                                public ele: H, private names: iEleMap, p: H,
+                                private printTexts: iEleMap) {
 
                         // data-event에 쓰일 값 저장
-                        ele.setAttribute('data-value', 'id:' + item.id);
-                        names.setText(item, this);
+                        ele.setAttribute('data-value', 'id:' + item.id)
+                        this.render();
                     }
 
-                    update(values) {
-                        $extend(this.item, values);
-                        this.names.setText(this.item);
+                    // 내용 수정하고
+                    render(values?) {
+                        let {item} = this;
+                        values && $extend(item, values);
+                        this.names.setText(item, this);
                     }
+
                     remove() {
                         tbody.removeChild(this.ele);
                     }
 
+                    // setText directive용
                     draft(e: H, item: WorkItem) {
-                        e.textContent = item.draft.length.toString();
+                        className(e, 'empty', !item.draft.length);
+                    }
+
+                    print(e: H, item: WorkFile) {
+                        let existsPrint = !!this.item.print.length;
+                        className(e, 'empty', !existsPrint);
+                        if (existsPrint)
+                            this.printTexts.setText(this.item.print[0], this);
+                    }
+
+                    thumb(e: H, print: WorkFile) {
+                        e.setAttribute('data-icon-file', print.filetype);
                     }
                 }
 
                 let
 
-                    work: Work,
                     $$values: { [key: number]: Item },
 
                     // ---------------------- ▼ Image Screen ▼ ---------------------- //
                     $imgScreen = selectAll(templates.imgScreen,
-                        [':first-child', '.screen', '.title', '.count', '.before', '.after'],
-                        (frag, ele: H, screen: H, title: H, count: H, before: H, after: H) => {
+                        [':first-child', '.screen', '.title', '.count', '.before', '.after', 'input'],
+                        (frag, ele: H, screen: H, title: H, count: H, before: H, after: H, input: HTMLInputElement) => {
 
                             let
-                                $item: WorkItem,
-                                index: number,
-                                $images: { img: HTMLImageElement, v: WorkFile }[],
 
+                                $item: Item,
+                                path: string,
+                                index: number,
+                                $images: HTMLImageElement[],
+
+
+                                // 마우스휠로 이미지 이동
                                 $events = new EventsGroup()
                                     .register(document, 'mousewheel', (e: MouseWheelEvent) => {
                                         let next = index + (e['wheelDelta'] < 0 ? 1 : -1);
@@ -316,39 +346,68 @@ export class View extends GenericModule<Q> {
 
 
                                 ctrl = {
-                                    select(i: number) {
-                                        if (!$images[i]) return;
 
-                                        let {length} = $images;
-                                        index = i;
-                                        screen.textContent = '';
-                                        screen.appendChild($images[i++].img);
-                                        this.reset(i, i === 1, !(i < length))
-                                    },
-                                    open(item: WorkItem) {
-                                        let path = ($item = item).work.path;
+                                    open(itemObject: Item) {
+                                        let {item} = ($item = itemObject);
 
+                                        path = item.work.path;
+                                        $images = [];
                                         // 이미지 생성
-                                        $images = item.draft.map((v, i) => {
-                                            let img = new Image;
-                                            img.src = 'http://hancomee.com/workdata/' + path + '/' +
-                                                v.save_name + '.' + v.filetype;
-                                            return {img: img, v: v};
-                                        });
+                                        item.draft.forEach(v => this.add(v));
 
                                         // 초기화
                                         screen.textContent = '';
                                         title.textContent = item.subject +
                                             (item.detail ? ' (' + item.detail + ')' : '')
 
-                                        this.reset(0, true, true).select(0);
-
+                                        this.reset().select(0);
                                         $self.pop(ele)
                                         $events.on();
                                     },
 
-                                    reset(index: number, b, a) {
-                                        count.textContent = index + ' / ' + length;
+                                    add(draft: WorkFile) {
+                                        let img = new Image;
+                                        img.src = '/local/work/' + path + '/' +
+                                            draft.save_name + '.' + draft.filetype;
+                                        return $images.push(img) - 1;
+                                    },
+
+                                    select(i: number) {
+                                        if (!$images[i]) return;
+
+                                        screen.textContent = '';
+                                        index = i;
+                                        this.reset(i, i === 0, !(i < $images.length))
+                                        screen.appendChild($images[i++]);
+                                    },
+
+                                    // 이미지 삭제
+                                    remove() {
+
+                                        let workFile = $item.item.draft[index];
+                                        if (!workFile) return;
+
+                                        // 이미지 삭제
+                                        WorkFile.removeFile('draft', workFile.id).then(() => {
+                                            $item.item.draft.splice(index, 1);
+                                            $images.splice(index, 1);
+
+                                            let {length} = $images;
+                                            if (length) {
+                                                this.select(index
+                                                < length ? index : length - 1);
+                                            }
+                                            else {
+                                                screen.textContent = '';
+                                                this.reset();
+                                                index = -1;
+                                            }
+                                            $item.render();
+                                        });
+                                    },
+
+                                    reset(index = -1, b = true, a = true) {
+                                        count.textContent = (index + 1) + ' / ' + $images.length;
                                         className(before, 'disabled', b);
                                         className(after, 'disabled', a);
                                         return this;
@@ -359,8 +418,36 @@ export class View extends GenericModule<Q> {
                                     close() {
                                         $events.off();
                                         $self.pop();
+                                    },
+                                    upload() {
+                                        hiddenInput.on();
                                     }
-                                };
+                                },
+
+                                hiddenInput = (function () {
+                                    let c = {
+                                        on() {
+                                            input.click();
+                                        },
+                                        complete() {
+                                            $item.render();     // 이미지 버튼에 불 들어오게
+                                        },
+                                        done(workFile: WorkFile) {
+                                            return WorkFile.saveFile('draft', $item.item.id, workFile).then(id => {
+                                                workFile.id = id;
+                                                $item.item.draft.push(workFile);
+                                                ctrl.select(ctrl.add(workFile));
+                                            });
+                                        }
+                                    }
+
+                                    input.addEventListener('change', () => {
+                                        let files = _makeArray(input.files);
+                                        fileUpload(files, c);
+                                    });
+
+                                    return c;
+                                })();
 
                             propertyMap(ele, 'click', ctrl);
 
@@ -425,7 +512,7 @@ export class View extends GenericModule<Q> {
                             tbody.textContent = '';
                             $$values = {};
                             items.forEach(v => this.add(v));
-                            return ctrl;
+                            return ctrl.$compute();
                         },
 
                         add(item: WorkItem) {
@@ -433,37 +520,53 @@ export class View extends GenericModule<Q> {
                             return ctrl;
                         },
 
+                        // 총액 계산
+                        $compute() {
+                            let p, item: WorkItem, total = 0, price = 0, vat = 0, item_len = 0;
+                            for (p in $$values) {
+                                item = $$values[p].item;
+                                total += item.total;
+                                price += item.price;
+                                vat += item.vat;
+                                item_len++;
+                            }
+                            texts.setText({total: total, price: price, vat: vat, item_len: item_len});
+                        },
 
                         // 아이템 추가버튼 클릭시
                         $create() {
-                            $modify.add(new WorkItem().setWork(work));
+                            $modify.add(new WorkItem().setWork($self.work));
                             modifyItem = null;  // important sign!!
                         },
 
                         // 추가일지, 수정일지는 modifyItem 변수에 따라 다르다.
                         $confirm() {
                             let values = $modify.values(),
-                                item = modifyItem ? modifyItem.item : new WorkItem(values).setWork(work);
+                                item = modifyItem ? modifyItem.item : new WorkItem(values).setWork($self.work);
 
-                            WorkItem.save(item).then(() => {
+                            WorkItem.save(values, $self.work.id).then(() => {
                                 // update
-                                if(modifyItem) modifyItem.update(values);
+                                if (modifyItem) modifyItem.render(values);
                                 // save
                                 else ctrl.add(item);
+                                ctrl.$compute();
                                 $modify.close();
                             })
                         },
 
                         $remove(d: I) {
                             let item = $$values[d.id];
-                            WorkItem.remove(item.item).then(() => item.remove());
+                            WorkItem.remove(item.item).then(() => {
+                                item.remove();
+                                delete $$values[d.id];
+                                ctrl.$compute();
+                            });
                             return ctrl;
                         },
 
                         // 수정모드
                         $modify(d: I) {
                             modifyItem = $$values[d.id];
-                            console.log($modify)
                             $modify.attach(modifyItem);
                         },
                         // 수정모드 취소
@@ -472,7 +575,7 @@ export class View extends GenericModule<Q> {
                         },
 
                         $img(d: I) {
-                            $imgScreen.open($$values[d.id].item);
+                            $imgScreen.open($$values[d.id]);
                         },
 
                     }; // ************** ▲ Modify Item Template ▲ ************** //
@@ -486,7 +589,6 @@ export class View extends GenericModule<Q> {
 
                 return {
                     'items'(this: ViewData, items: WorkItem[]) {
-                        work = this.work;
                         ctrl.reset(items);
                     }
                 }
@@ -525,7 +627,6 @@ export class View extends GenericModule<Q> {
 
                 let
 
-                    work: Work,
                     [modifyForm, modifyText] = selectAll<[H, HT]>
                     (createElement(templates.workMemoForm), ['textarea']),
                     textareaValue: boolean,
@@ -536,10 +637,9 @@ export class View extends GenericModule<Q> {
                     ctrl = {
                         create() {
                             if (!textareaValue) return;
-                            WorkMemo.save(new WorkMemo({
+                            WorkMemo.save($self.work.id, new WorkMemo({
                                 datetime: new Date().getTime(),
                                 value: createText.value,
-                                work: work
                             })).then(m => {
                                 createText.value = '';
                                 ctrl.add(m)
@@ -564,7 +664,7 @@ export class View extends GenericModule<Q> {
                         update() {
                             let {data, data: {value}} = activeMemo,
                                 newVal = data.value = modifyText.value;
-                            WorkMemo.save(data).then(() => {
+                            WorkMemo.save($self.work.id, data).then(() => {
                                 activeMemo.setValue(newVal);
                                 ctrl.cancel();
                             })
@@ -594,7 +694,6 @@ export class View extends GenericModule<Q> {
                 return {
                     'work.memo'(memo: WorkMemo[]) {
                         // 초기화
-                        work = this.work;
                         className(createForm, 'active', false);
                         createText.value = '';
                         ctrl.reset(memo);
@@ -639,7 +738,16 @@ export class View extends GenericModule<Q> {
                      *  때문에 files 갯수를 확인해서 작동하도록 한다.
                      */
                     if (files.length) {
-                        fileUpload.run(files);
+                        fileUpload(files, {
+                            done(workfile) {
+                                return WorkFile.saveFile('ref', $self.work.id, workfile).then((id) => {
+                                    console.log(id)
+                                });
+                            },
+                            complete() {
+
+                            }
+                        });
                         fileInput.value = '';
                     }
                 })
@@ -664,6 +772,7 @@ export class View extends GenericModule<Q> {
     $load(param: Q) {
         if (!param.uuid) return
         return Work.get(param.uuid).then((a: ViewData) => {
+            this.work = a.work;
             this.watcher.apply(a);
         })
     }

@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 16);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -132,7 +132,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return false;
         }
         proto = getProto(obj);
-        // Objects with no prototype (e.g., `Object.create( null )`) are plain
+        // Objects with no prototype (e.g., `Object.newInstance( null )`) are plain
         if (!proto) {
             return true;
         }
@@ -427,6 +427,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     var DOM;
     (function (DOM) {
         var doc = document;
+        function contains(parent, target) {
+            var p;
+            while (p = target.parentNode) {
+                if (parent === p)
+                    return true;
+            }
+            return false;
+        }
+        DOM.contains = contains;
         function closest(target, handler, limit) {
             if (limit === void 0) { limit = null; }
             var index = 0;
@@ -636,6 +645,72 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
+    // 숫자 자리수 맞추기
+    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
+        'yyyy': function (d) { return d.getFullYear(); },
+        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
+        'M': function (d) { return d.getMonth() + 1; },
+        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
+        'd': function (d) { return d.getDate(); },
+        'dd': function (d) { return zeroFill(d.getDate()); },
+        'E': function (d) { return __day[d.getDay()]; },
+        'HH': function (d) { return zeroFill(d.getHours()); },
+        'hh': function (d) { return zeroFill(d.getHours()); },
+        'mm': function (d) { return zeroFill(d.getMinutes()); },
+        'ss': function (d) { return zeroFill(d.getSeconds()); },
+        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
+    };
+    function _toKor(date, now) {
+        if (now === void 0) { now = new Date().getTime(); }
+        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
+        if (duration > day)
+            return Math.floor(duration / day) + '일 전';
+        if (duration > hour)
+            return Math.floor(duration / hour) + '시간 전';
+        if (duration > minute)
+            return Math.floor(duration / minute) + '분 전';
+        if (duration > second)
+            return Math.floor(duration / second) + '초 전';
+    }
+    exports._toKor = _toKor;
+    function _dateFormat(_date, f) {
+        if (!_date)
+            return '';
+        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
+        if (!f)
+            return _datetime(d);
+        return f.replace(r_datetime, function ($1) {
+            if (temp = _switch[$1])
+                return temp(d);
+            else
+                return $1;
+        });
+    }
+    exports._dateFormat = _dateFormat;
+    ;
+    function _datetime(val) {
+        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
+            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
+    }
+    exports._datetime = _datetime;
+    function _date(val) {
+        var m = val.getMonth() + 1, d = val.getDate();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
+    }
+    exports._date = _date;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function _makeArray(obj) {
         var r = [], l = obj.length;
         while (l-- > 0)
@@ -745,77 +820,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 5 */,
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
-    // 숫자 자리수 맞추기
-    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
-        'yyyy': function (d) { return d.getFullYear(); },
-        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
-        'M': function (d) { return d.getMonth() + 1; },
-        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
-        'd': function (d) { return d.getDate(); },
-        'dd': function (d) { return zeroFill(d.getDate()); },
-        'E': function (d) { return __day[d.getDay()]; },
-        'HH': function (d) { return zeroFill(d.getHours()); },
-        'hh': function (d) { return zeroFill(d.getHours()); },
-        'mm': function (d) { return zeroFill(d.getMinutes()); },
-        'ss': function (d) { return zeroFill(d.getSeconds()); },
-        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
-    };
-    function _toKor(date, now) {
-        if (now === void 0) { now = new Date().getTime(); }
-        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
-        if (duration > day)
-            return Math.floor(duration / day) + '일 전';
-        if (duration > hour)
-            return Math.floor(duration / hour) + '시간 전';
-        if (duration > minute)
-            return Math.floor(duration / minute) + '분 전';
-        if (duration > second)
-            return Math.floor(duration / second) + '초 전';
-    }
-    exports._toKor = _toKor;
-    function _dateFormat(_date, f) {
-        if (!_date)
-            return '';
-        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
-        if (!f)
-            return _datetime(d);
-        return f.replace(r_datetime, function ($1) {
-            if (temp = _switch[$1])
-                return temp(d);
-            else
-                return $1;
-        });
-    }
-    exports._dateFormat = _dateFormat;
-    ;
-    function _datetime(val) {
-        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
-            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
-    }
-    exports._datetime = _datetime;
-    function _date(val) {
-        var m = val.getMonth() + 1, d = val.getDate();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
-    }
-    exports._date = _date;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
+/* 6 */,
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10), __webpack_require__(9), __webpack_require__(6), __webpack_require__(1), __webpack_require__(4), __webpack_require__(12), __webpack_require__(2), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(9), __webpack_require__(10), __webpack_require__(4), __webpack_require__(1), __webpack_require__(5), __webpack_require__(11), __webpack_require__(2), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var read = access_1.Access.read;
@@ -828,18 +837,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         filesize: fileSize
     };
     function $setText(ele, val) {
-        var c = ele.getAttribute('data-type'), i, fn, p = c, arg;
-        if (c) {
-            if ((i = c.indexOf(':')) !== -1) {
-                p = c.substring(0, i);
-                arg = primitive(c.substring(i + 1, c.length));
+        if (val !== void 0) {
+            var c = ele.getAttribute('data-type'), i = void 0, fn = void 0, p = c, arg = void 0;
+            if (c) {
+                if ((i = c.indexOf(':')) !== -1) {
+                    p = c.substring(0, i);
+                    arg = primitive(c.substring(i + 1, c.length));
+                }
+                if (fn = defaultFilter[p]) {
+                    ele.textContent = fn(val, arg);
+                    return ele;
+                }
             }
-            if (fn = defaultFilter[p]) {
-                ele.textContent = fn(val, arg);
-                return ele;
-            }
+            ele.textContent = val == null ? '' : val;
         }
-        ele.textContent = val || '';
         return ele;
     }
     var EleMap = /** @class */ (function () {
@@ -1236,7 +1247,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             // 변수 표현식에서 쉽게 표기하기 위해 배열로 내보낸다.
             /*
-             *  let [create, {val1, val2}] = htmlParse()
+             *  let [newInstance, {val1, val2}] = htmlParse()
              */
             var _a = parseIndex.getResult(), $c = _a[0], result = _a[1];
             parseIndex = null;
@@ -1357,6 +1368,52 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var StringBuffer = /** @class */ (function () {
+        function StringBuffer(init) {
+            this.array = [];
+            this.i = 0;
+            if (init)
+                this.append(init);
+        }
+        StringBuffer.prototype.reset = function () {
+            this.array = [];
+            this.i = 0;
+            return this;
+        };
+        StringBuffer.prototype.prepend = function (v) {
+            this.array.unshift(v);
+            this.i++;
+            return this;
+        };
+        StringBuffer.prototype.append = function (v) {
+            var array = this.array;
+            if (!Array.isArray(v))
+                array[this.i++] = v;
+            else {
+                var i = 0, u = this.i, l = v.length;
+                while (i < l)
+                    array[u++] = v[i++];
+                this.i = u;
+            }
+            return this;
+        };
+        StringBuffer.prototype.toString = function () {
+            return this.array.join('');
+        };
+        return StringBuffer;
+    }());
+    exports.StringBuffer = StringBuffer;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1, number_1) {
@@ -1485,54 +1542,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var StringBuffer = /** @class */ (function () {
-        function StringBuffer(init) {
-            this.array = [];
-            this.i = 0;
-            if (init)
-                this.append(init);
-        }
-        StringBuffer.prototype.reset = function () {
-            this.array = [];
-            this.i = 0;
-            return this;
-        };
-        StringBuffer.prototype.prepend = function (v) {
-            this.array.unshift(v);
-            this.i++;
-            return this;
-        };
-        StringBuffer.prototype.append = function (v) {
-            var array = this.array;
-            if (!Array.isArray(v))
-                array[this.i++] = v;
-            else {
-                var i = 0, u = this.i, l = v.length;
-                while (i < l)
-                    array[u++] = v[i++];
-                this.i = u;
-            }
-            return this;
-        };
-        StringBuffer.prototype.toString = function () {
-            return this.array.join('');
-        };
-        return StringBuffer;
-    }());
-    exports.StringBuffer = StringBuffer;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 11 */,
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -1548,6 +1558,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
+/* 12 */,
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1748,10 +1759,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ }),
 /* 14 */,
 /* 15 */,
-/* 16 */
+/* 16 */,
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17), __webpack_require__(3), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, spa_1, dom_1, array_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(18), __webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, spa_1, dom_1, array_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var className = dom_1.DOM.className;
@@ -1772,9 +1784,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
              *  ① 로딩 엘리먼트
              *  ② 팝업 엘리먼트
              */
-            div.innerHTML = '<div class="loading"></div><div class="popup"></div>';
+            div.innerHTML = '<div class="loading"></div><div id="pop1" class="popup"></div><div id="pop2" class="popup"></div>';
             this.loadingElement = div.querySelector('.loading');
-            this.popElement = div.querySelector('.popup');
+            this.popElement = div.querySelector('#pop1');
+            this.pop2Element = div.querySelector('#pop2');
             this._resolve = Promise.all([
                 // style과 html 로딩딩
                 spa_1.SPA.getStyle('/dist/hancomee/src/' + id + '.css'),
@@ -1813,6 +1826,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             className(document.body, 'screen', isOpen);
             return this;
         };
+        // 팝업창
+        GenericModule.prototype.pop2 = function (element) {
+            var pop2Element = this.pop2Element, isOpen = !!element;
+            pop2Element.textContent = '';
+            isOpen && pop2Element.appendChild(element);
+            className(pop2Element, 'on', isOpen);
+            className(document.body, 'screen', isOpen);
+            return this;
+        };
         GenericModule.prototype.init = function () {
             return this._resolve;
         };
@@ -1835,7 +1857,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13), __webpack_require__(0), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, location_1, core_1, html_1) {

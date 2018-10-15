@@ -53,13 +53,16 @@ function $delete(url: string): Promise<any> {
 let
     $$extend = {
         activetime(v) {
-            return new Date(v)
+            if (!v) return null;
+            return v instanceof Date ? v : new Date(v)
         },
         datetime(v) {
-            return new Date(v)
+            if (!v) return null;
+            return v instanceof Date ? v : new Date(v)
         },
         updatetime(v) {
-            return new Date(v)
+            if (!v) return null;
+            return v instanceof Date ? v : new Date(v)
         },
 
         // list용
@@ -90,25 +93,28 @@ let
     },
 
     // 객체를 json data로 변경할때
-    $$json = {
-        activetime(v) {
-            return _datetime(v);
-        },
-        datetime(v) {
-            return _datetime(v)
-        },
-        updatetime(v) {
-            return _datetime(v)
-        },
-        // work객체는 work_id로 바꾼다.
-        work(v: Work) {
-            console.log('asdfasdf');
-            v && (this['work_id'] = v.id);
-        },
-        // draft, print는 json 변환에는 제외시킨다.
-        print: false,
-        draft: false
-    };
+    $$json = (function () {
+        let $$ = {
+            activetime(v) {
+                return _datetime(v);
+            },
+            datetime(v) {
+                return _datetime(v)
+            },
+            updatetime(v) {
+                return _datetime(v)
+            },
+            // work객체는 work_id로 바꾼다.
+            work(v: Work) {
+                v && (this['work_id'] = v.id);
+            },
+            // draft, print는 json 변환에는 제외시킨다.
+            print: false,
+            draft: false
+        }
+
+        return (data) => $extend({}, data, $$);
+    })();
 
 
 //********************** 작업 그룹 **********************//
@@ -166,7 +172,7 @@ export namespace Work {
     // 리스트 로딩
     export function list(query: string): Promise<ServerData<Work>> {
         return $get('/hancomee/list?' + query).then((e: ServerData<any>) => {
-            e.values = e.values.map(a => {
+            e.contents = e.contents.map(a => {
                 let work = new Work(a);
 
                 // 이미지가 같이 담겨온다.
@@ -211,8 +217,8 @@ export class WorkMemo {
  */
 export namespace WorkMemo {
 
-    export function save(memo: WorkMemo): Promise<WorkMemo> {
-        return $post('/hancomee/db/memo/', $extend({}, memo, $$json))
+    export function save(workId: number, memo: WorkMemo): Promise<WorkMemo> {
+        return $post('/hancomee/db/memo/' + workId, $$json(memo))
             .then((id) => {
                 memo.id = id;
                 return memo;
@@ -265,12 +271,8 @@ export class WorkItem {
 }
 
 export namespace WorkItem {
-    export function save(v: WorkItem): Promise<WorkItem> {
-        return $post('/hancomee/db/item/', $extend({}, v, $$json))
-            .then((id) => {
-                v.id = id;
-                return v;
-            });
+    export function save(v, workId): Promise<number> {
+        return $post('/hancomee/db/item/' + workId, $$json(v));
     }
 
     export function remove(v: WorkItem): Promise<any> {
@@ -308,10 +310,10 @@ export class Customer {
 
 export namespace Customer {
     export function save(customer: Customer) {
-        return $post('/hancomee/db/customer', $extend({}, customer, $$json))
+        return $post('/hancomee/db/customer', $$json(customer))
             .then((id) => customer.setId(id))
     }
- 
+
 }
 
 
@@ -335,43 +337,47 @@ export class WorkFile {
 export namespace WorkFile {
 
 
-    // uuid값 받아옴과 동시에 서버에 progressMap 생성
-    function $get(xhr: XMLHttpRequest, progressId: string)
-    function $get(xhr: XMLHttpRequest)
-    function $get(xhr: XMLHttpRequest, id?) {
-        return new Promise((o, x) => {
-            xhr.onreadystatechange = () => {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        o(id ? parseInt(xhr.responseText) : xhr.responseText);
-                    }
-                }
-            }
-            xhr.open('GET', '/upload/progress' + (id ? '/' + id : ''));
-            xhr.send(null)
-        });
-    }
+
 
     // 서버 송출하는 upload 진행도가 전체에서 차지할 비율
     let up = .4,
         send = 1 - up,
         rr = 100 * up;
 
+    // uuid값 받아옴과 동시에 서버에 progressMap 생성
+    function $get(progressId: string)
+    function $get()
+    function $get(id?) {
+        return new Promise((o, x) => {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', '/upload/progress' + (id ? '/' + id : ''));
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log('돼써!!!')
+                        o(id ? parseInt(xhr.responseText) : xhr.responseText);
+                    }
+                }
+            }
+            xhr.send(null)
+        });
+    }
 
     // File Upload Logic
-    function $upload(data: FormData, xhr: XMLHttpRequest, pXhr: XMLHttpRequest, handler) {
+    function $upload(data: FormData, handler) {
 
 
         // ① 고유 키를 받아온다.
-        return $get(xhr).then((id) => {
+        return $get().then((id) => {
 
             let
                 total = 0,
                 time = 10,
+                xhr = new XMLHttpRequest(),
 
                 // 서버측 다운로드 경과
                 tHandler = () => {
-                    $get(pXhr, id).then((d) => {
+                    $get(id).then((d) => {
                         if (total !== -1 && total !== d) {
                             handler.loading(rr + Math.floor(d / total * 100 * send));
                             setTimeout(tHandler, time);
@@ -394,6 +400,7 @@ export namespace WorkFile {
             }
 
             return new Promise((o, x) => {
+                xhr.open('POST', '/upload/file/' + id);
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
@@ -402,27 +409,32 @@ export namespace WorkFile {
                         }
                     }
                 }
-                xhr.open('POST', '/upload/file/' + id);
                 xhr.send(data);
             });
         })
     }
 
-    export function uploadRef(files: ArrayLike<File>, handler) {
-        let
-            xhr = new XMLHttpRequest(),
-            pXhr = new XMLHttpRequest();
+    export function uploadFile(path: string, files: ArrayLike<File>, handler) {
 
         return _reduce(files, (promise, file, i) => {
             return promise.then(() => {
                 let formData = new FormData();
-                formData.append('path', 'D:/work/files');
+                formData.append('path', 'D:/work/' + path);
                 formData.append('file', file);
 
                 handler.start(file, i);
 
-                return $upload(formData, xhr, pXhr, handler).then(() => handler.complete(file, i));
+                return $upload(formData, handler).then((id) => handler.done(file, id, i));
             })
-        }, Promise.resolve()).then(() => handler.done());
+        }, Promise.resolve()).then(() => handler.complete());
+    }
+
+
+    export function saveFile(type: string, ownId: number, workFile: WorkFile): Promise<number> {
+        return $post('/hancomee/db/' + type + '/' + ownId, $$json(workFile));
+    }
+    
+    export function removeFile(type: string, id: number): Promise<any> {
+        return $delete('/hancomee/db/' + type + '/' + id);
     }
 }

@@ -16,6 +16,7 @@ export abstract class GenericModule<T> implements iSPA.module<T> {
 
     private loadingElement: HTMLElement
     private popElement: HTMLElement
+    private pop2Element: HTMLElement
 
     /*
      *   이미 로드된 상황 (초기화)이고
@@ -34,9 +35,10 @@ export abstract class GenericModule<T> implements iSPA.module<T> {
          *  ① 로딩 엘리먼트
          *  ② 팝업 엘리먼트
          */
-        div.innerHTML = '<div class="loading"></div><div class="popup"></div>';
+        div.innerHTML = '<div class="loading"></div><div id="pop1" class="popup"></div><div id="pop2" class="popup"></div>';
         this.loadingElement = div.querySelector('.loading');
-        this.popElement = div.querySelector('.popup');
+        this.popElement = div.querySelector('#pop1');
+        this.pop2Element = div.querySelector('#pop2');
 
         this._resolve = Promise.all([
 
@@ -82,6 +84,19 @@ export abstract class GenericModule<T> implements iSPA.module<T> {
         popElement.textContent = '';
         isOpen && popElement.appendChild(element);
         className(popElement, 'on', isOpen);
+        className(document.body, 'screen', isOpen);
+
+        return this;
+    }
+
+    // 팝업창
+    protected pop2(element?: HTMLElement | DocumentFragment) {
+        let {pop2Element} = this,
+            isOpen = !!element;
+
+        pop2Element.textContent = '';
+        isOpen && pop2Element.appendChild(element);
+        className(pop2Element, 'on', isOpen);
         className(document.body, 'screen', isOpen);
 
         return this;

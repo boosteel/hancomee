@@ -70,6 +70,8 @@ public class Strings {
         HTML_ESCAPE.put("&lt;", "<");
         HTML_ESCAPE.put("&gt;", ">");
         HTML_ESCAPE.put("&nbsp;", " ");
+        HTML_ESCAPE.put("&#034;", "\"");
+        HTML_ESCAPE.put("&rsquo;", "'");
 
     }
 

@@ -1,18 +1,12 @@
 package com.hancomee.web.controller;
 
-import com.hancomee.util.DB;
-import com.hancomee.util.HTTP;
-import com.hancomee.util.Patterns;
-import com.hancomee.util.SQL;
-import com.hancomee.web.domain.BayBean;
+import com.hancomee.util.db.DB;
+import com.hancomee.util.db.ResultSetAccess;
+import com.hancomee.util.db.SQL;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("calendar")
@@ -32,7 +26,7 @@ public class CalendarCtrl {
     @ResponseBody
     public Object get(@RequestParam("sd") String sd, @RequestParam("ed") String ed) throws Exception {
         return db.execute("SELECT * FROM calendar WHERE date BETWEEN '" +
-                sd + "' AND '" + ed + "'", SQL::readAllJSON);
+                sd + "' AND '" + ed + "'", ResultSetAccess::readAllJSON);
     }
 
 
@@ -49,7 +43,7 @@ public class CalendarCtrl {
         }
         // update
         else {
-            db.update(SQL.update("calendar", value));
+            //db.update(SQL.update("calendar", value));
         }
 
         return id;

@@ -9,4 +9,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target(METHOD)
 public @interface Save {
+    String value();
+    String memo() default "";
+    boolean lastId() default false;
 }

@@ -24,21 +24,25 @@ let dummy = {},
     };
 
 function $setText(ele: HTMLElement, val) {
-    let c = ele.getAttribute('data-type'),
-        i, fn, p = c, arg;
 
-    if (c) {
-        if ((i = c.indexOf(':')) !== -1) {
-            p = c.substring(0, i);
-            arg = primitive(c.substring(i + 1, c.length));
+    if(val !== void 0) {
+        let c = ele.getAttribute('data-type'),
+            i, fn, p = c, arg;
+
+        if (c) {
+            if ((i = c.indexOf(':')) !== -1) {
+                p = c.substring(0, i);
+                arg = primitive(c.substring(i + 1, c.length));
+            }
+            if (fn = defaultFilter[p]) {
+                ele.textContent = fn(val, arg);
+                return ele;
+            }
         }
-        if (fn = defaultFilter[p]) {
-            ele.textContent = fn(val, arg);
-            return ele;
-        }
+
+        ele.textContent = val == null ? '' : val;
     }
 
-    ele.textContent = val || '';
     return ele;
 }
 

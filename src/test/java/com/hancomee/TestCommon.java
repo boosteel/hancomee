@@ -1,7 +1,5 @@
 package com.hancomee;
 
-import com.hancomee.util.db.NamedPrepareStatement;
-
 public class TestCommon {
 
     public static final void timeCheck(TimeRun t, int loop, String name) {

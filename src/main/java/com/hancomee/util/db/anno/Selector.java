@@ -8,5 +8,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Retention(RUNTIME)
 @Target(METHOD)
-public @interface AutoCommit {
+public @interface Selector {
+    String value();
+    String memo() default "";
 }

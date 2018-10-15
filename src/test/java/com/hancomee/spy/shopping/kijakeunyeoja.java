@@ -57,7 +57,7 @@ public class kijakeunyeoja extends AbstractSpy {
         out("\n---------- " + url + " ----------");
 
         Patterns.forEach(r_uuid, html, (i, g, _uuid) -> {
-            String pageURL = "http://" + host + "/board/product/read.html?no=" + _uuid + "&board_no=4&page=" + page,
+            String pageURL = "http://" + host + "/board/product/get.html?no=" + _uuid + "&board_no=4&page=" + page,
                     pageHTML = HTTP.get(pageURL);
 
             Patterns.forEach(r_data, pageHTML, (i2, g2, title, user, content) -> {

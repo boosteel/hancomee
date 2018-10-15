@@ -1,4 +1,4 @@
-package com.hancomee.util.db;
+package com.hancomee.util.db.support;
 
 public class NamedTuple {
     int index;

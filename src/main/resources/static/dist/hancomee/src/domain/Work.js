@@ -133,7 +133,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return false;
         }
         proto = getProto(obj);
-        // Objects with no prototype (e.g., `Object.create( null )`) are plain
+        // Objects with no prototype (e.g., `Object.newInstance( null )`) are plain
         if (!proto) {
             return true;
         }
@@ -355,7 +355,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ 20:
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(4), __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, array_1, datetime_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(5), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, array_1, datetime_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function $get(url) {
@@ -406,13 +406,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
     var $$extend = {
         activetime: function (v) {
-            return new Date(v);
+            if (!v)
+                return null;
+            return v instanceof Date ? v : new Date(v);
         },
         datetime: function (v) {
-            return new Date(v);
+            if (!v)
+                return null;
+            return v instanceof Date ? v : new Date(v);
         },
         updatetime: function (v) {
-            return new Date(v);
+            if (!v)
+                return null;
+            return v instanceof Date ? v : new Date(v);
         },
         // list용
         customer: function (v) {
@@ -440,25 +446,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         },
     }, 
     // 객체를 json data로 변경할때
-    $$json = {
-        activetime: function (v) {
-            return datetime_1._datetime(v);
-        },
-        datetime: function (v) {
-            return datetime_1._datetime(v);
-        },
-        updatetime: function (v) {
-            return datetime_1._datetime(v);
-        },
-        // work객체는 work_id로 바꾼다.
-        work: function (v) {
-            console.log('asdfasdf');
-            v && (this['work_id'] = v.id);
-        },
-        // draft, print는 json 변환에는 제외시킨다.
-        print: false,
-        draft: false
-    };
+    $$json = (function () {
+        var $$ = {
+            activetime: function (v) {
+                return datetime_1._datetime(v);
+            },
+            datetime: function (v) {
+                return datetime_1._datetime(v);
+            },
+            updatetime: function (v) {
+                return datetime_1._datetime(v);
+            },
+            // work객체는 work_id로 바꾼다.
+            work: function (v) {
+                v && (this['work_id'] = v.id);
+            },
+            // draft, print는 json 변환에는 제외시킨다.
+            print: false,
+            draft: false
+        };
+        return function (data) { return core_1.$extend({}, data, $$); };
+    })();
     //********************** 작업 그룹 **********************//
     var Work = /** @class */ (function () {
         function Work(data) {
@@ -481,7 +489,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         // 리스트 로딩
         function list(query) {
             return $get('/hancomee/list?' + query).then(function (e) {
-                e.values = e.values.map(function (a) {
+                e.contents = e.contents.map(function (a) {
                     var work = new Work(a);
                     // 이미지가 같이 담겨온다.
                     work.img = new WorkFile(a.draft);
@@ -519,8 +527,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
      * 메모 입출력은 그냥 간단하게 하자
      */
     (function (WorkMemo) {
-        function save(memo) {
-            return $post('/hancomee/db/memo/', core_1.$extend({}, memo, $$json))
+        function save(workId, memo) {
+            return $post('/hancomee/db/memo/' + workId, $$json(memo))
                 .then(function (id) {
                 memo.id = id;
                 return memo;
@@ -563,12 +571,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }());
     exports.WorkItem = WorkItem;
     (function (WorkItem) {
-        function save(v) {
-            return $post('/hancomee/db/item/', core_1.$extend({}, v, $$json))
-                .then(function (id) {
-                v.id = id;
-                return v;
-            });
+        function save(v, workId) {
+            return $post('/hancomee/db/item/' + workId, $$json(v));
         }
         WorkItem.save = save;
         function remove(v) {
@@ -591,7 +595,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     exports.Customer = Customer;
     (function (Customer) {
         function save(customer) {
-            return $post('/hancomee/db/customer', core_1.$extend({}, customer, $$json))
+            return $post('/hancomee/db/customer', $$json(customer))
                 .then(function (id) { return customer.setId(id); });
         }
         Customer.save = save;
@@ -605,29 +609,31 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }());
     exports.WorkFile = WorkFile;
     (function (WorkFile) {
-        function $get(xhr, id) {
+        // 서버 송출하는 upload 진행도가 전체에서 차지할 비율
+        var up = .4, send = 1 - up, rr = 100 * up;
+        function $get(id) {
             return new Promise(function (o, x) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/upload/progress' + (id ? '/' + id : ''));
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
+                            console.log('돼써!!!');
                             o(id ? parseInt(xhr.responseText) : xhr.responseText);
                         }
                     }
                 };
-                xhr.open('GET', '/upload/progress' + (id ? '/' + id : ''));
                 xhr.send(null);
             });
         }
-        // 서버 송출하는 upload 진행도가 전체에서 차지할 비율
-        var up = .4, send = 1 - up, rr = 100 * up;
         // File Upload Logic
-        function $upload(data, xhr, pXhr, handler) {
+        function $upload(data, handler) {
             // ① 고유 키를 받아온다.
-            return $get(xhr).then(function (id) {
-                var total = 0, time = 10, 
+            return $get().then(function (id) {
+                var total = 0, time = 10, xhr = new XMLHttpRequest(), 
                 // 서버측 다운로드 경과
                 tHandler = function () {
-                    $get(pXhr, id).then(function (d) {
+                    $get(id).then(function (d) {
                         if (total !== -1 && total !== d) {
                             handler.loading(rr + Math.floor(d / total * 100 * send));
                             setTimeout(tHandler, time);
@@ -647,6 +653,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     setTimeout(tHandler, time);
                 };
                 return new Promise(function (o, x) {
+                    xhr.open('POST', '/upload/file/' + id);
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState === 4) {
                             if (xhr.status === 200) {
@@ -655,24 +662,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                             }
                         }
                     };
-                    xhr.open('POST', '/upload/file/' + id);
                     xhr.send(data);
                 });
             });
         }
-        function uploadRef(files, handler) {
-            var xhr = new XMLHttpRequest(), pXhr = new XMLHttpRequest();
+        function uploadFile(path, files, handler) {
             return array_1._reduce(files, function (promise, file, i) {
                 return promise.then(function () {
                     var formData = new FormData();
-                    formData.append('path', 'D:/work/files');
+                    formData.append('path', 'D:/work/' + path);
                     formData.append('file', file);
                     handler.start(file, i);
-                    return $upload(formData, xhr, pXhr, handler).then(function () { return handler.complete(file, i); });
+                    return $upload(formData, handler).then(function (id) { return handler.done(file, id, i); });
                 });
-            }, Promise.resolve()).then(function () { return handler.done(); });
+            }, Promise.resolve()).then(function () { return handler.complete(); });
         }
-        WorkFile.uploadRef = uploadRef;
+        WorkFile.uploadFile = uploadFile;
+        function saveFile(type, ownId, workFile) {
+            return $post('/hancomee/db/' + type + '/' + ownId, $$json(workFile));
+        }
+        WorkFile.saveFile = saveFile;
+        function removeFile(type, id) {
+            return $delete('/hancomee/db/' + type + '/' + id);
+        }
+        WorkFile.removeFile = removeFile;
     })(WorkFile = exports.WorkFile || (exports.WorkFile = {}));
     exports.WorkFile = WorkFile;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -682,6 +695,73 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /***/ }),
 
 /***/ 4:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
+    // 숫자 자리수 맞추기
+    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
+        'yyyy': function (d) { return d.getFullYear(); },
+        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
+        'M': function (d) { return d.getMonth() + 1; },
+        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
+        'd': function (d) { return d.getDate(); },
+        'dd': function (d) { return zeroFill(d.getDate()); },
+        'E': function (d) { return __day[d.getDay()]; },
+        'HH': function (d) { return zeroFill(d.getHours()); },
+        'hh': function (d) { return zeroFill(d.getHours()); },
+        'mm': function (d) { return zeroFill(d.getMinutes()); },
+        'ss': function (d) { return zeroFill(d.getSeconds()); },
+        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
+    };
+    function _toKor(date, now) {
+        if (now === void 0) { now = new Date().getTime(); }
+        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
+        if (duration > day)
+            return Math.floor(duration / day) + '일 전';
+        if (duration > hour)
+            return Math.floor(duration / hour) + '시간 전';
+        if (duration > minute)
+            return Math.floor(duration / minute) + '분 전';
+        if (duration > second)
+            return Math.floor(duration / second) + '초 전';
+    }
+    exports._toKor = _toKor;
+    function _dateFormat(_date, f) {
+        if (!_date)
+            return '';
+        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
+        if (!f)
+            return _datetime(d);
+        return f.replace(r_datetime, function ($1) {
+            if (temp = _switch[$1])
+                return temp(d);
+            else
+                return $1;
+        });
+    }
+    exports._dateFormat = _dateFormat;
+    ;
+    function _datetime(val) {
+        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
+            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
+    }
+    exports._datetime = _datetime;
+    function _date(val) {
+        var m = val.getMonth() + 1, d = val.getDate();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
+    }
+    exports._date = _date;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 5:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -791,73 +871,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         return true;
     }
     exports._everyFalse = _everyFalse;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 6:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
-    // 숫자 자리수 맞추기
-    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
-        'yyyy': function (d) { return d.getFullYear(); },
-        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
-        'M': function (d) { return d.getMonth() + 1; },
-        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
-        'd': function (d) { return d.getDate(); },
-        'dd': function (d) { return zeroFill(d.getDate()); },
-        'E': function (d) { return __day[d.getDay()]; },
-        'HH': function (d) { return zeroFill(d.getHours()); },
-        'hh': function (d) { return zeroFill(d.getHours()); },
-        'mm': function (d) { return zeroFill(d.getMinutes()); },
-        'ss': function (d) { return zeroFill(d.getSeconds()); },
-        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
-    };
-    function _toKor(date, now) {
-        if (now === void 0) { now = new Date().getTime(); }
-        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
-        if (duration > day)
-            return Math.floor(duration / day) + '일 전';
-        if (duration > hour)
-            return Math.floor(duration / hour) + '시간 전';
-        if (duration > minute)
-            return Math.floor(duration / minute) + '분 전';
-        if (duration > second)
-            return Math.floor(duration / second) + '초 전';
-    }
-    exports._toKor = _toKor;
-    function _dateFormat(_date, f) {
-        if (!_date)
-            return '';
-        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
-        if (!f)
-            return _datetime(d);
-        return f.replace(r_datetime, function ($1) {
-            if (temp = _switch[$1])
-                return temp(d);
-            else
-                return $1;
-        });
-    }
-    exports._dateFormat = _dateFormat;
-    ;
-    function _datetime(val) {
-        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
-            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
-    }
-    exports._datetime = _datetime;
-    function _date(val) {
-        var m = val.getMonth() + 1, d = val.getDate();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
-    }
-    exports._date = _date;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 

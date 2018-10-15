@@ -117,7 +117,7 @@ export class List extends GenericModule<Q> {
             let list = frag.querySelector('#list');
 
             return (a: ServerData<Work>) => {
-                let {values} = a;
+                let {contents: values} = a;
                 list.innerHTML = values.map(a => c({
                     work: a,
                     li: STATE.map((v, i) => li({

@@ -3055,103 +3055,103 @@ aside {
   background-size: contain;
   background-repeat: no-repeat;
   background-image: url("/img/icon/file/unknown.png"); }
-  .icon-file.ai {
+  .icon-file.ai, .icon-file[data-icon-file="ai"] {
     background-image: url("/img/icon/file/ai.png"); }
-  .icon-file.img {
+  .icon-file.img, .icon-file[data-icon-file="img"] {
     background-image: url("/img/icon/file/img.png"); }
-  .icon-file.jpg {
+  .icon-file.jpg, .icon-file[data-icon-file="jpg"] {
     background-image: url("/img/icon/file/img.png"); }
-  .icon-file.gif {
+  .icon-file.gif, .icon-file[data-icon-file="gif"] {
     background-image: url("/img/icon/file/img.png"); }
-  .icon-file.bmp {
+  .icon-file.bmp, .icon-file[data-icon-file="bmp"] {
     background-image: url("/img/icon/file/img.png"); }
-  .icon-file.jpeg {
+  .icon-file.jpeg, .icon-file[data-icon-file="jpeg"] {
     background-image: url("/img/icon/file/img.png"); }
-  .icon-file.indd {
+  .icon-file.indd, .icon-file[data-icon-file="indd"] {
     background-image: url("/img/icon/file/indd.png"); }
-  .icon-file.pdf {
+  .icon-file.pdf, .icon-file[data-icon-file="pdf"] {
     background-image: url("/img/icon/file/pdf.png"); }
-  .icon-file.ppt {
+  .icon-file.ppt, .icon-file[data-icon-file="ppt"] {
     background-image: url("/img/icon/file/ppt.png"); }
-  .icon-file.pptx {
+  .icon-file.pptx, .icon-file[data-icon-file="pptx"] {
     background-image: url("/img/icon/file/ppt.png"); }
-  .icon-file.pptm {
+  .icon-file.pptm, .icon-file[data-icon-file="pptm"] {
     background-image: url("/img/icon/file/ppt.png"); }
-  .icon-file.potx {
+  .icon-file.potx, .icon-file[data-icon-file="potx"] {
     background-image: url("/img/icon/file/ppt.png"); }
-  .icon-file.potm {
+  .icon-file.potm, .icon-file[data-icon-file="potm"] {
     background-image: url("/img/icon/file/ppt.png"); }
-  .icon-file.pot {
+  .icon-file.pot, .icon-file[data-icon-file="pot"] {
     background-image: url("/img/icon/file/ppt.png"); }
-  .icon-file.ppsx {
+  .icon-file.ppsx, .icon-file[data-icon-file="ppsx"] {
     background-image: url("/img/icon/file/ppt.png"); }
-  .icon-file.ppsm {
+  .icon-file.ppsm, .icon-file[data-icon-file="ppsm"] {
     background-image: url("/img/icon/file/ppt.png"); }
-  .icon-file.pps {
+  .icon-file.pps, .icon-file[data-icon-file="pps"] {
     background-image: url("/img/icon/file/ppt.png"); }
-  .icon-file.ppam {
+  .icon-file.ppam, .icon-file[data-icon-file="ppam"] {
     background-image: url("/img/icon/file/ppt.png"); }
-  .icon-file.ppa {
+  .icon-file.ppa, .icon-file[data-icon-file="ppa"] {
     background-image: url("/img/icon/file/ppt.png"); }
-  .icon-file.psd {
+  .icon-file.psd, .icon-file[data-icon-file="psd"] {
     background-image: url("/img/icon/file/psd.png"); }
-  .icon-file.txt {
+  .icon-file.txt, .icon-file[data-icon-file="txt"] {
     background-image: url("/img/icon/file/txt.png"); }
-  .icon-file.word {
+  .icon-file.word, .icon-file[data-icon-file="word"] {
     background-image: url("/img/icon/file/word.png"); }
-  .icon-file.xls {
+  .icon-file.xls, .icon-file[data-icon-file="xls"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xlsx {
+  .icon-file.xlsx, .icon-file[data-icon-file="xlsx"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xlsm {
+  .icon-file.xlsm, .icon-file[data-icon-file="xlsm"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xlsb {
+  .icon-file.xlsb, .icon-file[data-icon-file="xlsb"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xltx {
+  .icon-file.xltx, .icon-file[data-icon-file="xltx"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xltm {
+  .icon-file.xltm, .icon-file[data-icon-file="xltm"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xlt {
+  .icon-file.xlt, .icon-file[data-icon-file="xlt"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xls {
+  .icon-file.xls, .icon-file[data-icon-file="xls"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xml {
+  .icon-file.xml, .icon-file[data-icon-file="xml"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xlam {
+  .icon-file.xlam, .icon-file[data-icon-file="xlam"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xla {
+  .icon-file.xla, .icon-file[data-icon-file="xla"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xlw {
+  .icon-file.xlw, .icon-file[data-icon-file="xlw"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.xlr {
+  .icon-file.xlr, .icon-file[data-icon-file="xlr"] {
     background-image: url("/img/icon/file/xls.png"); }
-  .icon-file.zip {
+  .icon-file.zip, .icon-file[data-icon-file="zip"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.ais {
+  .icon-file.ais, .icon-file[data-icon-file="ais"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.arj {
+  .icon-file.arj, .icon-file[data-icon-file="arj"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.cab {
+  .icon-file.cab, .icon-file[data-icon-file="cab"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.gz {
+  .icon-file.gz, .icon-file[data-icon-file="gz"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.hgx {
+  .icon-file.hgx, .icon-file[data-icon-file="hgx"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.jas {
+  .icon-file.jas, .icon-file[data-icon-file="jas"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.lzh {
+  .icon-file.lzh, .icon-file[data-icon-file="lzh"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.pak {
+  .icon-file.pak, .icon-file[data-icon-file="pak"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.psz {
+  .icon-file.psz, .icon-file[data-icon-file="psz"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.rar {
+  .icon-file.rar, .icon-file[data-icon-file="rar"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.sea {
+  .icon-file.sea, .icon-file[data-icon-file="sea"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.tgz {
+  .icon-file.tgz, .icon-file[data-icon-file="tgz"] {
     background-image: url("/img/icon/file/zip.png"); }
-  .icon-file.zool {
+  .icon-file.zool, .icon-file[data-icon-file="zool"] {
     background-image: url("/img/icon/file/zip.png"); }
 
 .d-form + * {
@@ -3404,3 +3404,8 @@ main .loading, main .popup {
     background-color: black; }
   main .loading.on, main .popup.on {
     display: flex; }
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0; }

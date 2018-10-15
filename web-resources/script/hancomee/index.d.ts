@@ -6,7 +6,7 @@ interface ServerData<T> {
     size: number
     totalElements: number
     totalPages: number
-    values: T[]
+    contents: T[]
 
     count: number[]
     price: number[]

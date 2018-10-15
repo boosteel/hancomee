@@ -111,13 +111,13 @@
     <table class="table">
         <thead>
         <tr>
-            <th>품목</th>
-            <th>규격</th>
-            <th>수량</th>
-            <th>단가</th>
-            <th>금액</th>
-            <th>부가세</th>
-            <th>비고</th>
+            <th>▽품목</th>
+            <th>▽규격</th>
+            <th>▽수량</th>
+            <th>▽단가</th>
+            <th>▽부가세</th>
+            <th>▽금액</th>
+            <th>▽비고</th>
             <th>img</th>
             <th>file</th>
             <th>..</th>
@@ -133,14 +133,19 @@
             <td data-name="vat" data-type="number"></td>
             <td data-name="total" data-type="number"></td>
             <td data-name="memo"></td>
-            <td data-name="draft" data-event="$img"></td>
+            <td class="item-file" data-name="draft" data-event="$img">
+                <i class="material-icons icon">insert_photo</i>
+            </td>
             <td>
-                <div class="dropdown print-file">
-                    <span data-toggle="dropdown"></span>
+                <div class="dropdown item-file" data-name="print">
+                    <span data-toggle="dropdown"><i class="material-icons icon">insert_drive_file</i></span>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <div class="add">파일 등록</div>
+                        <div class="add">
+                            <i class="material-icons upload">cloud_upload</i>
+                            <span>파일 등록</span>
+                        </div>
                         <ul class="file">
-                            <li><a class="thumb"></a></li>
+                            <li class="download"><a class="thumb icon-file" data-print="thumb"></a></li>
                             <li>
                                 <span data-print="original_name"></span>.<span data-print="filetype"></span>
                             </li>
@@ -241,11 +246,14 @@
         <div class="header">
             <span class="title"></span>
             <span class="count"></span>
-            <span class="close" data-event="close">닫기</span>
+            <span class="remove" data-event="remove">삭제</span>
+            <span class="close" data-event="close"><i class="material-icons">clear</i></span>
+            <span class="upload" data-event="upload"><i class="material-icons">publish</i></span>
         </div>
         <span class="before" data-event="move" data-value="v:-1">&lt;</span>
         <span class="after" data-event="move" data-value="v:1">&gt;</span>
         <div class="screen"></div>
+        <input class="hide" type="file" accept="image/*" multiple>
     </div>
 </script>
 
@@ -269,7 +277,7 @@
                         <div class="state dropdown">
                             <span data-toggle="dropdown">
                                 <span class="value">작업대기</span>
-                                <span class="arrow">▼</span>
+                                <span class="arrow">▽</span>
                             </span>
                             <div class="dropdown-menu dropdown-menu-right" data-event="state">
                                 <ul data-dismiss>

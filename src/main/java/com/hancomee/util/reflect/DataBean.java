@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.hancomee.util.DataConverter.data_by_jType;
-import static com.hancomee.util.DataConverter.sql_by_jType;
+import static com.hancomee.util.db.DataConverter.data_by_jType;
+import static com.hancomee.util.db.DataConverter.sql_by_jType;
 
 
 /*
@@ -34,8 +34,8 @@ public class DataBean extends ReflectObject {
         if (db == null) {
             try {
                 db = new DataBean(Class.forName(className));
-                for(String type : db.setterTypes.values())
-                    $assert(type);
+                for(Class<?> type : db.setterTypes.values())
+                    $assert(type.getName());
                 $cache.put(className, db);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -119,7 +119,8 @@ public class DataBean extends ReflectObject {
 
             ResultSetMetaData meta = rs.getMetaData();
             int len = meta.getColumnCount();
-            String label, tableName, setterType;
+            String label, tableName;
+            Class<?> setterType;
 
             while (len > 0) {
                 label = meta.getColumnLabel(len);
@@ -132,13 +133,13 @@ public class DataBean extends ReflectObject {
                  */
                 if (setterType != null) {
                     if (tableName.equals("$")) {
-                        set($self, label, data_by_jType(rs, meta, setterType, len));
+                        set($self, label, data_by_jType(rs, meta, setterType.getName(), len));
                     }
                     // 하위 멤버 빈일 경우
                     else {
                         Capsule capsule = dataBeanMap.get(tableName);
                         if (capsule == null)
-                            dataBeanMap.put(tableName, capsule = new Capsule(setterType));
+                            dataBeanMap.put(tableName, capsule = new Capsule(setterType.getName()));
                         capsule.set(label, rs, meta, len);
                     }
                 }

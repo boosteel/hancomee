@@ -5,7 +5,9 @@ import com.hancomee.util.IAccess;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 public class ReflectObject {
 
@@ -40,48 +42,72 @@ public class ReflectObject {
         int len = keys.length, i = 0;
 
         for (; i < len; i++) {
-            if(target == null) return null;
+            if (target == null) return null;
             ro = ReflectObject.getReflectObject(target.getClass());
             target = ro.get(target, keys[i]);
         }
-        return (T)target;
+        return (T) target;
     }
 
-    public static final<T> T setValue(T target, String key, Object value) {
-        String[] keys = key.split("\\.");
-        ReflectObject ro;
-
-        int len = keys.length, i = 0;
-
-        while(len-- > 0) {
-
+    public static final <T> T setValue(T target, String key, Object value) {
+        try {
+            return setValue(target, key.split("\\."), value, 0);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        for (; i < len; i++) {
-            ro = ReflectObject.getReflectObject(target.getClass());
-            target = ro.get(target, keys[i]);
-        }
+    }
 
+    private static final <T> T setValue(T target, String[] v, Object value, int index) throws Exception {
+        ReflectObject ro = getReflectObject(target.getClass().getName());
+
+        Class<?> clazz = ro.setterTypes.get(v[index]);
+
+        if (clazz != null) {
+            // 실제 값 입력
+            if (v.length - 1 == index) {
+                ro.set(target, v[index], value);
+            }
+            // 하위 객체
+            else {
+                Object t = ro.get(target, v[index]);
+                if (t == null) {
+                    t = clazz.newInstance();
+                }
+                ro.set(target, v[index], setValue(t, v, value, index + 1));
+            }
+        }
         return target;
     }
 
 
-    public static final<T> IAccess<T> createAccess(T t) {
-        ReflectObject db = getReflectObject(t.getClass());
+    /*
+     *  get / set 으로 데이터를 입출력할 수 있게 해준다.
+     *  Map과 Class를 하나의 인터페이스로 쓸 수 있게 하기 위해 만든 로직
+     */
+    public static final <T> IAccess<T> createAccess(Class<T> clazz) {
+        try {
+            return createAccess(clazz.newInstance());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static final <T> IAccess<T> createAccess(T t) {
+        Map<String, Class<?>> types = getReflectObject(t.getClass().getName()).setterTypes;
         return new IAccess<T>() {
-            @Override
             public T target() {
                 return t;
             }
 
-            @Override
             public Object get(String key) {
                 return getValue(t, key);
             }
 
-            @Override
             public IAccess<T> set(String key, Object value) {
                 setValue(t, key, value);
                 return this;
+            }
+            public Set<String> keySet() {
+                return types.keySet();
             }
         };
     }
@@ -91,10 +117,11 @@ public class ReflectObject {
         return n.substring(0, 1).toLowerCase() + n.substring(1);
     }
 
+    /* **************************** Class **************************** */
     protected Class<?> clazz;
     protected Map<String, Setter> setterMap = new HashMap<>();
     protected Map<String, Getter> getterMap = new HashMap<>();
-    protected Map<String, String> setterTypes = new HashMap<>();       // setter가 가진 클래스
+    protected Map<String, Class<?>> setterTypes = new HashMap<>();       // setter가 가진 클래스
 
     public ReflectObject(Class<?> clazz) {
         this.clazz = clazz;
@@ -125,7 +152,7 @@ public class ReflectObject {
 
                         Class<?> c = method.getParameterTypes()[0];
                         name = keyName(name);
-                        setterTypes.put(name, c.getName());
+                        setterTypes.put(name, c);
                         setterMap.put(name, (t, v) -> invoke.invoke(t, v));
                     }
 
@@ -151,7 +178,7 @@ public class ReflectObject {
                     getterMap.put(name, (t) -> field.get(t));
 
                 if (!setterMap.containsKey(name)) {
-                    setterTypes.put(name, field.getType().getName());
+                    setterTypes.put(name, field.getType());
                     setterMap.put(name, (t, v) -> field.set(t, v));
                 }
             }
@@ -183,6 +210,11 @@ public class ReflectObject {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+    }
+
+    public void set(Object obj, Map<String, Object> map) {
+
+
     }
 
     public Map<String, Object> map(Object target) throws Exception {

@@ -1,7 +1,7 @@
 package com.hancomee.spy.p2p;
 
 import com.hancomee.spy.p2p.core.P2P;
-import com.hancomee.util.DB;
+import com.hancomee.util.db.DB;
 
 import java.util.HashSet;
 import java.util.List;

@@ -1,23 +1,20 @@
 package com.hancomee.util.db;
 
-import com.hancomee.util.SQL;
+import com.hancomee.util.IAccess;
+import com.hancomee.util.MapAccess;
 import com.hancomee.util.db.anno.*;
-import com.hancomee.util.reflect.DataBean;
+import com.hancomee.util.db.support.Pager;
 
-import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.hancomee.util.DataConverter.data_by_jType;
+import static com.hancomee.util.db.DataConverter.data_by_jType;
 
 public class RepositoryFactory {
 
@@ -34,83 +31,38 @@ public class RepositoryFactory {
 
     private static class MethodData {
 
-        Class<?> returnType;
-
-
-        DataSource dataSource;
-        String name;
-
-        boolean autoCommit;
-
-        boolean hasParameters;
-        boolean hasValue;
-        boolean hasMap;
-        boolean hasConnection;
-
-        boolean wantResultSet;
-        boolean wantSave;
-        boolean wantLastId;
-        boolean wantMap;
-        boolean wantList;
-        boolean wantDataBean;
-        boolean wantSingleValue;
-
-        int paramCount;
-
+        DB db;
+        int pagerIndex = -1;
+        int statementIndex = -1;
         int connectionIndex = -1;
-        int beanIndex = -1;
         int mapIndex = -1;
 
         List<QVal> values = new ArrayList<>();
 
         /*
          *  Method의 모든 정보를 뽑아낸다.
+         *
+         *  리턴타입
+         *  ① List<Map<String, Object>>
+         *  ② Map<String, Object>
+         *  ③ int
+         *  ④ long
+         *  ⑤ String
+         *  ⑥ java.util.Date
+         *  ⑦ Pager
+         *
+         *
+         *  파라미터로 허용되는건
+         *  ① @Value
+         *  ③ Map<String, Object>
+         *  ④ Connection
+         *  ⑤ Statement
+         *  ⑥ Pager
          */
-        MethodData(Method method, DataSource db) throws Exception {
-
-            this.dataSource = db;
-            name = method.getName();
-            hasParameters = (paramCount = method.getParameterCount()) != 0;
-            returnType = method.getReturnType();
+        MethodData(Method method, DB db) throws Exception {
 
 
-            String className = returnType.getName();
-
-            if (method.getAnnotation(Save.class) != null) {
-                wantSave = true;
-            } else if (method.getAnnotation(LastInsertId.class) != null) {
-                wantSave = wantLastId = true;
-            } else if (!className.equals("void")) {
-
-                autoCommit = true;
-
-                if (className.contains(".")) {
-                    /*
-                     *  ① List 타입   ② 일반 클래스는
-                     *  모두 DataBean으로 간주한다.
-                     */
-                    if (!returnType.getName().startsWith("java.")) {
-                        wantDataBean = true;
-                    } else if (List.class.isAssignableFrom(returnType)) {
-
-                        /*
-                         *  method의 리턴타입의 Generic 객체정보를 가지고 오는 방법을 모르겠다.
-                         */
-                        String genericName = method.getGenericReturnType().getTypeName();
-                        returnType = Class.forName(genericName
-                                .substring(genericName.indexOf("<") + 1, genericName.indexOf(">"))
-                        );
-                        wantDataBean = wantList = true;
-                    } else if (className.equals("java.sql.ResultSet")) {
-                        wantResultSet = true;
-                    } else if (Map.class.isAssignableFrom(returnType)) {
-                        wantMap = true;
-                    } else
-                        wantSingleValue = true;
-                }
-
-            }
-
+            this.db = db;
 
             int i = 0;
             Class<?>[] parameters = method.getParameterTypes();
@@ -118,95 +70,83 @@ public class RepositoryFactory {
 
             /*
              *  메소드 파라미터 순회
-             *  메소드 파라미터는 결국 query를 완성하기 위한 값들이다.
              */
             for (Class<?> param : parameters) {
 
-                // 애노테이션은 Value만 허용한다.
+                // @Value
                 if (annotations[i].length == 1 && Value.class.isAssignableFrom(annotations[i][0].getClass())) {
-                    if (beanIndex != -1 || mapIndex != -1)
-                        throw new RuntimeException("파라미터값은 @Value | Map<String, Object> | Custom Class");
                     values.add(new QVal(i, ((Value) annotations[i][0]).value()));
                 }
-
-                className = param.getName();
-                if (className.contains(".") && !className.startsWith("java.")) {
-                    if (!values.isEmpty() || mapIndex != -1)
-                        throw new RuntimeException("파라미터값은 @Value | Map<String, Object> | Custom Class");
-                    beanIndex = i;
+                // Pager
+                else if (Pager.class.isAssignableFrom(param)) {
+                    pagerIndex = i;
                 }
-                // 파라미터 중에 Map이 있는지
+                // Map
                 else if (Map.class.isAssignableFrom(param)) {
-                    if (!values.isEmpty() || beanIndex != -1)
-                        throw new RuntimeException("파라미터값은 @Value | Map<String, Object> | Custom Class");
-                    hasMap = true;
                     mapIndex = i;
-                } else if (Connection.class.isAssignableFrom(param)) {
-                    connectionIndex = i;
-                    hasConnection = true;
                 }
-
+                // Connection
+                else if (Connection.class.isAssignableFrom(param)) {
+                    connectionIndex = i;
+                }
+                // Statement
+                else if (Statement.class.isAssignableFrom(param)) {
+                    statementIndex = i;
+                }
+                // error
+                else {
+                    throw new RuntimeException(param + " 은 지원하지 않는 Parameter입니다.");
+                }
                 i++;
             }
-
-            autoCommit = method.getAnnotation(AutoCommit.class) == null;
         }
 
 
-        /*
-         *  인자로 Connection이 들어오면 그것을 사용하고,
-         *  아니면 직접 DB에서 받아온다.
-         */
-        Object run(Object[] args, ConRun r) throws Exception {
-            if(hasConnection) return r.run((Connection) args[connectionIndex]);
-            else {
-                try (Connection con = dataSource.getConnection()) {
-
-                    if (autoCommit) {
-                        return r.run(con);
-                    } else {
-                        try {
-                            con.setAutoCommit(false);
-                            Object rv = r.run(con);
-                            con.commit();
-                            return rv;
-                        } catch (Exception e) {
-                            con.rollback();
-                            throw e;
-                        }
-                    }
-
-                } catch (Exception e) {
-                    throw e;
+        Object doStmt(Object[] args, DoStmt r) throws Exception {
+            // Statement가 인자로 제공될때
+            if (statementIndex != -1) {
+                return r.run((Statement) args[statementIndex]);
+            }
+            // Connection이 인자로 제공될때
+            else if (connectionIndex != -1) {
+                try (Statement stmt = ((Connection) args[connectionIndex]).createStatement()) {
+                    return r.run(stmt);
                 }
+            }
+            // 아무것도 없을때
+            else {
+                return db.doStmtR(stmt -> r.run(stmt));
             }
         }
 
-        // @Value가 있을 경우 Map을 만들때 쓴다.
-        // args는 method.invoke시의 인자값
-        Object paramValues(Object[] args) {
-            if (beanIndex != -1) return args[beanIndex];
-            if (mapIndex != -1) return args[mapIndex];
-
-            Map<String, Object> map = new HashMap<>();
+        IAccess<?> getAccess(Object[] args) {
+            Map<String, Object> map = mapIndex != -1 ?
+                    new HashMap<>((Map<String, Object>) args[mapIndex]) :
+                    new HashMap<>();
             for (QVal v : values) map.put(v.key, args[v.index]);
-            return map;
-        }
-
-        boolean isReturnType(Class<?> type) {
-            return type.isAssignableFrom(returnType);
+            return new MapAccess(map);
         }
     }
 
-    public interface ConRun {
-        Object run(Connection con) throws Exception;
+
+    public interface DoStmt {
+        Object run(Statement stmt) throws Exception;
     }
 
     public interface MethodRun {
         Object run(Object[] args) throws Exception;
+
     }
 
-    public static final <T> T createRepository(Class<T> cons, DataSource db) {
+    private static final <T> T _log(T t) {
+        System.out.println("\n-----------------------------------------------------------------");
+        System.out.println(t);
+        System.out.println("-----------------------------------------------------------------\n");
+        return t;
+    }
+
+
+    public static final <T> T createRepository(Class<T> cons, DB db) {
 
         try {
 
@@ -214,128 +154,167 @@ public class RepositoryFactory {
 
             for (Method method : cons.getMethods()) {
 
-                Query c = method.getAnnotation(Query.class);
+                Class<?> returnType = method.getReturnType();
+                MethodData md = new MethodData(method, db);
 
-                // ************************ @Prepared ************************ //
-                if (c != null) {
-                    NamedPreparedStatementFactory factory = SQL.newPrepared(c.value());
-                    MethodData md = new MethodData(method, db);
+                Insert INSERT;
+                Update UPDATE;
+                Selector SELECTOR;
+                Save SAVE;
+                PageList PAGE_LIST;
+                SQLString SQL_STRING;
 
+                // @Save
+                if ((SAVE = method.getAnnotation(Save.class)) != null) {
+                    boolean wantLastId = SAVE.lastId();
+                    SQL.DQuery query = SQL.dynamicSQL(SAVE.value());
 
-                    if (md.wantDataBean) {
-
-                        // List<{type}>
-                        if (md.wantList) {
-                            result.put(method, (args) -> {
-                                DataBean dataBean = DataBean.getBeanData(md.returnType.getName());
-                                return md.run(args, con -> {
-                                    List<?> list = new ArrayList<>();
-                                    try (ResultSet rs = factory.create(con)
-                                            .set(md.paramValues(args))
-                                            .doWorkR((p, m) -> p.executeQuery());) {
-                                        while (rs.next())
-                                            list.add(dataBean.newInstance(rs));
-                                        return list;
+                    result.put(method, args ->
+                            md.doStmt(args, stmt -> {
+                                int i = stmt.executeUpdate(_log(query.apply(md.getAccess(args))));
+                                if (wantLastId) {
+                                    try (ResultSet rs = stmt.executeQuery("SELECT LAST_INSERT_ID()")) {
+                                        rs.next();
+                                        i = rs.getInt(1);
                                     }
-                                });
-                            });
-                        }
-                        // 단일 객체
-                        else {
-                            result.put(method, (args) -> {
-                                DataBean dataBean = DataBean.getBeanData(md.returnType.getName());
-                                return md.run(args, con -> {
-                                    try (ResultSet rs = factory.create(con)
-                                            .set(md.paramValues(args))
-                                            .doWorkR((p, m) -> p.executeQuery())) {
-                                        return rs.next() ? dataBean.newInstance(rs) : null;
-                                    }
-                                });
-                            });
-                        }
-                    }
-                    // 리절트셋을 바로 원할때
-                    else if (md.wantResultSet) {
+                                }
+                                return i;
+                            }));
+                }
+                // @Update
+                else if ((UPDATE = method.getAnnotation(Update.class)) != null) {
 
-                        /*
-                         *   ★★★ ResultSet method(Map<String, Object> values)
-                         *   ★★★ ResultSet method(@Value("") Type name, ...)
-                         *   ★★★ ResultSet method(Map<String, Object> values, @Value("") Type name, ...)
-                         */
-                        if (md.hasValue || md.hasMap) {
-                            result.put(method,
-                                    (args) -> md.run(args, con -> factory.create(con)
-                                            .set(md.paramValues(args))
-                                            .doWorkR((p, m) -> p.executeQuery())));
-                        }
-                    }
+                    String tableName = UPDATE.value(),
+                            sql = "UPDATE " + tableName + " SET ";
 
-                    /*
-                     *   ★★★ @LastInsertId
-                     */
-                    else if (md.wantLastId) {
-                        result.put(method, (args) -> md.run(args,
-                                con -> factory.create(con)
-                                        .set(md.paramValues(args))
-                                        .doWorkR((p, m) -> {
-                                            p.executeUpdate();
-                                            try (Statement s = con.createStatement();
-                                                 ResultSet rs = s.executeQuery("SELECT LAST_INSERT_ID()")) {
-                                                rs.next();
-                                                return rs.getLong(1);
-                                            }
-                                        })));
-                    }
-                    /*
-                     *   ★★★ int method(Map<String, Object> values)
-                     *   ★★★ int method(Value("") Type name, ...)
-                     *   ★★★ int method(Map<String, Object> values, Value("") Type name, ...)
-                     */
-                    else if (md.wantSave) {
-                        result.put(method,
-                                (args) -> md.run(args, con -> factory.create(con)
-                                        .set(md.paramValues(args))
-                                        .doWorkR((p, m) -> p.executeUpdate())));
-                    }
+                    SQL.DQuery where = SQL.dynamicSQL(method.getAnnotation(Update.class).where());
+                    TableInfo info = db.getTableInfo(tableName);
 
-                    /*
-                     *   ★★★ NamedPrepareStatement method(Connection con)
-                     */
-                    else if (md.isReturnType(NamedPrepareStatement.class)) {
-                        result.put(method, (args) -> md.run(args, con -> factory.create(con)));
-                    } else if (md.wantSingleValue) {
-                        String className = md.returnType.getName();
-                        result.put(method, (args) -> {
-                            return md.run(args, con -> {
-                                return factory.create(con)
-                                        .set(md.paramValues(args))
-                                        .doWorkR((p, uu) -> {
-                                            try (ResultSet rs = p.executeQuery()) {
-                                                ResultSetMetaData m = rs.getMetaData();
-                                                if (rs.next()) {
-                                                    return data_by_jType(rs, m, className, 1);
-                                                } else
-                                                    return null;
-                                            }
-                                        });
-                            });
-                        });
-                    }
+                    result.put(method, args ->
+                            md.doStmt(args, stmt -> {
+                                IAccess access = md.getAccess(args);
+                                return stmt.executeUpdate(_log(
+                                        sql + SQL.update(access, info) + " WHERE " +
+                                                where.apply(access)));
+                            }));
                 }
 
+                // @Insert
+                else if ((INSERT = method.getAnnotation(Insert.class)) != null) {
+                    boolean wantLastId = INSERT.lastId();
+                    String tableName = INSERT.value(),
+                            sql = "INSERT INTO " + tableName + " ";
+                    TableInfo info = db.getTableInfo(tableName);
+
+                    result.put(method, args -> md.doStmt(args, stmt -> {
+                        int i = stmt.executeUpdate(_log(sql + SQL.insert(md.getAccess(args), info)));
+                        if (wantLastId) {
+                            try (ResultSet rs = stmt.executeQuery("SELECT LAST_INSERT_ID()")) {
+                                rs.next();
+                                i = rs.getInt(1);
+                            }
+                        }
+                        return i;
+                    }));
+                }
+
+                // @SQLString
+                else if ((SQL_STRING = method.getAnnotation(SQLString.class)) != null) {
+
+                    if (!String.class.isAssignableFrom(returnType))
+                        throw new RuntimeException("@SQLString error : \n" +
+                                "반환값은 반드시 java.lang.String이어야 합니다.");
+
+                    SQL.DQuery query = SQL.dynamicSQL(SQL_STRING.value());
+                    result.put(method, (args) -> query.apply(md.getAccess(args)));
+                }
+
+                // @PageList
+                else if ((PAGE_LIST = method.getAnnotation(PageList.class)) != null) {
+
+
+                    if (!Pager.class.isAssignableFrom(returnType))
+                        throw new RuntimeException("@PageList error : \n" +
+                                "리턴값은 반드시 Pager객체이어야 합니다.");
+                    if(md.pagerIndex == -1)
+                        throw new RuntimeException("@PageList error : \n" +
+                                "Pager객체가 반드시 인자로 제공되어야 합니다.");
+
+                    SQL.DQuery $select = SQL.dynamicSQL(PAGE_LIST.list()),
+                            $count = SQL.dynamicSQL(PAGE_LIST.count());
+
+                    result.put(method, (args) -> md.doStmt(args, stmt -> {
+                        Pager pager = (Pager) args[md.pagerIndex];
+                        IAccess access = md.getAccess(args);
+                        String select = _log($select.apply(access) + pager.orderBy() + pager.limit()),
+                                count = _log($count.apply(access));
+
+                        pager.setContents(DataAccess.readAll(stmt.executeQuery(select)));
+                        ResultSet rs = stmt.executeQuery(count);
+                        rs.next();
+                        return pager.setTotalElements(rs.getLong(1));
+                    }));
+                }
+
+                // @Selector
+                else if ((SELECTOR = method.getAnnotation(Selector.class)) != null) {
+
+                    String type = returnType.getName();
+                    SQL.DQuery query = SQL.dynamicSQL(SELECTOR.value());
+
+                    // return ResultSet
+                    if (ResultSet.class.isAssignableFrom(returnType)) {
+                        result.put(method, args ->
+                                md.doStmt(args, stmt -> stmt.executeQuery(_log(query.apply(md.getAccess(args))))));
+                    }
+                    // return Map<String, Object>
+                    else if (Map.class.isAssignableFrom(returnType)) {
+                        result.put(method, (args) ->
+                                md.doStmt(args, stmt -> {
+                                    try (ResultSet rs = stmt.executeQuery(_log(query.apply(md.getAccess(args))))) {
+                                        rs.next();
+                                        return DataAccess.read(rs, new MapAccess(new HashMap<>()));
+                                    }
+                                })
+                        );
+                    }
+                    // return List<Map<String, Object>>
+                    else if (List.class.isAssignableFrom(returnType)) {
+                        result.put(method, (args) ->
+                                md.doStmt(args, stmt -> {
+                                    try (ResultSet rs = stmt.executeQuery(_log(query.apply(md.getAccess(args))))) {
+                                        return DataAccess.readAll(rs);
+                                    }
+                                })
+                        );
+                    }
+                    // return JAVA DEFAULT TYPE
+                    else if (type.indexOf(".") == -1 || type.startsWith("java.lang")) {
+                        result.put(method, (args) -> md.doStmt(args, stmt -> {
+                            try (ResultSet rs = stmt.executeQuery(_log(query.apply(md.getAccess(args))))) {
+                                rs.next();
+                                return data_by_jType(rs, rs.getMetaData(), type, 1);
+                            }
+                        }));
+                    }
+
+                    // error
+                    else {
+                        throw new RuntimeException("@Selector error : \n" +
+                                type + " 은 지원하지 않는 반환값입니다.");
+                    }
+                }
+                // error
+                else {
+                    throw new RuntimeException(method + " 시그니처를 확인하세요.");
+                }
             }
 
 
             return (T) Proxy.newProxyInstance(
                     cons.getClassLoader(),
                     new Class[]{cons},
-                    (proxy, method, methodArgs) -> {
-                        MethodRun r = result.get(method);
-                        if (r == null)
-                            throw new RuntimeException("메소드 시그니처가 바르게 작성되지 않았습니다.\n" + method);
-                        return r.run(methodArgs);
-                    });
-
+                    (proxy, method, methodArgs) -> result.get(method).run(methodArgs));
 
         } catch (Exception e) {
             throw new RuntimeException(e);

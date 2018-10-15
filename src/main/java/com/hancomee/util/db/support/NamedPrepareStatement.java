@@ -1,7 +1,7 @@
-package com.hancomee.util.db;
+package com.hancomee.util.db.support;
 
-import com.hancomee.util.DataConverter;
-import com.hancomee.util.reflect.DataBean;
+import com.hancomee.util.IAccess;
+import com.hancomee.util.db.DataConverter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -53,29 +53,10 @@ public class NamedPrepareStatement {
         return this;
     }
 
-    public NamedPrepareStatement set(Object obj) {
-        String className = obj.getClass().getName();
-        return className.equals("java.util.Map") ?
-                setValue((Map<String, Object>) obj) :
-                setValue(obj, className);
-    }
-
-    private NamedPrepareStatement setValue(Map<String, Object> map) {
+    public NamedPrepareStatement set(IAccess<?> obj) {
         try {
             for (NamedTuple index : values)
-                DataConverter.setPstmt(pstmt, index.index, index.type, map.get(index.name));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return this;
-    }
-
-
-    private NamedPrepareStatement setValue(Object obj, String className) {
-        try {
-            DataBean bd = DataBean.getBeanData(className);
-            for (NamedTuple index : values)
-                DataConverter.setPstmt(pstmt, index.index, index.type, bd.get(obj, index.name));
+                DataConverter.setPstmt(pstmt, index.index, index.type, obj.get(index.name));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

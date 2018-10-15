@@ -4,6 +4,14 @@ export namespace DOM {
 
     let doc = document;
 
+    export function contains(parent: HTMLElement, target: HTMLElement) {
+        let p;
+        while(p = target.parentNode) {
+            if(parent === p) return true;
+        }
+        return false;
+    }
+
     export function closest(target: any,
                              handler: (e: Element, index: number) => boolean,
                              limit: Element = null): HTMLElement {
