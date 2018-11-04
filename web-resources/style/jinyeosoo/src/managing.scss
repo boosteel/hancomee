@@ -1,0 +1,69 @@
+@import "../../mixins";
+@import "../variables";
+
+#managing {
+
+  .info {
+    margin-top: 25px;
+  }
+
+  table.data-table {
+
+    > thead, > tbody {
+      > tr {
+        > th, > td {
+
+          &:first-child {
+            width: 18%;
+          }
+
+          &:last-child {
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+
+
+    > thead {
+      > tr {
+        > th {
+        }
+      }
+    }
+
+    > tbody {
+      > tr {
+
+        > td {
+          padding: 10px 15px;
+          vertical-align: top;
+
+          &:first-child {
+            > span {
+              display: block;
+            }
+          }
+        }
+
+        &.modify {
+          textarea {
+            height: 84px;
+          }
+        }
+      }
+    }
+  }
+
+  .input {
+    display: flex;
+    > label {
+      font-size: 12px;
+      white-space: nowrap;
+      padding: 10px 10px 0 0;
+    }
+    &:first-child {
+      margin-bottom: .5rem;
+    }
+  }
+}

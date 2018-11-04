@@ -1,6 +1,7 @@
 package com.hancomee.web.domain;
 
-import com.hancomee.util.Strings;
+
+import com.boosteel.util.support.Strings;
 
 public class BayBean {
 

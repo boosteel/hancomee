@@ -1,6 +1,6 @@
 package com.hancomee.web.controller.support;
 
-import com.hancomee.util.db.support.Pager;
+import com.boosteel.nativedb.core.support.Pager;
 import com.hancomee.web.controller.work.ListController;
 
 import java.util.Map;

@@ -8,6 +8,19 @@ import java.nio.file.*;
 public class ReLoad {
 
 
+    public static final void main(String[] args) throws Exception {
+        Path root = Paths.get(ReLoad.class.getClassLoader().getResource(".").toURI()),
+                classes = root.resolve("../classes"),
+                src = root.resolve("../../src/main/resources");
+
+        String[] target = {"static", "templates"};
+
+        for(String dir : target) {
+            $copy(src.resolve(dir), classes.resolve(dir));
+        }
+    }
+
+
     @Test
     public void copy() throws Exception {
 
@@ -24,7 +37,7 @@ public class ReLoad {
     }
 
 
-    private void $copy(Path source, Path target) throws IOException {
+    private static void $copy(Path source, Path target) throws IOException {
 
         out(source);
 
@@ -44,7 +57,7 @@ public class ReLoad {
         }
     }
 
-    private void out(Object obj) {
+    private static void out(Object obj) {
         System.out.println(obj);
     }
 

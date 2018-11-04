@@ -1,6 +1,7 @@
 package com.hancomee.spy.p2p.core;
 
-import com.hancomee.util.Patterns;
+
+import com.boosteel.util.support.Patterns;
 
 import java.nio.file.Path;
 import java.util.regex.Pattern;

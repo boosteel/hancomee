@@ -1,0 +1,27 @@
+
+
+@import "../bagic-bootstrap";
+@import "variable";
+@import "../flex";
+@import "fonts";
+@import "reboot";
+@import "utilities";
+@import "nav";
+@import "footer";
+@import "screen";
+@import "page-transfer";
+@import "products-menu";
+@import "logo";
+
+
+body {
+  overflow-x: hidden;
+  background-color: #282828;
+  font-size: 14px;
+  font-family: 'Roboto', 'Nanum Gothic';
+  color: $default-font-color;
+}
+
+main {
+  min-height: 100vh;
+}

@@ -1,7 +1,7 @@
 package com.hancomee.spy.p2p;
 
+import com.boosteel.nativedb.NativeDB;
 import com.hancomee.spy.p2p.core.P2P;
-import com.hancomee.util.db.DB;
 
 import java.util.HashSet;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class P2PManager {
 
-    private DB db = new DB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
+    private NativeDB db = new NativeDB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
     private Set<String> CHECK = new HashSet<>();
 
     protected String site;

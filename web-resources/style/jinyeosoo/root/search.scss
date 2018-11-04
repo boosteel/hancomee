@@ -1,0 +1,76 @@
+@import "../../mixins";
+@import "../variables";
+
+#search {
+
+  .search-box {
+    padding: 25px 60px;
+    width: 50%;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 5px;
+  }
+
+  .search-input {
+    margin-bottom: 25px;
+  }
+
+  .search-result {
+    margin: 0 20px;
+  }
+
+  input {
+    display: block;
+    padding: 10px 40px;
+    width: 100%;
+    height: 56px;
+    border: 2px solid #8397ab;
+    font-size: 20px;
+    outline: 0;
+    background-color: #f1f5f9;
+    border-radius: 28px;
+  }
+
+  table {
+    width: 100%;
+
+    > thead, > tbody {
+      > tr {
+        > td, > th {
+
+          font-size: 14px;
+          font-weight: normal;
+          text-align: center;
+
+          // 아이템 테이블 열 사이즈
+          @include table-col(10, 20,35,35);
+        }
+      }
+    }
+    > thead {
+      > tr {
+        > th {
+          padding: 5px;
+          color: #8397ab;
+          border-bottom: 1px solid #f1f5f9;
+        }
+      }
+    }
+
+    > tbody {
+      > tr {
+        cursor: pointer;
+        > td {
+          padding: 15px 10px;
+        }
+
+        &:hover {
+          > td {
+            background-color: #f1f5f9;
+          }
+        }
+      }
+    }
+  }
+
+}

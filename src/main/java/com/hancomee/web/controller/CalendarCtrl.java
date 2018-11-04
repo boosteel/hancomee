@@ -1,8 +1,8 @@
 package com.hancomee.web.controller;
 
-import com.hancomee.util.db.DB;
-import com.hancomee.util.db.ResultSetAccess;
-import com.hancomee.util.db.SQL;
+import com.boosteel.nativedb.NativeDB;
+import com.boosteel.nativedb.core.ResultSetAccess;
+import com.boosteel.nativedb.core.SQL;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +14,7 @@ public class CalendarCtrl {
 
     // new DB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
     // new DB("jdbc:mysql://localhost:3306/boosteel", "boosteel", "ko916304");
-    DB db = new DB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
+    NativeDB db = new NativeDB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
 
     @RequestMapping()
     public String intro() {

@@ -33,13 +33,17 @@ export class SelectCalendar {
                 this.create(parseInt(y), parseInt(m) - 1);
                 e.stopPropagation();
             }
-            else if (target.hasAttribute('data-value')) {
-                this.onSelect && this.onSelect(target.getAttribute('data-value'));
+            else if (target.hasAttribute('data-dismiss')) {
+                this.onSelect && this.onSelect(target.getAttribute('data-dismiss'));
             }
         });
         this.create(year, month, date);
     }
 
+    appendTo(element: HTMLElement) {
+        element.appendChild(this.element);
+        return this;
+    }
 
     create(date: Date)
     create(calendar: Calendar)
@@ -57,7 +61,7 @@ export namespace SelectCalendar {
     export function create(date: Date)
     export function create(calendar: Calendar)
     export function create(year: number, month: number, date?: number)
-    export function create(y, m?, d?) {
+    export function create(y, m?, d?): string {
 
         if (typeof y !== 'number') {
             m = y.getMonth();

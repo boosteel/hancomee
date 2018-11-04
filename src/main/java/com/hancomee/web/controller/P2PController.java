@@ -1,8 +1,7 @@
 package com.hancomee.web.controller;
 
-import com.hancomee.util.db.DB;
-import com.hancomee.util.db.ResultSetAccess;
-import com.hancomee.util.db.SQL;
+import com.boosteel.nativedb.NativeDB;
+import com.boosteel.nativedb.core.ResultSetAccess;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +12,7 @@ import java.util.Map;
 @RequestMapping("secret/p2p")
 public class P2PController {
 
-    DB db = new DB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
+    NativeDB db = new NativeDB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
 
 
     @RequestMapping()

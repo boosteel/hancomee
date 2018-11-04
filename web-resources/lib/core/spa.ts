@@ -7,6 +7,15 @@ let
     RESOLVE = Promise.resolve();
 
 
+class SPAInfo implements iSPA.Info {
+    constructor(public pathname: string,
+                public param,
+                public index: number,
+                public beforeIndex: number,
+                public way = beforeIndex === -1 ? index : index - beforeIndex) {
+    }
+}
+
 class Provider {
     private _factory: iSPA.factory<any>
     private _module: iSPA.module<any>
@@ -36,18 +45,24 @@ class Provider {
 
 export class SPA {
 
-    private index: number
     private isHash = false;
 
-    private url = new URLManager('')        // Dummy
+    private url: URLManager = null        // Dummy
     private list: Provider[] = []
+    private names: string[] = []
     private $active: Provider
     private _queue = <Promise<any>>Promise.resolve();
+
+
+    param
+    info: iSPA.Info
 
     constructor(public config: iSPA.config) {
     }
 
+    // 모듈 등록
     register(url: string, module: iSPA.module<any> | iSPA.factory<any>) {
+        this.names.push(url);
         this.list.push(new Provider(url, module));
         return this;
     }
@@ -55,50 +70,51 @@ export class SPA {
     // 이 메서드를 통해 모듈변경이 이루어진다.
     run(path: string): Promise<any> {
 
-        let {url, $active} = this,
-            m = new URLManager(path),
-            {pathname, search} = m;
-
-        this.url = m;               // 현재 url 갱신
+        let {list, names,url, $active, info, config, config:{defaultURL}} = this,
+            newURL = new URLManager(path),
+            {pathname, search} = newURL;
 
         //  ① 모듈변경
-        if (url.pathname !== pathname) {
+        if (!url || url.pathname !== pathname) {
 
-            let {list, list: {length: l}} = this, _index = 0, provider: Provider;
+            let index = names.indexOf(pathname),
+                provider = list[index];
 
-            while (l-- > 0) {
-                if (list[l].path === pathname) {
-                    provider = list[l];
-                    _index = l;
-                    break;
-                }
-            }
+            // 없는 모듈의 경우 :: defaultURL로 이동한다.
+            if (index === -1) {
+                if(info == null) location.hash = defaultURL;
+            } else {
 
-            if (provider) {
-                let {index, config} = this,
-                    param = Search.toObject(search, provider.param());
+                let param = this.param = Search.toObject(search, provider.param()),
+                    nInfo = this.info = new SPAInfo(pathname, param, index,
+                        info ? info.index : -1);
 
-                this.index = _index;        // 모듈 인덱스 갱신
+                this.url = newURL;
                 this.$active = provider;      // 현재 모듈 갱신
-
                 this._queue = this._queue
-                    .then(() => config.before && config.before(pathname, param, _index, index))
+                    .then(() => config.before && config.before(nInfo))
                     .then(() => Promise.all([
                         $active && $active.module.close(),
                         provider.init()
                     ]))
                     .then(([, html]) => {
-                        return RESOLVE.then(() => provider.module.load(param, search))
-                            .then(() => config.onChange(provider.element, $active && $active.element))
+                        return RESOLVE.then(() => provider.module.load(param, search, provider.element))
+                            .then(() => config.onChange(provider.element, $active && $active.element, nInfo))
                     })
-                    .then(() => config.after && config.after(pathname, param, _index, index));
+                    .then(() => config.after && config.after(nInfo))
+                    .catch(function (e: Error) {
+                        console.error(e.message)
+                        console.error(e.stack)
+                    });
             }
         }
 
         // ② 모듈 재로딩
         else if ($active && !Search.equals(url.search, search)) {
             this._queue = this._queue.then(() =>
-                $active.module.load(Search.toObject(search, $active.param()), search));
+                $active.module.load(
+                    this.param = Search.toObject(search, $active.param()), search, $active.element)
+            );
         }
 
 
@@ -108,7 +124,7 @@ export class SPA {
     onHash() {
         if (!this.isHash) {
             let handler = () => {
-                location.hash && this.run(location.hash.slice(1));
+                this.run(location.hash.slice(1));
             }
             window.addEventListener('hashchange', handler);
             handler();
@@ -145,6 +161,10 @@ export namespace SPA {
     // html 문서 가지고 오기
     // 이건 서버에서 매칭되는 컨트롤러가 만드시 있어야 한다.
     // /$template/{value}
+    export function getFragment(url: string): Promise<DocumentFragment> {
+        return get('/templates/' + url).then((text) => createFragment(text))
+    }
+
     export function getElement(url: string): Promise<DocumentFragment> {
         return get('/templates/' + url).then((text) => createFragment(text))
     }

@@ -59,12 +59,24 @@ declare namespace iLocation {
 
 declare namespace iSPA {
 
+    export interface Info {
+        pathname: string
+        param
+        index: number
+        beforeIndex: number
+
+        way: number
+    }
+
     export interface config {
-        before?(pathname: string, param, cIndex, oIndex): Promise<any> | void
 
-        onChange(currentElement: HTMLElement, beforeElement: HTMLElement)
+        defaultURL: string
 
-        after?(pathname: string, param, cIndex, oIndex): Promise<any> | void
+        before?(info: Info): Promise<any> | void
+
+        onChange(currentElement: HTMLElement, beforeElement: HTMLElement, info: Info)
+
+        after?(info: Info): Promise<any> | void
     }
 
     export interface factory<T> {
@@ -78,7 +90,7 @@ declare namespace iSPA {
 
         init(): Promise<HTMLElement>
 
-        load(param: T, search: string): Promise<any> | void
+        load(param: T, search: string, element: HTMLElement): Promise<any> | void
 
         close(): Promise<any> | void
     }

@@ -10,7 +10,7 @@ let hasOwn = {}.hasOwnProperty,
     r_url = /(https?:\/\/.*?\/)?([^\?]+)\??([^#]+)?#?(.*)/;
 
 
-export class Search implements iLocation.iSearch{
+export class Search implements iLocation.iSearch {
 
     reset(search = location.search) {
         return this.extend(Search.toObject(search))

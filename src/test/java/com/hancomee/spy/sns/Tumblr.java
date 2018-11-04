@@ -1,11 +1,11 @@
 package com.hancomee.spy.sns;
 
+import com.boosteel.http.HTTP;
+import com.boosteel.util.support.Patterns;
 import com.hancomee.spy.AbstractSpy;
 import com.hancomee.spy.Run;
 import com.hancomee.spy.VideoDown;
 import com.hancomee.spy.videos.Video;
-import com.hancomee.util.HTTP;
-import com.hancomee.util.Patterns;
 import org.junit.Test;
 
 import java.net.URLDecoder;

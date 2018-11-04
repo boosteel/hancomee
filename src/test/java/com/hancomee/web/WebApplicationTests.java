@@ -1,6 +1,6 @@
 package com.hancomee.web;
 
-import com.hancomee.util.Range;
+import com.boosteel.util.support.Range;
 import org.junit.Test;
 
 public class WebApplicationTests {

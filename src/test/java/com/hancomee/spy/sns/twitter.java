@@ -1,10 +1,10 @@
 package com.hancomee.spy.sns;
 
+import com.boosteel.http.HTTP;
+import com.boosteel.util.support.Patterns;
+import com.boosteel.util.support.Strings;
 import com.hancomee.spy.AbstractSpy;
 import com.hancomee.spy.SpyData;
-import com.hancomee.util.HTTP;
-import com.hancomee.util.Patterns;
-import com.hancomee.util.Strings;
 import org.junit.Test;
 
 import java.net.HttpURLConnection;
@@ -47,8 +47,8 @@ public class twitter extends AbstractSpy {
     public void run() throws Exception {
 
         //  3ZBzD5cPmRZtaVu
-        tour();
-        //run("ZziAH_");
+        //tour();
+        run("Smsex26 ");
 
     }
 

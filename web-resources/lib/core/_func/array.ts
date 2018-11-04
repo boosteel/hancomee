@@ -15,6 +15,15 @@ export function _forEach<T>(obj: ArrayLike<T>, h: (t: T, i: number) => any) {
     return obj;
 }
 
+export function _selector<T>(obj: ArrayLike<T>, h: (t: T, i: number) => any): any {
+    let i = 0, l = obj.length, v;
+    while(i < l) {
+        if((v = h(obj[i], i++)) !== undefined)
+           return v;
+    }
+    return undefined;
+}
+
 export function _forEachReverse<T>(obj: ArrayLike<T>, h: (t: T, i: number) => any) {
     let i = obj.length;
     while(i-- > 0) {

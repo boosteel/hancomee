@@ -1,6 +1,6 @@
 package com.hancomee.spy.p2p.core;
 
-import com.hancomee.util.Patterns;
+import com.boosteel.util.support.Patterns;
 import org.apache.tomcat.jni.File;
 import org.junit.Test;
 
@@ -15,10 +15,24 @@ public class _file extends _base {
     @Test
     public void run() throws Exception {
 
-        String path = "D:\\files\\Download\\181014";
 
-        forceThumb(path);
-        videoInfo(path);
+        String path = "D:\\files\\Download\\181020";
+
+        tour("D:\\files\\web_down");
+        //forceThumb(path);
+        //videoInfo(path);
+    }
+
+    public void tour(String path) throws Exception {
+        try(DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(path))) {
+            for(Path p : stream) {
+                if(Files.isDirectory(p))
+                    tour(p.toAbsolutePath().toString());
+            }
+        } finally {
+                forceThumb(path);
+                videoInfo(path);
+        }
     }
 
     // 여기서 만든 info.txt를 _db 클래스에서 읽어 DB에 저장하게 된다.

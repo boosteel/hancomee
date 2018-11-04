@@ -3,12 +3,11 @@ import {Customer, Work, WorkFile, WorkItem, WorkMemo} from "./domain/Work";
 import {Search} from "../../../lib/core/location";
 import {HTML} from "../../../lib/core/html";
 import {Events, EventsGroup} from "../../../lib/core/events";
-import {FormValue} from "../../../lib/core/form/FormValue";
 import {DOM} from "../../../lib/core/dom";
 import {Watcher} from "../../../lib/core/support/Watcher";
-import {_colReduce, _everyTrue, _forEach, _inTrue, _makeArray, _map} from "../../../lib/core/_func/array";
+import {_colReduce, _everyTrue, _forEach, _inTrue, _makeArray} from "../../../lib/core/_func/array";
 import {FormValid} from "../../../lib/core/form/FormValid";
-import {ImageCal} from "../../../lib/core/calcurator";
+import {$extend} from "../../../lib/core/core";
 import className = DOM.className;
 import ViewData = Work.ViewData;
 import createElement = HTML.createElement;
@@ -18,8 +17,8 @@ import selectAll = HTML.selectAll;
 import createTemplate = HTML.createTemplate;
 import reduceFragment = HTML.reduceFragment;
 import createFragment = HTML.createFragment;
-import {$extend} from "../../../lib/core/core";
 import select = HTML.select;
+import {Forms} from "../../../lib/core/form/Forms";
 
 type H = HTMLElement;
 type HI = HTMLInputElement
@@ -242,11 +241,11 @@ export class View extends GenericModule<Q> {
                             ctrl.data($customer);
                         },
                         modify() {
-                            FormValue.reset(a, $customer);
+                            Forms.reset(a, $customer);
                             ctrl.form($customer);
                         },
                         save() {
-                            let newData = new Customer(FormValue.serialize(a)).setId($customer.id);
+                            let newData = new Customer(Forms.serialize(a)).setId($customer.id);
                             Customer.save(newData).then(() => {
                                 ctrl.data($customer = newData);
                             });
@@ -466,7 +465,7 @@ export class View extends GenericModule<Q> {
                                 $mV: WorkItem,
 
                                 // 수정폼 검증을 위한 핸들러들
-                                isValid = (v: HI) => FormValid.input(v).isValid,
+                                isValid = (v: HI) => FormValid.input(v),
                                 isChange = (v: HI) => $mV[v.name] !== v.value.trim(),
                                 $change = () => className(container, 'change', _everyTrue(inputs, isValid) && _inTrue(inputs, isChange)),
 
@@ -475,13 +474,13 @@ export class View extends GenericModule<Q> {
                                     add(item: WorkItem) {
                                         $mV = item;
                                         className(container, 'change', false);
-                                        FormValue.reset(inputs);
+                                        Forms.reset(inputs);
                                         tbody.appendChild(container);
                                     },
                                     // 아이템 수정할시
                                     attach(item: Item) {
                                         className(container, 'change', false);
-                                        FormValue.reset(inputs, $mV = item.item);
+                                        Forms.reset(inputs, $mV = item.item);
                                         tbody.insertBefore(container, item.ele);
                                     },
                                     close() {
@@ -489,7 +488,7 @@ export class View extends GenericModule<Q> {
                                     },
 
                                     values() {
-                                        return FormValue.serialize(inputs);
+                                        return Forms.serialize(inputs);
                                     }
                                 };
 

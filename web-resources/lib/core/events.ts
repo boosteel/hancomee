@@ -303,7 +303,7 @@ export namespace Events {
     let r_read_split = /,\s*/;
     function read(target: HTMLElement, limit, obj) {
 
-        let event: string, n, v: string, vv, fn;
+        let event: string, v: string, fn;
 
         while (target && limit !== target) {
 
@@ -333,6 +333,7 @@ export namespace Events {
                     else obj[k] = primitive(v);
                 }
             }
+
             target = target.parentElement
         }
 

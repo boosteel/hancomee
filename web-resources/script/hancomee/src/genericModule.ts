@@ -14,6 +14,7 @@ export abstract class GenericModule<T> implements iSPA.module<T> {
     protected element: HTMLElement
     protected q: T
 
+    private popCount = 0;
     private loadingElement: HTMLElement
     private popElement: HTMLElement
     private pop2Element: HTMLElement
@@ -36,6 +37,7 @@ export abstract class GenericModule<T> implements iSPA.module<T> {
          *  ② 팝업 엘리먼트
          */
         div.innerHTML = '<div class="loading"></div><div id="pop1" class="popup"></div><div id="pop2" class="popup"></div>';
+
         this.loadingElement = div.querySelector('.loading');
         this.popElement = div.querySelector('#pop1');
         this.pop2Element = div.querySelector('#pop2');
@@ -44,7 +46,7 @@ export abstract class GenericModule<T> implements iSPA.module<T> {
 
             // style과 html 로딩딩
             SPA.getStyle('/dist/hancomee/src/' + id + '.css'),
-            SPA.getElement('hancomee/src/' + id)
+            SPA.getFragment('hancomee/src/' + id)
 
         ]).then(([style, frag]) => {
 
@@ -72,21 +74,18 @@ export abstract class GenericModule<T> implements iSPA.module<T> {
     // 로딩바
     protected loading(flag: boolean) {
         className(this.loadingElement, 'on', flag);
-        className(document.body, 'screen', flag);
-        return this;
+        return this.bodyScreen(flag);
     }
 
     // 팝업창
     protected pop(element?: HTMLElement | DocumentFragment) {
         let {popElement} = this,
-        isOpen = !!element;
+            isOpen = !!element;
 
         popElement.textContent = '';
         isOpen && popElement.appendChild(element);
         className(popElement, 'on', isOpen);
-        className(document.body, 'screen', isOpen);
-
-        return this;
+        return this.bodyScreen(isOpen);
     }
 
     // 팝업창
@@ -97,8 +96,12 @@ export abstract class GenericModule<T> implements iSPA.module<T> {
         pop2Element.textContent = '';
         isOpen && pop2Element.appendChild(element);
         className(pop2Element, 'on', isOpen);
-        className(document.body, 'screen', isOpen);
+        return this.bodyScreen(isOpen);
+    }
 
+    private bodyScreen(isOpen: boolean) {
+        this.popCount += isOpen ? 1 : -1;
+        className(document.body, 'screen', this.popCount > 0);
         return this;
     }
 

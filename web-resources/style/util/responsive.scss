@@ -1,0 +1,22 @@
+@import "../bagic-bootstrap";
+
+
+body {
+  color: #666;
+  background-color: #333;
+}
+
+main {
+
+  .explain, .image {
+    height: 100vh;
+  }
+  .explain {
+    background-color: #222;
+  }
+
+  .image {
+    background-color: #111;
+  }
+
+}

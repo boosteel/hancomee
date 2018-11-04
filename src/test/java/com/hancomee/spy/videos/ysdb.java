@@ -1,9 +1,9 @@
 package com.hancomee.spy.videos;
 
+import com.boosteel.http.HTTP;
+import com.boosteel.util.support.Patterns;
+import com.boosteel.util.support.Range;
 import com.hancomee.spy.Run;
-import com.hancomee.util.HTTP;
-import com.hancomee.util.Patterns;
-import com.hancomee.util.Range;
 import org.junit.Test;
 
 import java.net.URL;

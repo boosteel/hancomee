@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 37);
+/******/ 	return __webpack_require__(__webpack_require__.s = 59);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -424,6 +424,72 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
+    // 숫자 자리수 맞추기
+    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
+        'yyyy': function (d) { return d.getFullYear(); },
+        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
+        'M': function (d) { return d.getMonth() + 1; },
+        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
+        'd': function (d) { return d.getDate(); },
+        'dd': function (d) { return zeroFill(d.getDate()); },
+        'E': function (d) { return __day[d.getDay()]; },
+        'HH': function (d) { return zeroFill(d.getHours()); },
+        'hh': function (d) { return zeroFill(d.getHours()); },
+        'mm': function (d) { return zeroFill(d.getMinutes()); },
+        'ss': function (d) { return zeroFill(d.getSeconds()); },
+        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
+    };
+    function _toKor(date, now) {
+        if (now === void 0) { now = new Date().getTime(); }
+        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
+        if (duration > day)
+            return Math.floor(duration / day) + '일 전';
+        if (duration > hour)
+            return Math.floor(duration / hour) + '시간 전';
+        if (duration > minute)
+            return Math.floor(duration / minute) + '분 전';
+        if (duration > second)
+            return Math.floor(duration / second) + '초 전';
+    }
+    exports._toKor = _toKor;
+    function _dateFormat(_date, f) {
+        if (!_date)
+            return '';
+        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
+        if (!f)
+            return _datetime(d);
+        return f.replace(r_datetime, function ($1) {
+            if (temp = _switch[$1])
+                return temp(d);
+            else
+                return $1;
+        });
+    }
+    exports._dateFormat = _dateFormat;
+    ;
+    function _datetime(val) {
+        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
+            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
+    }
+    exports._datetime = _datetime;
+    function _date(val) {
+        var m = val.getMonth() + 1, d = val.getDate();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
+    }
+    exports._date = _date;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var DOM;
     (function (DOM) {
         var doc = document;
@@ -604,7 +670,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         function __toggleClass(array, values) {
             var l = values.length, i = 0, pos = -1, result = [], v, removal;
             for (; i < l; i++) {
-                if (removal = (v = values[i])[0] === '!') {
+                if (removal = ((v = values[i])[0] === '!')) {
                     if ((pos = array.indexOf(v.slice(1))) !== -1)
                         array.splice(pos, 1);
                 }
@@ -639,182 +705,63 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
-    // 숫자 자리수 맞추기
-    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
-        'yyyy': function (d) { return d.getFullYear(); },
-        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
-        'M': function (d) { return d.getMonth() + 1; },
-        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
-        'd': function (d) { return d.getDate(); },
-        'dd': function (d) { return zeroFill(d.getDate()); },
-        'E': function (d) { return __day[d.getDay()]; },
-        'HH': function (d) { return zeroFill(d.getHours()); },
-        'hh': function (d) { return zeroFill(d.getHours()); },
-        'mm': function (d) { return zeroFill(d.getMinutes()); },
-        'ss': function (d) { return zeroFill(d.getSeconds()); },
-        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
-    };
-    function _toKor(date, now) {
-        if (now === void 0) { now = new Date().getTime(); }
-        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
-        if (duration > day)
-            return Math.floor(duration / day) + '일 전';
-        if (duration > hour)
-            return Math.floor(duration / hour) + '시간 전';
-        if (duration > minute)
-            return Math.floor(duration / minute) + '분 전';
-        if (duration > second)
-            return Math.floor(duration / second) + '초 전';
-    }
-    exports._toKor = _toKor;
-    function _dateFormat(_date, f) {
-        if (!_date)
-            return '';
-        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
-        if (!f)
-            return _datetime(d);
-        return f.replace(r_datetime, function ($1) {
-            if (temp = _switch[$1])
-                return temp(d);
-            else
-                return $1;
-        });
-    }
-    exports._dateFormat = _dateFormat;
-    ;
-    function _datetime(val) {
-        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
-            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
-    }
-    exports._datetime = _datetime;
-    function _date(val) {
-        var m = val.getMonth() + 1, d = val.getDate();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
-    }
-    exports._date = _date;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, dom_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    function _makeArray(obj) {
-        var r = [], l = obj.length;
-        while (l-- > 0)
-            r[l] = obj[l];
-        return r;
-    }
-    exports._makeArray = _makeArray;
-    function _forEach(obj, h) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (h(obj[i], i++) === false)
-                break;
-        }
-        return obj;
-    }
-    exports._forEach = _forEach;
-    function _forEachReverse(obj, h) {
-        var i = obj.length;
-        while (i-- > 0) {
-            if (h(obj[i], i) === false)
-                break;
-        }
-        return obj;
-    }
-    exports._forEachReverse = _forEachReverse;
-    function _reduce(obj, h, r) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            r = h(r, obj[i], i++);
-        }
-        return r;
-    }
-    exports._reduce = _reduce;
-    function _map(obj, h) {
-        var r = [], i = 0, l = obj.length;
-        while (i < l) {
-            r[i] = h(obj[i], i++);
-        }
-        return r;
-    }
-    exports._map = _map;
-    function _colMap(values, size, handler) {
-        var r = [], v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
-        while (index < l) {
-            if (index % size === 0) {
-                v && (r[rIndex] = handler(v, rIndex++));
-                v = [];
-                vIndex = 0;
-            }
-            v[vIndex++] = values[index++];
-        }
-        v && (r[rIndex] = handler(v, rIndex++));
-        return r;
-    }
-    exports._colMap = _colMap;
-    function _colReduce(values, size, handler, r) {
-        var v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
-        while (index < l) {
-            if (index % size === 0) {
-                v && (r = handler(r, v, rIndex++));
-                v = [];
-                vIndex = 0;
-            }
-            v[vIndex++] = values[index++];
-        }
-        v && (r = handler(r, v, rIndex++));
-        return r;
-    }
-    exports._colReduce = _colReduce;
-    function _in(obj, filter, r) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (filter(obj[i], i++) === r)
-                return r;
-        }
-        return !r;
-    }
-    // true가 하나라도 있으면
-    function _inTrue(obj, filter) {
-        return _in(obj, filter, true);
-    }
-    exports._inTrue = _inTrue;
-    function _inFalse(obj, filter) {
-        return _in(obj, filter, false);
-    }
-    exports._inFalse = _inFalse;
-    function _everyTrue(obj, filter) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (filter(obj[i], i++) === false)
-                return false;
-        }
-        return true;
-    }
-    exports._everyTrue = _everyTrue;
-    function _everyFalse(obj, filter) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (filter(obj[i], i++) === true)
-                return false;
-        }
-        return true;
-    }
-    exports._everyFalse = _everyFalse;
+    var Toggle;
+    (function (Toggle) {
+        var className = dom_1.DOM.className;
+        var hasClass = dom_1.DOM.hasClass;
+        var r_dropdown = ['dropdown'], r_open = ['show', 'open'], active, act = function (dropdown, flag) {
+            className(dropdown, r_open, flag);
+            className(dropdown.querySelector('.dropdown-menu'), r_open, flag);
+            if (flag)
+                active = dropdown;
+            else
+                active = null;
+        };
+        (function () {
+            document.addEventListener('click', function (e) {
+                var ele = e.target, dropdown, btn = false, // 토글버튼인지 확인
+                dismiss = false; // dropdown 이하에 dismiss 설정 확인
+                // 순회
+                do {
+                    // dropdown 찾기
+                    if (hasClass(ele, r_dropdown)) {
+                        dropdown = ele;
+                        break;
+                    }
+                    // 끄기 버튼
+                    else if (ele.hasAttribute('data-dismiss'))
+                        dismiss = true;
+                    // 타켓 확인
+                    else if (ele.hasAttribute('data-toggle')) {
+                        if (ele.getAttribute('data-toggle') === 'dropdown')
+                            btn = dismiss = true;
+                        else
+                            return;
+                    }
+                } while (ele = ele.parentElement);
+                // 현재 활성화된게 있고, 찾은 dropdown과 다르다면 무조건 끈다.
+                if (active && active !== dropdown)
+                    act(active, false);
+                // ① dropdown 객체를 찾았을때
+                if (dropdown) {
+                    // 현재 열려져있다면 dismiss 체킹이 되어있을때만 없앤다.
+                    if (hasClass(dropdown, r_open)) {
+                        dismiss && act(dropdown, false);
+                    }
+                    // 아니라면 btn을 클릭했을 경우에만 켠다.
+                    else {
+                        btn && act(dropdown, true);
+                    }
+                }
+            });
+        })();
+    })(Toggle = exports.Toggle || (exports.Toggle = {}));
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -823,158 +770,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Arrays;
-    (function (Arrays) {
-        // 배열을 테이블화 시켜서 순회한다. 행이 존재함
-        // 콜백함수 (원소, 전체인덱스, 열넘버, 행넘버) ==>  false 반환시 루프 멈춤
-        function cols(array, col, callback) {
-            var limit = array.length, i = 0, colNum, row = -1;
-            if (col < 1)
-                throw new Error('열 수는 1 이상이어야  합니다 :: input Value ==> ' + col);
-            for (; i < limit; i++) {
-                if ((colNum = i % col) === 0)
-                    row++;
-                if (callback.call(array, array[i], i, i % col, row) === false)
-                    return;
-            }
-        }
-        Arrays.cols = cols;
-        /*
-         *  DataTransferItemList 때문에 만든 함수
-         *  map을 이용함에 있어, 비동기식 콜백으로 값을 받아야 하는 지연값이 있을 경우에 쓴다.
-         *  *사용법은 로직 참고
-         */
-        function promiseMap(array, handler) {
-            return new Promise(function (resolve, _) {
-                var check, len = check = array.length, result = [];
-                var _loop_1 = function () {
-                    var index = len;
-                    handler(array[index], function (d) {
-                        result[index] = d;
-                        --check === 0 && resolve(result);
-                    });
-                };
-                while (len-- > 0) {
-                    _loop_1();
-                }
-            });
-        }
-        Arrays.promiseMap = promiseMap;
-        // 숫자배열을 만들어준다.
-        // 시작넘버부터 객수
-        function rangeBySize(start, size) {
-            var array = [];
-            for (var l = start + size; start < l; start++) {
-                array.push(start);
-            }
-            return array;
-        }
-        Arrays.rangeBySize = rangeBySize;
-        // 시작숫자부터 마지막 숫자를 포함한 배열을 반환
-        function range_atob(start, lastNum) {
-            var reverse = start > lastNum ? true : false, array = [];
-            /*
-             *  start와 lastNum이 반대로 들어오면 ?    (5, 1)   ==>  [5,4,3,2,1]
-             *  일단 뒤짚어서 배열을 만든 후, 내보낼때 reserve()한다.
-             */
-            if (reverse) {
-                var temp = start;
-                start = lastNum;
-                lastNum = temp;
-            }
-            for (var i = 0, l = lastNum - start + 1; i < l; i++) {
-                array.push(i + start);
-            }
-            return reverse ? array.reverse() : array;
-        }
-        Arrays.range_atob = range_atob;
-        // drive 배열의 원소만큼 루프를 돌린다.
-        // callback함수는  1) drive 배열의 원소와  2) driven배얼, 3) 인덱스를 제공받는다.
-        function _with(drive, driven, callback) {
-            if (drive == null)
-                return;
-            for (var i = 0; i < drive.length; i++) {
-                callback.call(drive, drive[i], driven, i);
-            }
-        }
-        Arrays._with = _with;
-        function fill(length, v) {
-            if (v === void 0) { v = null; }
-            var i = 0, array = [], handler = v;
-            if (typeof v !== 'function')
-                handler = function () { return v; };
-            for (; i < length; i++) {
-                array[i] = handler.call(array, i);
-            }
-            return array;
-        }
-        Arrays.fill = fill;
-        // 배열을 length의 갯수만큼 나눈다.
-        // [1,2,3,4,5,6], 3  ==>  [1,2,3], [4,5,6]
-        function split(target, length) {
-            var result = [], temp, pos;
-            for (var i = 0, l = target.length; i < l; i++) {
-                pos = i % length;
-                if (!pos)
-                    result.push(temp = []);
-                temp[pos] = target[i];
-            }
-            return result;
-        }
-        Arrays.split = split;
-        // target의 앞부터 다 맞으면 오케이
-        function startWith(key, target) {
-            var i = 0, l = key.length;
-            if (target.length < l)
-                return false;
-            for (; i < l; i++) {
-                if (key[i] !== target[i])
-                    return false;
-            }
-            return true;
-        }
-        Arrays.startWith = startWith;
-        function endWith(key, target) {
-            var i = 0, l = key.length, r = target.length - l;
-            if (r < 0)
-                return false;
-            for (; i < l; i++, r++) {
-                if (key[i] !== target[r])
-                    return false;
-            }
-            return true;
-        }
-        Arrays.endWith = endWith;
-        // 값 비교
-        function equals(a, b) {
-            if (a === b)
-                return true;
-            if (a == null || b == null)
-                return false;
-            if (a.length != b.length)
-                return false;
-            // If you don't care about the order of the elements inside
-            // the array, you should sort both arrays here.
-            for (var i = 0, l = a.length; i < l; i++) {
-                if (a[i] !== b[i])
-                    return false;
-            }
-            return true;
-        }
-        Arrays.equals = equals;
-    })(Arrays = exports.Arrays || (exports.Arrays = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(9), __webpack_require__(10), __webpack_require__(4), __webpack_require__(1), __webpack_require__(5), __webpack_require__(11), __webpack_require__(2), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(8), __webpack_require__(9), __webpack_require__(3), __webpack_require__(1), __webpack_require__(7), __webpack_require__(10), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var read = access_1.Access.read;
@@ -1019,7 +815,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             var _a = this, l = _a.length, keys = _a.keys, i = 0, key;
             for (; i < l; i++) {
                 if (directive[key = keys[i]])
-                    directive[key](this[i], obj);
+                    directive[key](this[i], obj[key], obj);
                 else
                     $setText(this[i], read(key, obj));
             }
@@ -1099,7 +895,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         HTML.nthChildren = nthChildren;
         function select(context, selector) {
             var sChar = selector[0], l = selector.length - 1;
-            if (sChar === '=') {
+            if (sChar === '!') {
+                var r_1 = context.querySelector(selector.substring(1));
+                r_1.parentNode.removeChild(r_1);
+                return r_1;
+            }
+            else if (sChar === '=') {
                 return createFragment(selector.substring(1));
             }
             // ① 'select[]'  ==> querySelectorAll()
@@ -1131,10 +932,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             // ③ querySelector()
             else {
-                if (sChar === '#' && selector.indexOf(' ') === -1)
-                    return document.getElementById(selector.slice(1));
-                else
-                    return context.querySelector(selector);
+                return context.querySelector(selector);
             }
         }
         HTML.select = select;
@@ -1455,69 +1253,131 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, dom_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Toggle;
-    (function (Toggle) {
-        var className = dom_1.DOM.className;
-        var hasClass = dom_1.DOM.hasClass;
-        var r_dropdown = ['dropdown'], r_open = ['show', 'open'], active, act = function (dropdown, flag) {
-            className(dropdown, r_open, flag);
-            className(dropdown.querySelector('.dropdown-menu'), r_open, flag);
-            if (flag)
-                active = dropdown;
-            else
-                active = null;
-        };
-        (function () {
-            document.addEventListener('click', function (e) {
-                var ele = e.target, dropdown, btn = false, // 토글버튼인지 확인
-                dismiss = false; // dropdown 이하에 dismiss 설정 확인
-                // 순회
-                do {
-                    // dropdown 찾기
-                    if (hasClass(ele, r_dropdown)) {
-                        dropdown = ele;
-                        break;
-                    }
-                    // 끄기 버튼
-                    else if (ele.hasAttribute('data-dismiss'))
-                        dismiss = true;
-                    // 타켓 확인
-                    else if (ele.hasAttribute('data-toggle')) {
-                        if (ele.getAttribute('data-toggle') === 'dropdown')
-                            btn = dismiss = true;
-                        else
-                            return;
-                    }
-                } while (ele = ele.parentElement);
-                // 현재 활성화된게 있고, 찾은 dropdown과 다르다면 무조건 끈다.
-                if (active && active !== dropdown)
-                    act(active, false);
-                // ① dropdown 객체를 찾았을때
-                if (dropdown) {
-                    // 현재 열려져있다면 dismiss 체킹이 되어있을때만 없앤다.
-                    if (hasClass(dropdown, r_open)) {
-                        dismiss && act(dropdown, false);
-                    }
-                    // 아니라면 btn을 클릭했을 경우에만 켠다.
-                    else {
-                        btn && act(dropdown, true);
-                    }
-                }
-            });
-        })();
-    })(Toggle = exports.Toggle || (exports.Toggle = {}));
+    function _makeArray(obj) {
+        var r = [], l = obj.length;
+        while (l-- > 0)
+            r[l] = obj[l];
+        return r;
+    }
+    exports._makeArray = _makeArray;
+    function _forEach(obj, h) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (h(obj[i], i++) === false)
+                break;
+        }
+        return obj;
+    }
+    exports._forEach = _forEach;
+    function _selector(obj, h) {
+        var i = 0, l = obj.length, v;
+        while (i < l) {
+            if ((v = h(obj[i], i++)) !== undefined)
+                return v;
+        }
+        return undefined;
+    }
+    exports._selector = _selector;
+    function _forEachReverse(obj, h) {
+        var i = obj.length;
+        while (i-- > 0) {
+            if (h(obj[i], i) === false)
+                break;
+        }
+        return obj;
+    }
+    exports._forEachReverse = _forEachReverse;
+    function _reduce(obj, h, r) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            r = h(r, obj[i], i++);
+        }
+        return r;
+    }
+    exports._reduce = _reduce;
+    function _map(obj, h) {
+        var r = [], i = 0, l = obj.length;
+        while (i < l) {
+            r[i] = h(obj[i], i++);
+        }
+        return r;
+    }
+    exports._map = _map;
+    function _colMap(values, size, handler) {
+        var r = [], v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
+        while (index < l) {
+            if (index % size === 0) {
+                v && (r[rIndex] = handler(v, rIndex++));
+                v = [];
+                vIndex = 0;
+            }
+            v[vIndex++] = values[index++];
+        }
+        v && (r[rIndex] = handler(v, rIndex++));
+        return r;
+    }
+    exports._colMap = _colMap;
+    function _colReduce(values, size, handler, r) {
+        var v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
+        while (index < l) {
+            if (index % size === 0) {
+                v && (r = handler(r, v, rIndex++));
+                v = [];
+                vIndex = 0;
+            }
+            v[vIndex++] = values[index++];
+        }
+        v && (r = handler(r, v, rIndex++));
+        return r;
+    }
+    exports._colReduce = _colReduce;
+    function _in(obj, filter, r) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === r)
+                return r;
+        }
+        return !r;
+    }
+    // true가 하나라도 있으면
+    function _inTrue(obj, filter) {
+        return _in(obj, filter, true);
+    }
+    exports._inTrue = _inTrue;
+    function _inFalse(obj, filter) {
+        return _in(obj, filter, false);
+    }
+    exports._inFalse = _inFalse;
+    function _everyTrue(obj, filter) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === false)
+                return false;
+        }
+        return true;
+    }
+    exports._everyTrue = _everyTrue;
+    function _everyFalse(obj, filter) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === true)
+                return false;
+        }
+        return true;
+    }
+    exports._everyFalse = _everyFalse;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -1563,7 +1423,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1, number_1) {
@@ -1692,7 +1552,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -1708,7 +1568,519 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Arrays;
+    (function (Arrays) {
+        // 배열을 테이블화 시켜서 순회한다. 행이 존재함
+        // 콜백함수 (원소, 전체인덱스, 열넘버, 행넘버) ==>  false 반환시 루프 멈춤
+        function cols(array, col, callback) {
+            var limit = array.length, i = 0, colNum, row = -1;
+            if (col < 1)
+                throw new Error('열 수는 1 이상이어야  합니다 :: input Value ==> ' + col);
+            for (; i < limit; i++) {
+                if ((colNum = i % col) === 0)
+                    row++;
+                if (callback.call(array, array[i], i, i % col, row) === false)
+                    return;
+            }
+        }
+        Arrays.cols = cols;
+        /*
+         *  DataTransferItemList 때문에 만든 함수
+         *  map을 이용함에 있어, 비동기식 콜백으로 값을 받아야 하는 지연값이 있을 경우에 쓴다.
+         *  *사용법은 로직 참고
+         */
+        function promiseMap(array, handler) {
+            return new Promise(function (resolve, _) {
+                var check, len = check = array.length, result = [];
+                var _loop_1 = function () {
+                    var index = len;
+                    handler(array[index], function (d) {
+                        result[index] = d;
+                        --check === 0 && resolve(result);
+                    });
+                };
+                while (len-- > 0) {
+                    _loop_1();
+                }
+            });
+        }
+        Arrays.promiseMap = promiseMap;
+        // 숫자배열을 만들어준다.
+        // 시작넘버부터 객수
+        function rangeBySize(start, size) {
+            var array = [];
+            for (var l = start + size; start < l; start++) {
+                array.push(start);
+            }
+            return array;
+        }
+        Arrays.rangeBySize = rangeBySize;
+        // 시작숫자부터 마지막 숫자를 포함한 배열을 반환
+        function range_atob(start, lastNum) {
+            var reverse = start > lastNum ? true : false, array = [];
+            /*
+             *  start와 lastNum이 반대로 들어오면 ?    (5, 1)   ==>  [5,4,3,2,1]
+             *  일단 뒤짚어서 배열을 만든 후, 내보낼때 reserve()한다.
+             */
+            if (reverse) {
+                var temp = start;
+                start = lastNum;
+                lastNum = temp;
+            }
+            for (var i = 0, l = lastNum - start + 1; i < l; i++) {
+                array.push(i + start);
+            }
+            return reverse ? array.reverse() : array;
+        }
+        Arrays.range_atob = range_atob;
+        // drive 배열의 원소만큼 루프를 돌린다.
+        // callback함수는  1) drive 배열의 원소와  2) driven배얼, 3) 인덱스를 제공받는다.
+        function _with(drive, driven, callback) {
+            if (drive == null)
+                return;
+            for (var i = 0; i < drive.length; i++) {
+                callback.call(drive, drive[i], driven, i);
+            }
+        }
+        Arrays._with = _with;
+        function fill(length, v) {
+            if (v === void 0) { v = null; }
+            var i = 0, array = [], handler = v;
+            if (typeof v !== 'function')
+                handler = function () { return v; };
+            for (; i < length; i++) {
+                array[i] = handler.call(array, i);
+            }
+            return array;
+        }
+        Arrays.fill = fill;
+        // 배열을 length의 갯수만큼 나눈다.
+        // [1,2,3,4,5,6], 3  ==>  [1,2,3], [4,5,6]
+        function split(target, length) {
+            var result = [], temp, pos;
+            for (var i = 0, l = target.length; i < l; i++) {
+                pos = i % length;
+                if (!pos)
+                    result.push(temp = []);
+                temp[pos] = target[i];
+            }
+            return result;
+        }
+        Arrays.split = split;
+        // target의 앞부터 다 맞으면 오케이
+        function startWith(key, target) {
+            var i = 0, l = key.length;
+            if (target.length < l)
+                return false;
+            for (; i < l; i++) {
+                if (key[i] !== target[i])
+                    return false;
+            }
+            return true;
+        }
+        Arrays.startWith = startWith;
+        function endWith(key, target) {
+            var i = 0, l = key.length, r = target.length - l;
+            if (r < 0)
+                return false;
+            for (; i < l; i++, r++) {
+                if (key[i] !== target[r])
+                    return false;
+            }
+            return true;
+        }
+        Arrays.endWith = endWith;
+        // 값 비교
+        function equals(a, b) {
+            if (a === b)
+                return true;
+            if (a == null || b == null)
+                return false;
+            if (a.length != b.length)
+                return false;
+            // If you don't care about the order of the elements inside
+            // the array, you should sort both arrays here.
+            for (var i = 0, l = a.length; i < l; i++) {
+                if (a[i] !== b[i])
+                    return false;
+            }
+            return true;
+        }
+        Arrays.equals = equals;
+    })(Arrays = exports.Arrays || (exports.Arrays = {}));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Created by hellofunc on 2017-05-06.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, access_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var hasOwn = {}.hasOwnProperty, hasOwnProperty = function (obj, value) { return hasOwn.call(obj, value); }, r_url = /(https?:\/\/.*?\/)?([^\?]+)\??([^#]+)?#?(.*)/;
+    var Search = /** @class */ (function () {
+        function Search() {
+        }
+        Search.prototype.reset = function (search) {
+            if (search === void 0) { search = location.search; }
+            return this.extend(Search.toObject(search));
+        };
+        Search.prototype.extend = function (obj) {
+            var p;
+            for (p in obj) {
+                this[p] = obj[p];
+            }
+            return this;
+        };
+        Search.prototype.hash = function () {
+            location.hash = this.toString();
+            return this;
+        };
+        Search.prototype.queryString = function (obj) {
+            if (obj)
+                obj = core_1.$extend(core_1.$extend({}, obj), this);
+            else
+                obj = this;
+            return Search.toSearch(obj);
+        };
+        Search.prototype.toString = function () {
+            return Search.toSearch(this);
+        };
+        return Search;
+    }());
+    exports.Search = Search;
+    (function (Search) {
+        var primitive = access_1.Access.primitive;
+        var r_n = /&/;
+        function create() {
+            return new Search().reset();
+        }
+        Search.create = create;
+        /*
+         *  쿼리 문자열 비교.
+         *  순서만 다르고 같은 값으로 이루어진 쿼리의 경우 true가 된다.
+         */
+        function equals(a, b) {
+            if (a === b)
+                return true;
+            if (a == null || b == null)
+                return false;
+            if (a.length != b.length)
+                return false;
+            var an = a.split(r_n), bn = b.split(r_n), len = an.length;
+            while (len-- > 0)
+                if (bn.indexOf(an[len]) === -1)
+                    return false;
+            return true;
+        }
+        Search.equals = equals;
+        // Object  ====>  querystring
+        function toSearch(obj, prefix) {
+            if (prefix === void 0) { prefix = ''; }
+            if (core_1.isEmptyObject(obj))
+                return '';
+            var array = [], value;
+            var _loop_1 = function (key) {
+                value = obj[key];
+                if (key[0] === '_' || key[0] === '$' || value == null || typeof value === 'function' || !hasOwnProperty(obj, key))
+                    return "continue";
+                if (core_1.isPlainObject(value)) {
+                    array.push(toSearch(value, prefix + key + '.'));
+                }
+                else if (Array.isArray(value)) {
+                    array = array.concat(value.map(function (v) { return key + '=' + encodeURIComponent(v); }));
+                }
+                else
+                    array.push(prefix + key + '=' + encodeURIComponent(value));
+            };
+            for (var key in obj) {
+                _loop_1(key);
+            }
+            return array.join("&");
+        }
+        Search.toSearch = toSearch;
+        // querystring  ====>  Object
+        function toObject(query, dest) {
+            var obj = {};
+            if (query[0] === '?')
+                query = query.slice(1);
+            query.split(/&/)
+                .filter(function (a) { return a && a.indexOf('=') !== -1; })
+                .forEach(function (v) {
+                var _a = v.split(/=/), key = _a[0], _value = _a[1], value = access_1.Access.access(obj, key);
+                // decoding
+                _value = primitive(decodeURIComponent(_value));
+                // key가 같은 경우 array로
+                if (value) {
+                    if (!Array.isArray(value))
+                        value = [value];
+                    value.push(_value);
+                }
+                else
+                    value = _value;
+                access_1.Access.access(obj, key, value, true);
+            });
+            if (dest)
+                obj = core_1.$extend(dest, obj);
+            return obj;
+        }
+        Search.toObject = toObject;
+    })(Search = exports.Search || (exports.Search = {}));
+    exports.Search = Search;
+    var URLManager = /** @class */ (function () {
+        function URLManager(fullURL) {
+            this.fullURL = fullURL;
+            this.host = '';
+            this.pathname = '';
+            this.search = '';
+            this.hash = '';
+            var exec = r_url.exec(fullURL);
+            if (exec) {
+                this.host = exec[1] || '';
+                // 앞의 /는 삭제한다.
+                this.pathname = (exec[2] || '').replace(/^\//, '');
+                this.search = exec[3] || '';
+                this.hash = exec[4] || '';
+            }
+        }
+        URLManager.prototype.paths = function () {
+            return this.path || (this.path = this.pathname.split(/\//));
+        };
+        URLManager.prototype.equals = function (v) {
+            if (v == null)
+                return false;
+            if (typeof v === 'string')
+                v = new URLManager(v);
+            if (v.fullURL === this.fullURL)
+                return true;
+            if (v.host !== this.host)
+                return false;
+            if (v.pathname !== this.pathname)
+                return false;
+            if (!Search.equals(v.search, this.search))
+                return false;
+            if (v.hash !== this.hash)
+                return false;
+            return true;
+        };
+        return URLManager;
+    }());
+    exports.URLManager = URLManager;
+    (function (URLManager) {
+        function create(url) {
+            return new URLManager(url);
+        }
+        URLManager.create = create;
+        // /admin/:name?music=:audio, {name: '고정철', audio: '네임'}  ===>   /admin/고정철?music=네임
+        // 해당값이 없을시  키워드 부분을 삭제해버린다.
+        function queryExp(str, obj) {
+            var _a = str.split(/\?/), url = _a[0], query = _a[1], URL = url.split(/\//).reduce(function (r, v) {
+                if (v[0] === ':' && (v = v.slice(1))) {
+                    var value = access_1.Access.access(obj, v);
+                    value != null && r.push(value);
+                }
+                else
+                    r.push(v);
+                return r;
+            }, []).join('/'), QUERY;
+            // 쿼리 문자열이 있으면?
+            if (query) {
+                QUERY = query.split(/&/).reduce(function (r, v) {
+                    var _a = v.split(/\=/), prop = _a[0], value = _a[1];
+                    if (value[0] === ':' && (value = value.slice(1))) {
+                        var u = access_1.Access.access(obj, value);
+                        u != null && r.push(prop + '=' + u);
+                    }
+                    else
+                        r.push(v);
+                    return r;
+                }, []).join('&');
+            }
+            return QUERY ? URL + '?' + QUERY : URL;
+        }
+        URLManager.queryExp = queryExp;
+    })(URLManager = exports.URLManager || (exports.URLManager = {}));
+    exports.URLManager = URLManager;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12), __webpack_require__(0), __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, location_1, core_1, html_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var RESOLVE = Promise.resolve();
+    var SPAInfo = /** @class */ (function () {
+        function SPAInfo(pathname, param, index, beforeIndex, way) {
+            if (way === void 0) { way = beforeIndex === -1 ? index : index - beforeIndex; }
+            this.pathname = pathname;
+            this.param = param;
+            this.index = index;
+            this.beforeIndex = beforeIndex;
+            this.way = way;
+        }
+        return SPAInfo;
+    }());
+    var Provider = /** @class */ (function () {
+        // 클래스가 그대로 들어와도 되고, 객체가 들어와도 된다.
+        function Provider(path, f) {
+            this.path = path;
+            if (typeof f !== 'function')
+                this._module = f;
+            else
+                this._factory = f;
+        }
+        Provider.prototype.param = function (p) {
+            var param = this.module.getParam();
+            if (p)
+                param = core_1._extend(p, param);
+            return param;
+        };
+        Provider.prototype.init = function () {
+            var _this = this;
+            return this.module.init().then(function (ele) { return _this.element = ele; });
+        };
+        Object.defineProperty(Provider.prototype, "module", {
+            get: function () {
+                return this._module || (this._module = new this._factory());
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return Provider;
+    }());
+    var SPA = /** @class */ (function () {
+        function SPA(config) {
+            this.config = config;
+            this.isHash = false;
+            this.url = null; // Dummy
+            this.list = [];
+            this.names = [];
+            this._queue = Promise.resolve();
+        }
+        // 모듈 등록
+        SPA.prototype.register = function (url, module) {
+            this.names.push(url);
+            this.list.push(new Provider(url, module));
+            return this;
+        };
+        // 이 메서드를 통해 모듈변경이 이루어진다.
+        SPA.prototype.run = function (path) {
+            var _this = this;
+            var _a = this, list = _a.list, names = _a.names, url = _a.url, $active = _a.$active, info = _a.info, config = _a.config, defaultURL = _a.config.defaultURL, newURL = new location_1.URLManager(path), pathname = newURL.pathname, search = newURL.search;
+            //  ① 모듈변경
+            if (!url || url.pathname !== pathname) {
+                var index = names.indexOf(pathname), provider_1 = list[index];
+                // 없는 모듈의 경우 :: defaultURL로 이동한다.
+                if (index === -1) {
+                    if (info == null)
+                        location.hash = defaultURL;
+                }
+                else {
+                    var param_1 = this.param = location_1.Search.toObject(search, provider_1.param()), nInfo_1 = this.info = new SPAInfo(pathname, param_1, index, info ? info.index : -1);
+                    this.url = newURL;
+                    this.$active = provider_1; // 현재 모듈 갱신
+                    this._queue = this._queue
+                        .then(function () { return config.before && config.before(nInfo_1); })
+                        .then(function () { return Promise.all([
+                        $active && $active.module.close(),
+                        provider_1.init()
+                    ]); })
+                        .then(function (_a) {
+                        var html = _a[1];
+                        return RESOLVE.then(function () { return provider_1.module.load(param_1, search, provider_1.element); })
+                            .then(function () { return config.onChange(provider_1.element, $active && $active.element, nInfo_1); });
+                    })
+                        .then(function () { return config.after && config.after(nInfo_1); })
+                        .catch(function (e) {
+                        console.error(e.message);
+                        console.error(e.stack);
+                    });
+                }
+            }
+            // ② 모듈 재로딩
+            else if ($active && !location_1.Search.equals(url.search, search)) {
+                this._queue = this._queue.then(function () {
+                    return $active.module.load(_this.param = location_1.Search.toObject(search, $active.param()), search, $active.element);
+                });
+            }
+            return this._queue;
+        };
+        SPA.prototype.onHash = function () {
+            var _this = this;
+            if (!this.isHash) {
+                var handler = function () {
+                    _this.run(location.hash.slice(1));
+                };
+                window.addEventListener('hashchange', handler);
+                handler();
+                this.isHash = true;
+            }
+            return this;
+        };
+        return SPA;
+    }());
+    exports.SPA = SPA;
+    (function (SPA) {
+        var createFragment = html_1.HTML.createFragment;
+        function get(url) {
+            return new Promise(function (o, x) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            o(xhr.responseText);
+                        }
+                        else
+                            o('');
+                    }
+                };
+                xhr.open('GET', url, true);
+                xhr.send(null);
+            });
+        }
+        // html 문서 가지고 오기
+        // 이건 서버에서 매칭되는 컨트롤러가 만드시 있어야 한다.
+        // /$template/{value}
+        function getFragment(url) {
+            return get('/templates/' + url).then(function (text) { return createFragment(text); });
+        }
+        SPA.getFragment = getFragment;
+        function getElement(url) {
+            return get('/templates/' + url).then(function (text) { return createFragment(text); });
+        }
+        SPA.getElement = getElement;
+        function getStyle(url) {
+            return get(url).then(function (text) {
+                var style = document.createElement('style');
+                style.type = 'text/css';
+                style.innerHTML = text;
+                return style;
+            });
+        }
+        SPA.getStyle = getStyle;
+    })(SPA = exports.SPA || (exports.SPA = {}));
+    exports.SPA = SPA;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1724,7 +2096,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(14), __webpack_require__(6), __webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, NameMap_1, arrays_1, core_1, access_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(15), __webpack_require__(11), __webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, NameMap_1, arrays_1, core_1, access_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Events = /** @class */ (function () {
@@ -1998,7 +2370,7 @@ var __extends = (this && this.__extends) || (function () {
          */
         var r_read_split = /,\s*/;
         function read(target, limit, obj) {
-            var event, n, v, vv, fn;
+            var event, v, fn;
             while (target && limit !== target) {
                 if (event == null) {
                     if (event = target.getAttribute('data-event')) {
@@ -2046,208 +2418,10 @@ var __extends = (this && this.__extends) || (function () {
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Created by hellofunc on 2017-05-06.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, access_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var hasOwn = {}.hasOwnProperty, hasOwnProperty = function (obj, value) { return hasOwn.call(obj, value); }, r_url = /(https?:\/\/.*?\/)?([^\?]+)\??([^#]+)?#?(.*)/;
-    var Search = /** @class */ (function () {
-        function Search() {
-        }
-        Search.prototype.reset = function (search) {
-            if (search === void 0) { search = location.search; }
-            return this.extend(Search.toObject(search));
-        };
-        Search.prototype.extend = function (obj) {
-            var p;
-            for (p in obj) {
-                this[p] = obj[p];
-            }
-            return this;
-        };
-        Search.prototype.hash = function () {
-            location.hash = this.toString();
-            return this;
-        };
-        Search.prototype.queryString = function (obj) {
-            if (obj)
-                obj = core_1.$extend(core_1.$extend({}, obj), this);
-            else
-                obj = this;
-            return Search.toSearch(obj);
-        };
-        Search.prototype.toString = function () {
-            return Search.toSearch(this);
-        };
-        return Search;
-    }());
-    exports.Search = Search;
-    (function (Search) {
-        var primitive = access_1.Access.primitive;
-        var r_n = /&/;
-        function create() {
-            return new Search().reset();
-        }
-        Search.create = create;
-        /*
-         *  쿼리 문자열 비교.
-         *  순서만 다르고 같은 값으로 이루어진 쿼리의 경우 true가 된다.
-         */
-        function equals(a, b) {
-            if (a === b)
-                return true;
-            if (a == null || b == null)
-                return false;
-            if (a.length != b.length)
-                return false;
-            var an = a.split(r_n), bn = b.split(r_n), len = an.length;
-            while (len-- > 0)
-                if (bn.indexOf(an[len]) === -1)
-                    return false;
-            return true;
-        }
-        Search.equals = equals;
-        // Object  ====>  querystring
-        function toSearch(obj, prefix) {
-            if (prefix === void 0) { prefix = ''; }
-            if (core_1.isEmptyObject(obj))
-                return '';
-            var array = [], value;
-            var _loop_1 = function (key) {
-                value = obj[key];
-                if (key[0] === '_' || key[0] === '$' || value == null || typeof value === 'function' || !hasOwnProperty(obj, key))
-                    return "continue";
-                if (core_1.isPlainObject(value)) {
-                    array.push(toSearch(value, prefix + key + '.'));
-                }
-                else if (Array.isArray(value)) {
-                    array = array.concat(value.map(function (v) { return key + '=' + encodeURIComponent(v); }));
-                }
-                else
-                    array.push(prefix + key + '=' + encodeURIComponent(value));
-            };
-            for (var key in obj) {
-                _loop_1(key);
-            }
-            return array.join("&");
-        }
-        Search.toSearch = toSearch;
-        // querystring  ====>  Object
-        function toObject(query, dest) {
-            var obj = {};
-            if (query[0] === '?')
-                query = query.slice(1);
-            query.split(/&/)
-                .filter(function (a) { return a && a.indexOf('=') !== -1; })
-                .forEach(function (v) {
-                var _a = v.split(/=/), key = _a[0], _value = _a[1], value = access_1.Access.access(obj, key);
-                // decoding
-                _value = primitive(decodeURIComponent(_value));
-                // key가 같은 경우 array로
-                if (value) {
-                    if (!Array.isArray(value))
-                        value = [value];
-                    value.push(_value);
-                }
-                else
-                    value = _value;
-                access_1.Access.access(obj, key, value, true);
-            });
-            if (dest)
-                obj = core_1.$extend(dest, obj);
-            return obj;
-        }
-        Search.toObject = toObject;
-    })(Search = exports.Search || (exports.Search = {}));
-    exports.Search = Search;
-    var URLManager = /** @class */ (function () {
-        function URLManager(fullURL) {
-            this.fullURL = fullURL;
-            this.host = '';
-            this.pathname = '';
-            this.search = '';
-            this.hash = '';
-            var exec = r_url.exec(fullURL);
-            if (exec) {
-                this.host = exec[1] || '';
-                // 앞의 /는 삭제한다.
-                this.pathname = (exec[2] || '').replace(/^\//, '');
-                this.search = exec[3] || '';
-                this.hash = exec[4] || '';
-            }
-        }
-        URLManager.prototype.paths = function () {
-            return this.path || (this.path = this.pathname.split(/\//));
-        };
-        URLManager.prototype.equals = function (v) {
-            if (v == null)
-                return false;
-            if (typeof v === 'string')
-                v = new URLManager(v);
-            if (v.fullURL === this.fullURL)
-                return true;
-            if (v.host !== this.host)
-                return false;
-            if (v.pathname !== this.pathname)
-                return false;
-            if (!Search.equals(v.search, this.search))
-                return false;
-            if (v.hash !== this.hash)
-                return false;
-            return true;
-        };
-        return URLManager;
-    }());
-    exports.URLManager = URLManager;
-    (function (URLManager) {
-        function create(url) {
-            return new URLManager(url);
-        }
-        URLManager.create = create;
-        // /admin/:name?music=:audio, {name: '고정철', audio: '네임'}  ===>   /admin/고정철?music=네임
-        // 해당값이 없을시  키워드 부분을 삭제해버린다.
-        function queryExp(str, obj) {
-            var _a = str.split(/\?/), url = _a[0], query = _a[1], URL = url.split(/\//).reduce(function (r, v) {
-                if (v[0] === ':' && (v = v.slice(1))) {
-                    var value = access_1.Access.access(obj, v);
-                    value != null && r.push(value);
-                }
-                else
-                    r.push(v);
-                return r;
-            }, []).join('/'), QUERY;
-            // 쿼리 문자열이 있으면?
-            if (query) {
-                QUERY = query.split(/&/).reduce(function (r, v) {
-                    var _a = v.split(/\=/), prop = _a[0], value = _a[1];
-                    if (value[0] === ':' && (value = value.slice(1))) {
-                        var u = access_1.Access.access(obj, value);
-                        u != null && r.push(prop + '=' + u);
-                    }
-                    else
-                        r.push(v);
-                    return r;
-                }, []).join('&');
-            }
-            return QUERY ? URL + '?' + QUERY : URL;
-        }
-        URLManager.queryExp = queryExp;
-    })(URLManager = exports.URLManager || (exports.URLManager = {}));
-    exports.URLManager = URLManager;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var NameMap = /** @class */ (function () {
@@ -2292,11 +2466,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 15 */,
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, datetime_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, datetime_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"];
@@ -2535,10 +2708,326 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 17 */
+/* 17 */,
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(18), __webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, spa_1, dom_1, array_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function _remap(obj) {
+        var p, v;
+        for (p in obj)
+            if (typeof (v = obj[p]) === 'string')
+                obj[p] = obj[v];
+        return obj;
+    }
+    exports._remap = _remap;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2), __webpack_require__(18), __webpack_require__(3), __webpack_require__(22), __webpack_require__(16)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, number_1, remap_1, datetime_1, inputs_1, calendar_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var forEach = Array.prototype.forEach, dummy = {}, r_date = /\d{4}-\d{1,2}-\d{1,2}/, 
+    /*
+     *  ① type.name
+     *  ② type
+     */
+    DEFAULT_GETTER = remap_1._remap({
+        file: function (input) {
+            if (input.value) {
+                if (input.files)
+                    return input.files;
+                else
+                    input.value;
+            }
+            return null;
+        },
+        'select-multiple': function (select) {
+            var i = 0, length = select.length, array = [];
+            for (; i < length; i++) {
+                if (select[i].checked)
+                    array.push(select[i]);
+            }
+            return array.length ? array : null;
+        },
+        date: function (date) {
+            var value = date.value;
+            if (value && r_date.test(value))
+                return new Date(value);
+            return null;
+        },
+        select: function (select) {
+            var selectedIndex = select.selectedIndex;
+            if (selectedIndex !== -1)
+                return select[selectedIndex].value;
+            return null;
+        },
+        'select-one': 'select',
+        radio: function (input) {
+            if (input.checked)
+                return input.value;
+            return null;
+        },
+        checkbox: function (input) {
+            if (input.checked) {
+                return input.value;
+            }
+            else {
+                var v = input.getAttribute('data-none');
+                if (v) {
+                    return v === 'null' ? null : v;
+                }
+            }
+            return null;
+        },
+        number: function (input) {
+            var value = input.value;
+            if (number_1.r_number.test(value))
+                return parseInt(value);
+            return 0;
+        },
+        text: function (input) {
+            var value = input.value;
+            switch (input.getAttribute('data-type')) {
+                case 'number':
+                    return number_1.r_number.test(value) ? parseInt(input.value) : 0;
+                case 'date':
+                    if (!r_date.test(value))
+                        return null;
+                    var _a = input.value.split('-'), y = _a[0], m = _a[1], d = _a[2];
+                    return new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+                default:
+                    return input.value;
+            }
+        },
+        textarea: function (input) {
+            return input.value;
+        }
+    }), DEFAULT_SETTER = remap_1._remap({
+        number: function (input, val) {
+            if (typeof val === "number")
+                val = val.toString();
+            else if (val == null || !number_1.r_number.test(val))
+                val = '0';
+            input.value = val;
+        },
+        // null값이 들어올 수 있다.
+        date: function (input, val) {
+            if (val == null)
+                input.value = '';
+            else {
+                if (val instanceof Date)
+                    input.value = datetime_1._date(val);
+                else
+                    input.value = val;
+            }
+        },
+        radio: function (input, val) {
+            if (val == null)
+                input.checked = input.hasAttribute('checked');
+            else {
+                var value = input.getAttribute('value');
+                if (Array.isArray(val))
+                    input.checked = val.indexOf(value) !== -1;
+                else
+                    input.checked = value == val;
+            }
+        },
+        checkbox: 'radio',
+        text: function (input, value) {
+            switch (input.getAttribute('data-type')) {
+                case 'date':
+                    if (value instanceof Date)
+                        return input.value = calendar_1.Calendar.isodate(value);
+                default:
+                    input.value = value || '';
+            }
+        }
+    });
+    // 같은 값이 있을때만 배열로
+    function $getter(input, obj, name) {
+        if (name === void 0) { name = input.name; }
+        var type = input.type, v, vv;
+        if (DEFAULT_GETTER[type]) {
+            v = DEFAULT_GETTER[type](input);
+            if (v !== null) {
+                if (vv = obj[name]) {
+                    if (!Array.isArray(vv))
+                        obj[name] = vv = [vv];
+                    vv.push(v);
+                }
+                else
+                    obj[name] = v;
+            }
+        }
+    }
+    function formEach(target, form) {
+        if (target.nodeType === 1) {
+            if (target.classList.contains('form-group'))
+                groupEach(target, form.createGroups(target));
+            else if (target.hasAttribute('name')) {
+                form.put(target);
+            }
+            else {
+                var children = target.children, length_1 = target.children.length;
+                while (length_1-- > 0) {
+                    formEach(children[length_1], form);
+                }
+            }
+        }
+        return form;
+    }
+    function groupEach(target, formGroup) {
+        if (target.nodeType === 1) {
+            var children = target.children, length_2 = target.children.length, i = 0;
+            for (; i < length_2; i++) {
+                target = children[i];
+                if (target.hasAttribute('name') && inputs_1.r_inputs.test(target.tagName)) {
+                    formGroup.add(target);
+                }
+                else
+                    groupEach(target, formGroup);
+            }
+        }
+    }
+    var Forms = /** @class */ (function () {
+        function Forms(element) {
+            this.element = element;
+            this.groups = [];
+            this.defaultHandler = dummy;
+            formEach(element, this);
+        }
+        Forms.prototype.setHandlers = function (handlers) {
+            this.defaultHandler = handlers;
+            return this;
+        };
+        Forms.prototype.createGroups = function (target) {
+            var g = new FormGroups(target);
+            this.groups.push(g);
+            return g;
+        };
+        Forms.prototype.put = function (input) {
+            var own = this.own;
+            if (!own)
+                own = this.own = this.createGroups(this.element);
+            own.add(input);
+            return this;
+        };
+        Forms.prototype.values = function (handlers) {
+            if (handlers === void 0) { handlers = this.defaultHandler; }
+            var result = {};
+            this.each(function (p, inputs) {
+                if (handlers[p])
+                    result[p] = handlers[p].get(inputs);
+                else
+                    inputs.forEach(function (input) { return $getter(input, result, p); });
+            });
+            return result;
+        };
+        Forms.prototype.reset = function (obj, handlers) {
+            if (obj === void 0) { obj = dummy; }
+            if (handlers === void 0) { handlers = this.defaultHandler; }
+            var v;
+            this.each(function (p, inputs) {
+                v = obj[p];
+                if (handlers[p])
+                    handlers[p].set(inputs, v);
+                else
+                    inputs.forEach(function (input) { return Forms.set(input, v); });
+            });
+            return this;
+        };
+        Forms.prototype.each = function (handler, obj) {
+            var p, inputs;
+            this.groups.forEach(function (g) {
+                inputs = g.inputs;
+                for (p in inputs)
+                    obj = handler(p, inputs[p], obj);
+            });
+            return obj;
+        };
+        return Forms;
+    }());
+    exports.Forms = Forms;
+    var FormGroups = /** @class */ (function () {
+        function FormGroups(element) {
+            this.element = element;
+            this.inputs = {};
+        }
+        FormGroups.prototype.add = function (input) {
+            var inputs = this.inputs, name = input.name;
+            if (name) {
+                (inputs[name] || (inputs[name] = [])).push(input);
+            }
+            return this;
+        };
+        return FormGroups;
+    }());
+    exports.FormGroups = FormGroups;
+    (function (Forms) {
+        function createForms(target) {
+            return new Forms(target);
+        }
+        Forms.createForms = createForms;
+        function reset(inputs, obj) {
+            if (obj === void 0) { obj = dummy; }
+            forEach.call(inputs, function (v) { return set(v, obj[v.name]); });
+        }
+        Forms.reset = reset;
+        function set(input, v) {
+            var f = DEFAULT_SETTER[input['type']];
+            if (f) {
+                f(input, v);
+            }
+            else {
+                input['value'] = v == null ? '' : v;
+            }
+            return input;
+        }
+        Forms.set = set;
+        function serialize(form) {
+            var length = form.length, input, name, obj = {};
+            while (length-- > 0) {
+                input = form[length];
+                if (!input.disabled && (name = input.name)) {
+                    $getter(input, obj, name);
+                }
+            }
+            return obj;
+        }
+        Forms.serialize = serialize;
+    })(Forms = exports.Forms || (exports.Forms = {}));
+    exports.Forms = Forms;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 20 */,
+/* 21 */,
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.r_inputs = /select|textarea|input/i;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13), __webpack_require__(4), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, spa_1, dom_1, array_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var className = dom_1.DOM.className;
@@ -2546,6 +3035,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         function GenericModule(id, param) {
             var _this = this;
             this.param = param;
+            this.popCount = 0;
             /*
              *   이미 로드된 상황 (초기화)이고
              *   쿼리없이 그대로 요청이 들어오면 기존에 작업중이던 화면을 그대로 내보내준다.
@@ -2566,7 +3056,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this._resolve = Promise.all([
                 // style과 html 로딩딩
                 spa_1.SPA.getStyle('/dist/hancomee/src/' + id + '.css'),
-                spa_1.SPA.getElement('hancomee/src/' + id)
+                spa_1.SPA.getFragment('hancomee/src/' + id)
             ]).then(function (_a) {
                 var style = _a[0], frag = _a[1];
                 div.appendChild(style);
@@ -2589,8 +3079,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         // 로딩바
         GenericModule.prototype.loading = function (flag) {
             className(this.loadingElement, 'on', flag);
-            className(document.body, 'screen', flag);
-            return this;
+            return this.bodyScreen(flag);
         };
         // 팝업창
         GenericModule.prototype.pop = function (element) {
@@ -2598,8 +3087,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             popElement.textContent = '';
             isOpen && popElement.appendChild(element);
             className(popElement, 'on', isOpen);
-            className(document.body, 'screen', isOpen);
-            return this;
+            return this.bodyScreen(isOpen);
         };
         // 팝업창
         GenericModule.prototype.pop2 = function (element) {
@@ -2607,7 +3095,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             pop2Element.textContent = '';
             isOpen && pop2Element.appendChild(element);
             className(pop2Element, 'on', isOpen);
-            className(document.body, 'screen', isOpen);
+            return this.bodyScreen(isOpen);
+        };
+        GenericModule.prototype.bodyScreen = function (isOpen) {
+            this.popCount += isOpen ? 1 : -1;
+            className(document.body, 'screen', this.popCount > 0);
             return this;
         };
         GenericModule.prototype.init = function () {
@@ -2632,154 +3124,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 18 */
+/* 24 */,
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13), __webpack_require__(0), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, location_1, core_1, html_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var RESOLVE = Promise.resolve();
-    var Provider = /** @class */ (function () {
-        // 클래스가 그대로 들어와도 되고, 객체가 들어와도 된다.
-        function Provider(path, f) {
-            this.path = path;
-            if (typeof f !== 'function')
-                this._module = f;
-            else
-                this._factory = f;
-        }
-        Provider.prototype.param = function (p) {
-            var param = this.module.getParam();
-            if (p)
-                param = core_1._extend(p, param);
-            return param;
-        };
-        Provider.prototype.init = function () {
-            var _this = this;
-            return this.module.init().then(function (ele) { return _this.element = ele; });
-        };
-        Object.defineProperty(Provider.prototype, "module", {
-            get: function () {
-                return this._module || (this._module = new this._factory());
-            },
-            enumerable: true,
-            configurable: true
-        });
-        return Provider;
-    }());
-    var SPA = /** @class */ (function () {
-        function SPA(config) {
-            this.config = config;
-            this.isHash = false;
-            this.url = new location_1.URLManager(''); // Dummy
-            this.list = [];
-            this._queue = Promise.resolve();
-        }
-        SPA.prototype.register = function (url, module) {
-            this.list.push(new Provider(url, module));
-            return this;
-        };
-        // 이 메서드를 통해 모듈변경이 이루어진다.
-        SPA.prototype.run = function (path) {
-            var _a = this, url = _a.url, $active = _a.$active, m = new location_1.URLManager(path), pathname = m.pathname, search = m.search;
-            this.url = m; // 현재 url 갱신
-            //  ① 모듈변경
-            if (url.pathname !== pathname) {
-                var _b = this, list = _b.list, l = _b.list.length, _index_1 = 0, provider_1;
-                while (l-- > 0) {
-                    if (list[l].path === pathname) {
-                        provider_1 = list[l];
-                        _index_1 = l;
-                        break;
-                    }
-                }
-                if (provider_1) {
-                    var _c = this, index_1 = _c.index, config_1 = _c.config, param_1 = location_1.Search.toObject(search, provider_1.param());
-                    this.index = _index_1; // 모듈 인덱스 갱신
-                    this.$active = provider_1; // 현재 모듈 갱신
-                    this._queue = this._queue
-                        .then(function () { return config_1.before && config_1.before(pathname, param_1, _index_1, index_1); })
-                        .then(function () { return Promise.all([
-                        $active && $active.module.close(),
-                        provider_1.init()
-                    ]); })
-                        .then(function (_a) {
-                        var html = _a[1];
-                        return RESOLVE.then(function () { return provider_1.module.load(param_1, search); })
-                            .then(function () { return config_1.onChange(provider_1.element, $active && $active.element); });
-                    })
-                        .then(function () { return config_1.after && config_1.after(pathname, param_1, _index_1, index_1); });
-                }
-            }
-            // ② 모듈 재로딩
-            else if ($active && !location_1.Search.equals(url.search, search)) {
-                this._queue = this._queue.then(function () {
-                    return $active.module.load(location_1.Search.toObject(search, $active.param()), search);
-                });
-            }
-            return this._queue;
-        };
-        SPA.prototype.onHash = function () {
-            var _this = this;
-            if (!this.isHash) {
-                var handler = function () {
-                    location.hash && _this.run(location.hash.slice(1));
-                };
-                window.addEventListener('hashchange', handler);
-                handler();
-                this.isHash = true;
-            }
-            return this;
-        };
-        return SPA;
-    }());
-    exports.SPA = SPA;
-    (function (SPA) {
-        var createFragment = html_1.HTML.createFragment;
-        function get(url) {
-            return new Promise(function (o, x) {
-                var xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                            o(xhr.responseText);
-                        }
-                        else
-                            o('');
-                    }
-                };
-                xhr.open('GET', url, true);
-                xhr.send(null);
-            });
-        }
-        // html 문서 가지고 오기
-        // 이건 서버에서 매칭되는 컨트롤러가 만드시 있어야 한다.
-        // /$template/{value}
-        function getElement(url) {
-            return get('/templates/' + url).then(function (text) { return createFragment(text); });
-        }
-        SPA.getElement = getElement;
-        function getStyle(url) {
-            return get(url).then(function (text) {
-                var style = document.createElement('style');
-                style.type = 'text/css';
-                style.innerHTML = text;
-                return style;
-            });
-        }
-        SPA.getStyle = getStyle;
-    })(SPA = exports.SPA || (exports.SPA = {}));
-    exports.SPA = SPA;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 19 */,
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(5), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, array_1, datetime_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(7), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, array_1, datetime_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function $get(url) {
@@ -3117,32 +3466,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 21 */,
-/* 22 */,
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function _remap(obj) {
-        var p, v;
-        for (p in obj)
-            if (typeof (v = obj[p]) === 'string')
-                obj[p] = obj[v];
-        return obj;
-    }
-    exports._remap = _remap;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 24 */,
-/* 25 */,
 /* 26 */,
 /* 27 */,
-/* 28 */
+/* 28 */,
+/* 29 */,
+/* 30 */,
+/* 31 */,
+/* 32 */,
+/* 33 */,
+/* 34 */,
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = (this && this.__extends) || (function () {
@@ -3155,7 +3491,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17), __webpack_require__(20), __webpack_require__(13), __webpack_require__(7), __webpack_require__(16), __webpack_require__(10), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, genericModule_1, Work_1, location_1, html_1, calendar_1, format_1, events_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(23), __webpack_require__(25), __webpack_require__(12), __webpack_require__(6), __webpack_require__(16), __webpack_require__(9), __webpack_require__(14)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, genericModule_1, Work_1, location_1, html_1, calendar_1, format_1, events_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var htmlParser = html_1.HTML.htmlParser;
@@ -3276,7 +3612,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
 
 
 /***/ }),
-/* 29 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = (this && this.__extends) || (function () {
@@ -3289,7 +3625,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(7), __webpack_require__(17), __webpack_require__(16), __webpack_require__(0), __webpack_require__(9), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, html_1, genericModule_1, calendar_1, core_1, StringBuffer_1, events_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(23), __webpack_require__(16), __webpack_require__(0), __webpack_require__(8), __webpack_require__(14)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, html_1, genericModule_1, calendar_1, core_1, StringBuffer_1, events_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var htmlParser = html_1.HTML.htmlParser;
@@ -3552,7 +3888,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
 
 
 /***/ }),
-/* 30 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = (this && this.__extends) || (function () {
@@ -3565,7 +3901,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17), __webpack_require__(20), __webpack_require__(13), __webpack_require__(7), __webpack_require__(12), __webpack_require__(31), __webpack_require__(3), __webpack_require__(32), __webpack_require__(5), __webpack_require__(33), __webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, genericModule_1, Work_1, location_1, html_1, events_1, FormValue_1, dom_1, Watcher_1, array_1, FormValid_1, core_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(23), __webpack_require__(25), __webpack_require__(12), __webpack_require__(6), __webpack_require__(14), __webpack_require__(4), __webpack_require__(41), __webpack_require__(7), __webpack_require__(42), __webpack_require__(0), __webpack_require__(19)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, genericModule_1, Work_1, location_1, html_1, events_1, dom_1, Watcher_1, array_1, FormValid_1, core_1, Forms_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var className = dom_1.DOM.className;
@@ -3736,11 +4072,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                         ctrl.data($customer);
                     },
                     modify: function () {
-                        FormValue_1.FormValue.reset(a, $customer);
+                        Forms_1.Forms.reset(a, $customer);
                         ctrl.form($customer);
                     },
                     save: function () {
-                        var newData = new Work_1.Customer(FormValue_1.FormValue.serialize(a)).setId($customer.id);
+                        var newData = new Work_1.Customer(Forms_1.Forms.serialize(a)).setId($customer.id);
                         Work_1.Customer.save(newData).then(function () {
                             ctrl.data($customer = newData);
                         });
@@ -3909,25 +4245,25 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
                 $modify = selectAll(pick(container, '.work-item-form'), ['[name][]'], function (container, inputs) {
                     var $mV, 
                     // 수정폼 검증을 위한 핸들러들
-                    isValid = function (v) { return FormValid_1.FormValid.input(v).isValid; }, isChange = function (v) { return $mV[v.name] !== v.value.trim(); }, $change = function () { return className(container, 'change', array_1._everyTrue(inputs, isValid) && array_1._inTrue(inputs, isChange)); }, ctrl = {
+                    isValid = function (v) { return FormValid_1.FormValid.input(v); }, isChange = function (v) { return $mV[v.name] !== v.value.trim(); }, $change = function () { return className(container, 'change', array_1._everyTrue(inputs, isValid) && array_1._inTrue(inputs, isChange)); }, ctrl = {
                         // 아이템 추가할시
                         add: function (item) {
                             $mV = item;
                             className(container, 'change', false);
-                            FormValue_1.FormValue.reset(inputs);
+                            Forms_1.Forms.reset(inputs);
                             tbody.appendChild(container);
                         },
                         // 아이템 수정할시
                         attach: function (item) {
                             className(container, 'change', false);
-                            FormValue_1.FormValue.reset(inputs, $mV = item.item);
+                            Forms_1.Forms.reset(inputs, $mV = item.item);
                             tbody.insertBefore(container, item.ele);
                         },
                         close: function () {
                             tbody.removeChild(container);
                         },
                         values: function () {
-                            return FormValue_1.FormValue.serialize(inputs);
+                            return Forms_1.Forms.serialize(inputs);
                         }
                     };
                     container.addEventListener('keyup', $change);
@@ -4170,156 +4506,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
 
 
 /***/ }),
-/* 31 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2), __webpack_require__(23), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, number_1, remap_1, datetime_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var FormValue;
-    (function (FormValue) {
-        var forEach = Array.prototype.forEach, dummy = {}, r_date = /\d{4}-\d{1,2}-\d{1,2}/, 
-        /*
-         *  ① type.name
-         *  ② type
-         */
-        DEFAULT_GETTER = remap_1._remap({
-            file: function (input) {
-                if (input.value) {
-                    if (input.files)
-                        return input.files;
-                    else
-                        input.value;
-                }
-                return null;
-            },
-            'select-multiple': function (select) {
-                var i = 0, length = select.length, array = [];
-                for (; i < length; i++) {
-                    if (select[i].checked)
-                        array.push(select[i]);
-                }
-                return array.length ? array : null;
-            },
-            date: function (date) {
-                var value = date.value;
-                if (value && r_date.test(value))
-                    return new Date(value);
-                return null;
-            },
-            select: function (select) {
-                var selectedIndex = select.selectedIndex;
-                if (selectedIndex !== -1)
-                    return select[selectedIndex].value;
-                return null;
-            },
-            'select-one': 'select',
-            radio: function (input) {
-                if (input.checked)
-                    return input.value;
-                return null;
-            },
-            checkbox: function (input) {
-                if (input.checked) {
-                    return input.value;
-                }
-                else {
-                    var v = input.getAttribute('data-none');
-                    if (v) {
-                        return v === 'null' ? null : v;
-                    }
-                }
-                return null;
-            },
-            number: function (input) {
-                var value = input.value;
-                if (number_1.r_number.test(value))
-                    return parseInt(value);
-                return 0;
-            },
-            text: function (input) {
-                return input.value;
-            },
-            textarea: 'text'
-        }), DEFAULT_SETTER = remap_1._remap({
-            number: function (input, val) {
-                if (typeof val === "number")
-                    val = val.toString();
-                else if (val == null || !number_1.r_number.test(val))
-                    val = '0';
-                input.value = val;
-            },
-            // null값이 들어올 수 있다.
-            date: function (input, val) {
-                if (val == null)
-                    input.value = '';
-                else {
-                    if (val instanceof Date)
-                        input.value = datetime_1._date(val);
-                    else
-                        input.value = val;
-                }
-            },
-            radio: function (input, val) {
-                if (val == null)
-                    input.checked = false;
-                else {
-                    var value = input.getAttribute('value');
-                    if (Array.isArray(val))
-                        input.checked = val.indexOf(value) !== -1;
-                    else
-                        input.checked = value == val;
-                }
-            },
-            checkbox: 'radio',
-        });
-        function reset(inputs, obj) {
-            if (obj === void 0) { obj = dummy; }
-            forEach.call(inputs, function (v) { return set(v, obj[v.name]); });
-        }
-        FormValue.reset = reset;
-        function set(input, v) {
-            var f = DEFAULT_SETTER[input['type']];
-            if (f) {
-                f(input, v);
-            }
-            else {
-                input['value'] = v == null ? '' : v;
-            }
-            return input;
-        }
-        FormValue.set = set;
-        function serialize(form) {
-            var length = form.length, v, vv, input, name, type, obj = {};
-            while (length-- > 0) {
-                input = form[length];
-                if (!input.disabled && (name = input.name)) {
-                    type = input.type;
-                    if (DEFAULT_GETTER[type]) {
-                        v = DEFAULT_GETTER[type](input);
-                        if (vv = obj[name]) {
-                            if (!Array.isArray(vv))
-                                obj[name] = vv = [vv];
-                            vv.push(v);
-                        }
-                        else
-                            obj[name] = v;
-                    }
-                }
-            }
-            return obj;
-        }
-        FormValue.serialize = serialize;
-    })(FormValue = exports.FormValue || (exports.FormValue = {}));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, arrays_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     // 얕은 비교
@@ -4434,169 +4624,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 33 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(34), __webpack_require__(23), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, _commons_1, remap_1, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(18), __webpack_require__(2), __webpack_require__(19)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, remap_1, number_1, Forms_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var _a = Array.prototype, $$map = _a.map, $$forEach = _a.forEach, $$reduce = _a.reduce;
-    /*
-     *  폼 검증 결과로 제공하는 객체
-     */
-    var VALID = /** @class */ (function () {
-        function VALID(element, isValid) {
-            if (isValid === void 0) { isValid = true; }
-            this.element = element;
-            this.isValid = isValid;
-            this.errors = [];
-        }
-        VALID.prototype.setValid = function (flag) {
-            this.isValid = flag;
-            return this;
-        };
-        VALID.prototype.addError = function (msg) {
-            var errors = this.errors;
-            errors.indexOf(msg) === -1 && errors.push(msg);
-            this.isValid = false;
-            return this;
-        };
-        return VALID;
-    }());
-    // <input>
-    var ValidInput = /** @class */ (function (_super) {
-        __extends(ValidInput, _super);
-        function ValidInput() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        ValidInput.prototype.each = function (handler) {
-            var element = this.element;
-            handler.call(this, this.isValid, element, element.closest('.form-group'), element.form);
-            return this;
-        };
-        return ValidInput;
-    }(VALID));
-    // <div class="form-group">
-    var ValidGroup = /** @class */ (function (_super) {
-        __extends(ValidGroup, _super);
-        function ValidGroup() {
-            var _this = _super !== null && _super.apply(this, arguments) || this;
-            _this.inputs = [];
-            return _this;
-        }
-        ValidGroup.prototype.addInput = function (input) {
-            if (!input.isValid)
-                this.setValid(false);
-            this.inputs.push(input);
-            return this;
-        };
-        ValidGroup.prototype.each = function (handler, _context) {
-            var _a = this, element = _a.element, inputs = _a.inputs, l = _a.inputs.length, i = 0, input, context = _context || this;
-            while (i < l) {
-                input = inputs[i++];
-                handler.call(context, input.isValid, input.element, element, input.element.form);
-            }
-            return this;
-        };
-        return ValidGroup;
-    }(VALID));
-    // <form>
-    var ValidForm = /** @class */ (function (_super) {
-        __extends(ValidForm, _super);
-        function ValidForm() {
-            var _this = _super !== null && _super.apply(this, arguments) || this;
-            _this.groups = [];
-            return _this;
-        }
-        ValidForm.prototype.addGroup = function (group) {
-            if (!group.isValid)
-                this.setValid(false);
-            this.groups.push(group);
-            return this;
-        };
-        ValidForm.prototype.each = function (handler) {
-            var _this = this;
-            this.groups.forEach(function (g) { return g.each(handler, _this); });
-            return this;
-        };
-        return ValidForm;
-    }(VALID));
-    /*
-     *  폼 검증을 위한 검증핸들러를 가진 객체.
-     *  엘리먼트를 받아 어트리뷰트값을 모두 순회하며, 등록된 검증핸들러를 찾는다.
-     *  핸들러가 존재하면 이를 통해 값을 검증한다.
-     *  그 결과로 VALID객체를 반환한다.
-     */
-    var FormValid = /** @class */ (function () {
-        function FormValid(inputs, groups, errors) {
-            if (inputs === void 0) { inputs = {}; }
-            if (groups === void 0) { groups = {}; }
-            if (errors === void 0) { errors = {}; }
-            this.inputs = inputs;
-            this.groups = groups;
-            this.errors = errors;
-        }
-        FormValid.prototype.input = function (target) {
-            var _this = this;
-            var name = target.name, type = target.type, obj = new ValidInput(target);
-            _commons_1.each(target, function (p, v) {
-                if (!_this._input(target, p, v, name, type)) {
-                    obj.setValid(false).addError(_this._message(p, v, type, name));
-                }
-            });
-            return obj;
-        };
-        FormValid.prototype.group = function (target) {
-            var _this = this;
-            var obj = new ValidGroup(target);
-            // form 자체 검증
-            _commons_1.each(target, function (p, v) {
-                _this._group(target, p, v) || obj.addError(_this._message(p, v, 'group', name));
-            });
-            // inputs 검증
-            _commons_1.eachChilds(target.querySelectorAll('[name]'), function (child) { return obj.addInput(_this.input(child)); });
-            return obj;
-        };
-        FormValid.prototype.form = function (form) {
-            var _this = this;
-            var obj = new ValidForm(form);
-            _commons_1.eachChilds(form.querySelectorAll('.form-group'), function (child) { return obj.addGroup(_this.group(child)); });
-            return obj;
-        };
-        // 각 key를 조합해 검증 핸들러를 찾는다.
-        FormValid.prototype._input = function (input, attrName, attrValue, type, name) {
-            if (type === void 0) { type = input.type; }
-            if (name === void 0) { name = input.name; }
-            var inputs = this.inputs, fn = inputs[attrName + '.' + type + '.' + name] ||
-                inputs[attrName + '.' + type] ||
-                inputs[attrName];
-            return fn ? fn(input, attrValue) : true;
-        };
-        FormValid.prototype._group = function (group, attrName, attrValue) {
-            var fn = this.groups[attrName];
-            return fn ? fn(group, attrValue) : true;
-        };
-        FormValid.prototype._message = function (attrName, attrValue, type, name) {
-            var errors = this.errors, msg = errors[attrName + '.' + type + '.' + name] ||
-                errors[attrName + '.' + type] ||
-                errors[attrName];
-            if (msg)
-                return msg.replace(/%/g, attrValue);
-            return attrName + ' is wrong.' + '(:' + attrValue + ')';
-        };
-        return FormValid;
-    }());
-    exports.FormValid = FormValid;
+    var FormValid;
     (function (FormValid) {
         var 
         /*
@@ -4668,84 +4702,102 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __extends = 
             }
         }), error_msg = {
             required: '반드시 필요한 항목입니다.'
-        }, DEFAULT_FORM_VALID = new FormValid(input_valid, group_valid, error_msg);
-        function extend(dist, source) {
-            if (!source)
-                return dist;
-            var p;
-            for (p in source)
-                dist[p] = source[p];
+        };
+        var skipProps = 'name type'.split(' ');
+        // 각 key를 조합해 검증 핸들러를 찾는다.
+        function _input(input, attrName, attrValue, type, name) {
+            if (type === void 0) { type = input.type; }
+            if (name === void 0) { name = input.name; }
+            var fn = input_valid[attrName + '.' + type + '.' + name] ||
+                input_valid[attrName + '.' + type] ||
+                input_valid[attrName];
+            return fn ? fn(input, attrValue) : true;
         }
-        // 새로운 FormValid 생성
-        function extendOption(data) {
-            return new FormValid(extend(Object.create(input_valid), data.input), extend(Object.create(group_valid), data.group), extend(Object.create(error_msg), data.error));
+        function _group(group, attrName, attrValue) {
+            var fn = group_valid[attrName];
+            return fn ? fn(group, attrValue) : true;
         }
-        FormValid.extendOption = extendOption;
-        /*
-         *  Default 설정을 사용할때는 아래 static 메서드를 사용하면 된다.
-         *  특수한 검증이 필요할 경우에는 직접 FormValie 객체를 만들어서 사용하면 된다.
-         */
-        function inputs(inputs) {
-            return $$map.call(inputs, function (i) { return input(i); });
+        function _message(attrName, attrValue, type, name) {
+            var msg = error_msg[attrName + '.' + type + '.' + name] ||
+                error_msg[attrName + '.' + type] ||
+                error_msg[attrName];
+            if (msg)
+                return msg.replace(/%/g, attrValue);
+            return attrName + ' is wrong.' + '(:' + attrValue + ')';
         }
-        FormValid.inputs = inputs;
-        function input(input) {
-            return DEFAULT_FORM_VALID.input(input);
+        function $valid(t, h) {
+            var form = t instanceof Forms_1.Forms ? t : Forms_1.Forms.createForms(t), element = form.element, result = true;
+            if (h) {
+                form.groups.forEach(function (group) {
+                    var name, e = group.element, inputs = group.inputs, handler;
+                    for (name in inputs) {
+                        handler = h[name] || h['*'];
+                        inputs[name].forEach(function (input) {
+                            var type = input.type, attributes = input.attributes, l = input.attributes.length, n, v, errors = [];
+                            while (l-- > 0) {
+                                if (skipProps.indexOf(n = attributes[l].name) == -1) {
+                                    if (_input(input, n = attributes[l].name, v = attributes[l].value, type, name))
+                                        errors.push(_message(n, v, type, name));
+                                }
+                            }
+                            result = errors.length ? result : false;
+                            handler.call(handler, errors, input, e, element);
+                        });
+                    }
+                });
+            }
+            else {
+                form.groups.forEach(function (group) {
+                    var name, inputs = group.inputs;
+                    for (name in inputs) {
+                        inputs[name].forEach(function (input) {
+                            var type = input.type, attributes = input.attributes, l = input.attributes.length, attr;
+                            while (l-- > 0) {
+                                attr = attributes[l];
+                                result = _input(input, attr.name, attr.value, type, name) ? result : false;
+                            }
+                        });
+                    }
+                });
+            }
+            return result;
+        }
+        FormValid.$valid = $valid;
+        function input(i) {
+            var type = i.type, name = i.name, attributes = i.attributes, l = i.attributes.length;
+            while (l-- > 0) {
+                if (!_input(i, attributes[l].name, attributes[l].value, type, name))
+                    return false;
+            }
+            return true;
         }
         FormValid.input = input;
-        function group(group) {
-            return DEFAULT_FORM_VALID.group(group);
-        }
-        FormValid.group = group;
-        function form(form) {
-            return DEFAULT_FORM_VALID.form(form);
-        }
-        FormValid.form = form;
     })(FormValid = exports.FormValid || (exports.FormValid = {}));
-    exports.FormValid = FormValid;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-/* 34 */
+/* 43 */,
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */,
+/* 54 */,
+/* 55 */,
+/* 56 */,
+/* 57 */,
+/* 58 */,
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.skipProps = 'name type';
-    function closest(target, className) {
-    }
-    exports.closest = closest;
-    function each(ele, handler) {
-        var attributes = ele.attributes, length = ele.attributes.length, name;
-        while (length-- > 0) {
-            if (exports.skipProps.indexOf(name = attributes[length].name) === -1) {
-                handler(name, attributes[length].value);
-            }
-        }
-    }
-    exports.each = each;
-    function eachChilds(nodeList, handler) {
-        var len = nodeList.length, node;
-        while (len-- > 0) {
-            if (!(node = nodeList[len])['hasAttribute']('disabled'))
-                handler(node);
-        }
-    }
-    exports.eachChilds = eachChilds;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 35 */,
-/* 36 */,
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(18), __webpack_require__(28), __webpack_require__(29), __webpack_require__(7), __webpack_require__(30), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, spa_1, list_1, calendar_1, html_1, view_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(13), __webpack_require__(38), __webpack_require__(39), __webpack_require__(6), __webpack_require__(40), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, spa_1, list_1, calendar_1, html_1, view_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var selectAll = html_1.HTML.selectAll;
@@ -4788,7 +4840,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     }
                 };
             })(aside.querySelectorAll('li')), spa = new spa_1.SPA({
-                before: function (pathname) {
+                defaultURL: 'list',
+                before: function (_a) {
+                    var pathname = _a.pathname;
                     asideMenu(pathname);
                     main.className = 'load';
                     window.scrollTo(0, 0);

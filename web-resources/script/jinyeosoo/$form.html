@@ -1,0 +1,185 @@
+<form id="form">
+
+    <div class="form-row">
+
+        <div class="form-group-title">고객정보</div>
+
+        <div class="form-container">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">국적</label>
+                <div class="col-sm-10">
+                    <input class="check-btn" type="radio" name="korean" value="1" id="korean1" checked>
+                    <label for="korean1">내국인</label>
+                    <input class="check-btn" type="radio" name="korean" value="0" id="korean2">
+                    <label for="korean2">외국인</label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="name" class="col-sm-1 col-form-label">성명</label>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" name="name" id="name" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="birth1" class="col-sm-1 col-form-label">생년월일</label>
+                <div class="col-sm-1">
+                    <input type="text" maxlength="4" class="form-control" name="birth" id="birth1" autocomplete="off">
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" maxlength="2" class="form-control" name="birth" id="birth2" autocomplete="off">
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" maxlength="2" class="form-control" name="birth" id="birth3" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">성별</label>
+                <div class="col-sm-10">
+                    <input class="check-btn" type="radio" name="sex" value="0" id="female" checked>
+                    <label for="female">여성</label>
+                    <input class="check-btn" type="radio" name="sex" value="1" id="male">
+                    <label for="male">남성</label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">결혼여부</label>
+                <div class="col-sm-10">
+                    <input class="check-btn" type="radio" name="married" value="0" id="single" checked>
+                    <label for="single">미혼</label>
+                    <input class="check-btn" type="radio" name="married" value="1" id="double">
+                    <label for="double">기혼</label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="job" class="col-sm-1 col-form-label">직업</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" name="job" id="job" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="mobile1" class="col-sm-1 col-form-label">휴대전화</label>
+                <div class="col-sm-1">
+                    <input type="text" maxlength="3" class="form-control" name="mobile" id="mobile1" autocomplete="off">
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" maxlength="4" class="form-control" name="mobile" id="mobile2" autocomplete="off">
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" maxlength="4" class="form-control" name="mobile" id="mobile3" autocomplete="off">
+                </div>
+
+            </div>
+            <div class="form-group row">
+                <label for="address" class="col-sm-1 col-form-label">주소</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="address" id="address" autocomplete="off">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+
+        <div class="form-group-title">관리정보</div>
+        <div class="form-container">
+            <div class="form-group row">
+                <label for="tall" class="col-sm-1 col-form-label">신장</label>
+                <div class="col-sm-1">
+                    <input type="text" class="form-control" name="tall" id="tall" onautocomplete="off">
+                </div>
+                <div class="col-sm-1">
+                    <span class="unit">Cm</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="weight" class="col-sm-1 col-form-label">몸무게</label>
+                <div class="col-sm-1">
+                    <input type="text" class="form-control" name="weight" id="weight" autocomplete="off">
+                </div>
+                <div class="col-sm-1">
+                    <span class="unit">Kg</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">혈액형</label>
+                <div class="col-sm-10">
+                    <input class="check-btn" type="radio" name="blood" value="0" id="a" checked>
+                    <label for="a">A형</label>
+                    <input class="check-btn" type="radio" name="blood" value="1" id="b">
+                    <label for="b">B형</label>
+                    <input class="check-btn" type="radio" name="blood" value="2" id="o">
+                    <label for="o">O형</label>
+                    <input class="check-btn" type="radio" name="blood" value="3" id="ab">
+                    <label for="ab">AB형</label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">피부상태</label>
+                <div class="col-sm-10">
+                    <input class="check-btn" type="radio" name="skin" value="0" id="skin-1" checked>
+                    <label for="skin-1">건성</label>
+                    <input class="check-btn" type="radio" name="skin" value="1" id="skin-2">
+                    <label for="skin-2">중성</label>
+                    <input class="check-btn" type="radio" name="skin" value="2" id="skin-3">
+                    <label for="skin-3">지성</label>
+                    <input class="check-btn" type="radio" name="skin" value="3" id="skin-4">
+                    <label for="skin-4">복합성</label>
+                    <input class="check-btn" type="radio" name="skin" value="4" id="skin-5">
+                    <label for="skin-5">민감성</label>
+                    <input class="check-btn" type="radio" name="skin" value="5" id="skin-6">
+                    <label for="skin-6">기타</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="operation" class="col-form-label">
+                    수술 또는 수술부위와 수술 또는 시술 날짜를 적어주세요.
+                </label>
+                <input type="text" class="form-control" name="operation" id="operation" autocomplete="off">
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="form-row">
+
+        <div class="form-group-title">고객설문</div>
+        <div class="form-container">
+            <div class="form-group">
+                <label for="tall" class="col-form-label">이곳에 어떻게 알고 오셨나요?</label>
+                <div class="col-sm-12">
+                    <input class="check-btn" type="radio" name="search" value="0" id="search1" checked>
+                    <label for="search1">페이스북</label>
+                    <input class="check-btn" type="radio" name="search" value="1" id="search2">
+                    <label for="search2">인스타그램</label>
+                    <input class="check-btn" type="radio" name="search" value="2" id="search3">
+                    <label for="search3">블로그</label>
+                    <input class="check-btn" type="radio" name="search" value="3" id="search4">
+                    <label for="search4">카페</label>
+                    <input class="check-btn" type="radio" name="search" value="4" id="search5">
+                    <label for="search5">지인소개</label>
+                    <input class="check-btn" type="radio" name="search" value="5" id="search6">
+                    <label for="search6">광고매체</label>
+                    <input class="check-btn" type="radio" name="search" value="6" id="search7">
+                    <label for="search7">기타</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="text1" class="col-form-label">
+                    미용효과를 원하는 부위 중 선천적이라고 생각하는 부분을 적어주세요.
+                </label>
+                <input type="text" class="form-control" name="text1" id="text1" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="text2" class="col-form-label">
+                    미용효과를 원하는 부위 중 후천적이라고 생각하는 부분을 적어주세요.
+                </label>
+                <input type="text" class="form-control" name="text2" id="text2" autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+    <div class="btns">
+        <input class="submit" type="submit" value="저장">
+    </div>
+</form>

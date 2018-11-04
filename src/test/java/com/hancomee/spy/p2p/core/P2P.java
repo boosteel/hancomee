@@ -1,6 +1,7 @@
 package com.hancomee.spy.p2p.core;
 
-import com.hancomee.util.Strings;
+
+import com.boosteel.util.support.Strings;
 
 import java.util.List;
 import java.util.stream.Collectors;

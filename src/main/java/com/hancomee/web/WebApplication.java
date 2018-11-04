@@ -32,7 +32,7 @@ public class WebApplication extends SpringBootServletInitializer implements WebM
 
     @RequestMapping
     public String intro() {
-        return "intro.html";
+        return "boosteel/main.html";
     }
 
     @RequestMapping(value="templates/**/*")

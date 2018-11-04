@@ -1,4 +1,14 @@
-
 // Core variables and mixins
+
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
 @import "../../node_modules/bootstrap/scss/mixins";
 
+
+@mixin table-col($size...) {
+  @for $i from 1 through length($size) {
+    &:nth-child(#{$i}) {
+      width: nth($size, $i) * 1%;
+    }
+  }
+}

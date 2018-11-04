@@ -1,0 +1,13 @@
+@import "../mixin";
+
+#products {
+  .cover {
+    background: {
+      size: contain;
+      repeat: no-repeat;
+      position-x: right;
+      position-y: bottom;
+      image: url("/img/boosteel/top-bg3.png");
+    }
+  }
+}

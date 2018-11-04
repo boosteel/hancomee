@@ -1,8 +1,9 @@
 package com.hancomee.spy;
 
-import com.hancomee.util.db.DB;
-import com.hancomee.util.HTTP;
-import com.hancomee.util.Patterns;
+
+import com.boosteel.http.HTTP;
+import com.boosteel.nativedb.NativeDB;
+import com.boosteel.util.support.Patterns;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +24,7 @@ public abstract class AbstractSpy {
 
 
     protected Set<String> uuid = new HashSet<>();
-    protected DB $db;
+    protected NativeDB $db;
 
     private static final Path ROOT = Paths.get("D:/files");
 
@@ -50,7 +51,7 @@ public abstract class AbstractSpy {
             Files.createDirectories(this.root = this.ROOT.resolve(this.targetPath));
 
             // DB 커넥션
-            $db = new DB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
+            $db = new NativeDB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
 
             // DB에서 uuid 가지고 오기
             $db.execute("SELECT uuid FROM spy_data WHERE path LIKE '" + uri + "%'", (rs) -> {

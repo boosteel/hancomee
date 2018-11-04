@@ -1,8 +1,7 @@
 package com.hancomee.web;
 
-import com.hancomee.util.HTTP;
-import com.hancomee.util.Patterns;
-import com.hancomee.util.Strings;
+import com.boosteel.http.HTTP;
+import com.boosteel.util.support.Patterns;
 import com.hancomee.web.controller.AudioBay;
 import com.hancomee.web.controller.NaverCafe;
 import com.hancomee.web.domain.BayBean;
@@ -19,7 +18,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.hancomee.util.Strings.unEscapeHTML;
 
 public class AnyTest {
 

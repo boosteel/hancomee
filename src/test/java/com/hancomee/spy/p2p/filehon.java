@@ -1,8 +1,8 @@
 package com.hancomee.spy.p2p;
 
+import com.boosteel.http.HTTP;
+import com.boosteel.util.support.Patterns;
 import com.hancomee.spy.p2p.core.P2P;
-import com.hancomee.util.HTTP;
-import com.hancomee.util.Patterns;
 import org.junit.Test;
 
 import java.net.URLEncoder;

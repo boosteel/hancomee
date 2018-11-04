@@ -1,8 +1,8 @@
 package com.hancomee;
 
-import com.hancomee.util.HTTP;
-import com.hancomee.util.Patterns;
-import com.hancomee.util.Strings;
+import com.boosteel.http.HTTP;
+import com.boosteel.util.support.Patterns;
+import com.boosteel.util.support.Strings;
 import org.junit.Test;
 
 import java.nio.file.Files;

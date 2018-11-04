@@ -210,7 +210,7 @@ export namespace DOM {
     function __toggleClass(array: string[], values: string[]) {
         let l = values.length, i = 0, pos = -1, result = [], v, removal;
         for (; i < l; i++) {
-            if (removal = (v = values[i])[0] === '!') {
+            if (removal = ((v = values[i])[0] === '!')) {
                 if ((pos = array.indexOf(v.slice(1))) !== -1) array.splice(pos, 1);
             } else {
                 if ((pos = array.indexOf(v)) === -1) result.push(v);

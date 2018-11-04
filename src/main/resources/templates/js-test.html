@@ -14,420 +14,146 @@
 </head>
 <body>
 
+<button id="prev">이전</button><button id="next">이후</button>
+<div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item 0">
+            <img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=777&amp;fg=555&amp;text=First slide" alt="First slide [800x400]" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_166a6447841%20text%20%7B%20fill%3A%23555%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_166a6447841%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22285.921875%22%20y%3D%22217.7%22%3EFirst%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" data-holder-rendered="true">
+        </div>
+        <div class="carousel-item active 1">
+            <img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=666&amp;fg=444&amp;text=Second slide" alt="Second slide [800x400]" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_166a6447844%20text%20%7B%20fill%3A%23444%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_166a6447844%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23666%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22247.3203125%22%20y%3D%22217.7%22%3ESecond%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" data-holder-rendered="true">
+        </div>
+        <div class="carousel-item 2">
+            <img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=555&amp;fg=333&amp;text=Third slide" alt="Third slide [800x400]" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_166a6447846%20text%20%7B%20fill%3A%23333%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_166a6447846%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23555%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22277%22%20y%3D%22217.7%22%3EThird%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" data-holder-rendered="true">
+        </div>
+    </div>
+</div>
 
+<form class="form">
 
-
-
-<!-------------------------** Template **------------------------------->
-<script id="customerTable" type="text/html">
-    <div class="panel">
-        <div class="header">
-            <span class="title">거래처</span>
-            <div class="ctrl">
-                <span class="v-btn h-inline-block" data-event="save">저장</span>
-                <span class="v-btn h-hidden" data-event="modify">수정</span>
-                <span class="v-btn h-inline-block" data-event="cancel">취소</span>
+    <div class="title">고객정보</div>
+    <div class="form-group row">
+        <label for="date" class="col-sm-2 col-form-label">날짜</label>
+        <div class="col-sm-2 dropdown">
+            <input type="text" required class="form-control date" data-toggle="dropdown" name="date" id="date">
+            <div class="date-table dropdown-menu"></div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="name" class="col-sm-2 col-form-label">성명</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="name" id="name">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="birth" class="col-sm-2 col-form-label">생년월일</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="birth" id="birth">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">성별</label>
+        <div class="col-sm-10">
+            <input class="check-btn" type="radio" name="sex" value="0" id="female" checked>
+            <label for="female">여성</label>
+            <input class="check-btn" type="radio" name="sex" value="1" id="male">
+            <label for="male">남성</label>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">결혼여부</label>
+        <div class="col-sm-10">
+            <input class="check-btn" type="radio" name="married" value="0" id="single" checked>
+            <label for="single">미혼</label>
+            <input class="check-btn" type="radio" name="married" value="1" id="double">
+            <label for="double">기혼</label>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="job" class="col-sm-2 col-form-label">직업</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="job" id="job" value="디자이너">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="mobile1" class="col-sm-2 col-form-label">휴대전화</label>
+        <div class="form-group row">
+            <label for="mobile1" class="col-sm-2 col-form-label">휴대전화</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="mobile" id="mobile1" data-index="0" onautocomplete="false">
             </div>
-        </div>
-        <div class="body">
-            <table class="table">
-                <tbody>
-                <tr>
-                    <th>상호</th>
-                    <td colspan="3">
-                        <span class="h-hidden" data-name="name"></span>
-                        <input class="h-block" name="name">
-                    </td>
-                </tr>
-                <tr>
-                    <th>사업자번호</th>
-                    <td>
-                        <span class="h-hidden" data-name="biz_num"></span>
-                        <input class="h-block" name="biz_num">
-                    </td>
-                    <th>대표자</th>
-                    <td>
-                        <span class="h-hidden" data-name="ceo"></span>
-                        <input class="h-block" name="ceo">
-                    </td>
-                </tr>
-                <tr>
-                    <th>업태</th>
-                    <td>
-                        <span class="h-hidden" data-name="biz_con"></span>
-                        <input class="h-block" name="biz_con">
-                    </td>
-                    <th>종목</th>
-                    <td>
-                        <span class="h-hidden" data-name="biz_type"></span>
-                        <input class="h-block" name="biz_type">
-                    </td>
-                </tr>
-                <tr>
-                    <th>휴대전화</th>
-                    <td>
-                        <span class="h-hidden" data-name="mobile"></span>
-                        <input class="h-block" name="mobile">
-                    </td>
-                    <th>이메일</th>
-                    <td>
-                        <span class="h-hidden" data-name="email"></span>
-                        <input class="h-block" name="email">
-                    </td>
-                </tr>
-                <tr>
-                    <th>유선전화</th>
-                    <td>
-                        <span class="h-hidden" data-name="tel"></span>
-                        <input class="h-block" name="tel">
-                    </td>
-                    <th>팩스</th>
-                    <td>
-                        <span class="h-hidden" data-name="fax"></span>
-                        <input class="h-block" name="fax">
-                    </td>
-                </tr>
-                <tr>
-                    <th>주소</th>
-                    <td colspan="3">
-                        <span class="h-hidden" data-name="address"></span>
-                        <input class="h-block" name="address">
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</script>
-
-
-<script id="workMemo" type="text/html">
-    <div data-self="ele">
-        <div class="value">
-            <pre data-name="value"></pre>
-        </div>
-        <div class="ctrl">
-            <span class="datetime" data-name="datetime" data-type="date:yyyy-MM-dd(E) HH:mm:ss"></span>
-            <span class="v-btn" data-event="modify">수정</span>
-            <span class="v-btn" data-event="delete">삭제</span>
-        </div>
-    </div>
-</script>
-
-
-<script id="workMemoForm" type="text/html">
-    <div class="d-form">
-        <div class="textarea">
-            <textarea></textarea>
-        </div>
-        <div class="ctrl">
-            <span class="v-btn" data-event="confirm">확인</span>
-            <span class="v-btn" data-event="cancel">취소</span>
-        </div>
-    </div>
-</script>
-
-<script id="itemTable" type="text/html">
-    <table class="table">
-        <thead>
-        <tr>
-            <th>품목</th>
-            <th>규격</th>
-            <th>수량</th>
-            <th>단가</th>
-            <th>금액</th>
-            <th>부가세</th>
-            <th>비고</th>
-            <th>img</th>
-            <th>file</th>
-            <th>..</th>
-            <th>..</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr class="work-item" data-self="itemEle">
-            <td data-name="subject"></td>
-            <td data-name="detail"></td>
-            <td data-name="count" data-type="number"></td>
-            <td data-name="price" data-type="number"></td>
-            <td data-name="vat" data-type="number"></td>
-            <td data-name="total" data-type="number"></td>
-            <td data-name="memo"></td>
-            <td data-name="draft" data-event="img"></td>
-            <td>
-                <div class="dropdown print-file">
-                    <span data-toggle="dropdown"></span>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <div class="add">파일 등록</div>
-                        <ul class="file">
-                            <li><a class="thumb"></a></li>
-                            <li>
-                                <span data-print="original_name"></span>.<span data-print="filetype"></span>
-                            </li>
-                            <li><span data-print="size" data-type="filesize"></span></li>
-                            <li><span data-print="datetime" data-type="date:yyyy-MM-dd(E) HH:mm:ss"></span></li>
-                        </ul>
-                    </div>
-                </div>
-            </td>
-            <td class="ctrl">
-                <span class="v-btn" data-event="modify">수정</span>
-            </td>
-            <td class="ctrl">
-                <span class="v-btn" data-event="delete">삭제</span>
-            </td>
-        </tr>
-        <tr class="work-item-form d-form">
-            <td>
-                <input name="subject" required>
-            </td>
-            <td>
-                <input name="detail">
-            </td>
-            <td>
-                <input name="count" type="number">
-            </td>
-            <td>
-                <input name="price" type="number">
-            </td>
-            <td>
-                <input name="vat" type="number">
-            </td>
-            <td>
-                <input name="total" type="number">
-            </td>
-            <td>
-                <input name="memo">
-            </td>
-            <td></td>
-            <td></td>
-            <td class="ctrl">
-                <span class="v-btn" data-event="confirm">확인</span>
-            </td>
-            <td class="ctrl">
-                <span class="v-btn" data-event="cancel">취소</span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</script>
-
-
-<script id="workRef" type="text/html">
-    <ul>
-        <li><a class="thumb"></a></li>
-        <li>
-            <span data-name="original_name"></span>.<span data-name="filetype"></span>
-        </li>
-        <li><span data-name="size" data-type="filesize"></span></li>
-        <li><span data-name="datetime" data-type="date:yyyy-MM-dd(E) HH:mm:ss"></span></li>
-    </ul>
-</script>
-
-<script id="fileUploadItem" type="text/html">
-    <div>
-        <span data-name="index"></span>
-        <span data-name="icon"></span>
-        <span data-name="size" data-type="filesize"></span>
-        <span data-name="name"></span>
-    </div>
-</script>
-
-<script id="fileUpload" type="text/html">
-    <div class="file-upload">
-        <div class="header">
-            <span class="v-btn" data-event="on">시작</span>
-            <span class="v-btn" data-event="off">종료</span>
-        </div>
-        <div class="body">
-            <div class="slide upload-file">
-                <div class="slide-bar"></div>
-                <span class="info">50%</span>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="mobile" id="mobile2" data-index="1" onautocomplete="false">
             </div>
-            <div class="slide upload-files">
-                <div class="slide-bar"></div>
-                <span class="info">1 / 5</span>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="mobile" id="mobile3" data-index="2" onautocomplete="false">
             </div>
-        </div>
-        <div class="footer">
-            <div class="list"></div>
+
         </div>
     </div>
-</script>
-
-
-<script id="imgScreen" type="text/html">
-    <div class="img-screen">
-        <div class="header">
-            <span class="title"></span>
-            <span class="count"></span>
-            <span class="close" data-event="close">닫기</span>
-        </div>
-        <span class="before" data-event="move" data-value="v:-1">&lt;</span>
-        <span class="after" data-event="move" data-value="v:1">&gt;</span>
-        <div class="screen"></div>
-    </div>
-</script>
-
-<!-------------------------** Template **------------------------------->
-
-
-<nav>
-</nav>
-
-
-<main class="container-fluid">
-
-    <div class="row">
-
-
-        <!---- 타이틀 & 총가격 ---->
-        <div class="col-7">
-            <div class="panel">
-                <div id="title" class="header">
-                    <div class="info">
-                        <div class="state dropdown">
-                            <span data-toggle="dropdown">
-                                <span class="value">작업대기</span>
-                                <span class="arrow">▼</span>
-                            </span>
-                            <div class="dropdown-menu dropdown-menu-right" data-event="state">
-                                <ul data-dismiss>
-                                    <li><span data-value="state:0">작업대기</span></li>
-                                    <li><span data-value="state:1">시안검토</span></li>
-                                    <li><span data-value="state:2">시안완료</span></li>
-                                    <li><span data-value="state:3">제작중</span></li>
-                                    <li><span data-value="state:4">입고</span></li>
-                                    <li><span data-value="state:5">납품</span></li>
-                                    <li><span data-value="state:6">완료</span></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <span class="uuid">
-                            <i>No.</i>
-                            <span data-name="uuid"></span>
-                        </span>
-                        <span class="datetime" data-name="datetime"
-                              data-type="date:yyyy-MM-dd(E) HH:mm:ss"></span>
-                    </div>
-
-                    <div class="title">
-                        <span class="customer" data-name="customer.name"></span>
-                        <div class="value h-hidden">
-                            <span data-name="title">제목</span>
-                            <span class="v-btn" data-event="modify">수정</span>
-                        </div>
-                        <div class="h-block">
-                            <input>
-                            <span class="v-btn" data-event="confirm">확인</span>
-                            <span class="v-btn" data-event="cancel">취소</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="sum" class="body">
-                    <table class="table">
-                        <tbody>
-                        <tr>
-                            <td rowspan="3" class="work-text">
-                                <div>
-                                    <div class="ctrl">
-                                        <span class="v-btn h-hidden" data-event="modify">수정</span>
-                                        <span class="v-btn h-inline-block" data-event="confirm">확인</span>
-                                        <span class="v-btn h-inline-block" data-event="reset">취소</span>
-                                    </div>
-                                    <span>견적 메모 (※고객에게 전달할 메세지)</span>
-                                </div>
-                                <textarea disabled></textarea>
-                            </td>
-                            <th class="total">총액</th>
-                            <td class="total">
-                                <span class="count" data-name="item_len"></span>
-                                <span class="num" data-name="total" data-type="number"></span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="price">단가</th>
-                            <td class="price" data-name="price" data-type="number"></td>
-                        </tr>
-                        <tr>
-                            <th class="vat">부가세</th>
-                            <td class="vat" data-name="vat" data-type="number"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-        </div>
-
-        <!---- 거래처 정보 ---->
-        <div class="col-5" id="customer">
-        </div>
-
-    </div>
-
-
-    <div class="row">
-
-        <!---- 작업내역 ---->
-        <div class="col-12">
-            <div id="work-item" class="panel">
-                <div class="header">
-                    <span class="title">작업 내역</span>
-                    <div class="ctrl">
-                        <span class="v-btn" data-event="create">추가</span>
-                    </div>
-                </div>
-                <div class="body"></div>
-            </div>
+    <div class="form-group row">
+        <label for="address" class="col-sm-2 col-form-label">주소</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="address" id="address">
         </div>
     </div>
 
-
-    <div class="row">
-
-        <!---- 작업 메모 ---->
-        <div class="col-6">
-            <div id="work-memo" class="panel">
-                <div class="header">
-                    <span class="title">작업 메모</span>
-                </div>
-                <div class="body">
-                    <div class="list"></div>
-                </div>
-                <div class="footer">
-                    <div class="form">
-                        <div class="textarea">
-                            <textarea></textarea>
-                        </div>
-                        <span class="confirm" data-event="confirm">
-                            등록
-                        </span>
-                    </div>
-                </div>
-            </div>
+    <div class="title">관리정보</div>
+    <div class="form-group row">
+        <label for="tall" class="col-sm-2 col-form-label">신장</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control" name="tall" id="tall">
         </div>
-
-        <!---- 작업파일 ---->
-        <div class="col-6">
-            <div id="work-ref" class="panel">
-                <div class="header">
-                    <span class="title">작업 파일</span>
-                    <div class="ctrl">
-                        <span class="v-btn" data-event="add">추가</span>
-                    </div>
-                    <input class="hide add-input" type="file" multiple>
-                </div>
-                <div class="body"></div>
-            </div>
+        <div class="col-sm-2">
+            <span>Cm</span>
         </div>
     </div>
-
-
-</main>
-
+    <div class="form-group row">
+        <label for="weight" class="col-sm-2 col-form-label">몸무게</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control" name="weight" id="weight">
+        </div>
+        <div class="col-sm-2">
+            <span>Kg</span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">혈액형</label>
+        <div class="col-sm-10">
+            <input class="check-btn" type="radio" name="blood" value="A" id="a" checked>
+            <label for="a">A형</label>
+            <input class="check-btn" type="radio" name="blood" value="B" id="b">
+            <label for="b">B형</label>
+            <input class="check-btn" type="radio" name="blood" value="O" id="o">
+            <label for="o">O형</label>
+            <input class="check-btn" type="radio" name="blood" value="AB" id="ab">
+            <label for="ab">AB형</label>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">피부상태</label>
+        <div class="col-sm-10">
+            <input class="check-btn" type="radio" name="skin" value="0" id="skin-1" checked>
+            <label for="skin-1">건성</label>
+            <input class="check-btn" type="radio" name="skin" value="1" id="skin-2">
+            <label for="skin-2">중성</label>
+            <input class="check-btn" type="radio" name="skin" value="2" id="skin-3">
+            <label for="skin-3">지성</label>
+            <input class="check-btn" type="radio" name="skin" value="3" id="skin-4">
+            <label for="skin-4">복합성</label>
+            <input class="check-btn" type="radio" name="skin" value="4" id="skin-5">
+            <label for="skin-5">민감성</label>
+            <input class="check-btn" type="radio" name="skin" value="5" id="skin-6">
+            <label for="skin-6">기타</label>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="operation" class="col-sm-2 col-form-label">수술부위</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="operation" id="operation">
+        </div>
+    </div>
+</form>
 
 </body>
 </html>

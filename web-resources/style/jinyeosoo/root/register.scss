@@ -1,0 +1,18 @@
+@import "../../mixins";
+@import "../variables";
+
+#register {
+
+  position: relative;
+
+  .info {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 70px;
+    background-color: #6785a2;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+}

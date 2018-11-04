@@ -65,7 +65,8 @@ $ready(() => {
             })(aside.querySelectorAll('li')),
 
             spa = new SPA({
-                before(pathname) {
+                defaultURL: 'list',
+                before({pathname}: iSPA.Info) {
                     asideMenu(pathname);
                     main.className = 'load';
                     window.scrollTo(0, 0);

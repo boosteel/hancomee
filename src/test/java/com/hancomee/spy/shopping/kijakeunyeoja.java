@@ -1,10 +1,10 @@
 package com.hancomee.spy.shopping;
 
+import com.boosteel.http.HTTP;
+import com.boosteel.util.support.Patterns;
+import com.boosteel.util.support.Range;
 import com.hancomee.spy.AbstractSpy;
 import com.hancomee.spy.SpyData;
-import com.hancomee.util.HTTP;
-import com.hancomee.util.Patterns;
-import com.hancomee.util.Range;
 import org.junit.Test;
 import org.mockito.Spy;
 

@@ -1,8 +1,6 @@
 package com.hancomee.spy.p2p.core;
 
 
-import com.hancomee.util.Patterns;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

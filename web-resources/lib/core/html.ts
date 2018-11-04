@@ -66,7 +66,7 @@ export class EleMap {
     setText(obj = dummy, directive = dummy) {
         let {length: l, keys} = this, i = 0, key;
         for (; i < l; i++) {
-            if (directive[key = keys[i]]) directive[key](this[i], obj);
+            if (directive[key = keys[i]]) directive[key](this[i], obj[key], obj);
             else $setText(this[i], read(key, obj));
         }
 
@@ -145,7 +145,12 @@ export namespace HTML {
         let sChar = selector[0],
             l = selector.length - 1;
 
-        if (sChar === '=') {
+        if(sChar === '!') {
+            let r = context.querySelector(selector.substring(1));
+            r.parentNode.removeChild(r);
+            return r;
+        }
+        else if (sChar === '=') {
             return createFragment(selector.substring(1));
         }
         // ① 'select[]'  ==> querySelectorAll()
@@ -179,10 +184,7 @@ export namespace HTML {
         }
         // ③ querySelector()
         else {
-            if (sChar === '#' && selector.indexOf(' ') === -1)
-                return document.getElementById(selector.slice(1));
-            else
-                return context.querySelector(selector);
+             return context.querySelector(selector);
         }
     }
     

@@ -1,0 +1,10 @@
+@import "../../mixins";
+@import "../variables";
+
+#intro {
+  min-height: 600px;
+  background: {
+    image: url(/img/jinyeosoo/j.png);
+    repeat: no-repeat;
+  }
+}

@@ -1,0 +1,75 @@
+
+
+main {
+  > div {
+    &.move-hide, &.move-show {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      animation-timing-function: ease;
+      animation-fill-mode: both;
+      animation-duration: 1s;
+    }
+
+    &.move-hide {
+      &.move-left {
+        animation-name: move-hide-left;
+      }
+      &.move-right {
+        animation-name: move-hide-right;
+      }
+    }
+
+    &.move-show {
+      &.move-left {
+        animation-name: move-show-left;
+      }
+      &.move-right {
+        animation-name: move-show-right;
+      }
+    }
+  }
+}
+
+
+@keyframes move-hide-left {
+
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(-100%, 0);
+  }
+}
+
+@keyframes move-hide-right {
+
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(100%, 0);
+  }
+}
+
+@keyframes move-show-left {
+
+  from {
+    transform: translate(100%, 0);
+  }
+  to {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes move-show-right {
+
+  from {
+    transform: translate(-100%, 0);
+  }
+  to {
+    transform: translate(0, 0);
+  }
+}
+

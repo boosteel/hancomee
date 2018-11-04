@@ -1,6 +1,7 @@
 package com.hancomee.web.controller.work;
 
-import com.hancomee.util.db.anno.*;
+import com.boosteel.nativedb.NativeDB;
+import com.boosteel.nativedb.core.anno.*;
 import com.hancomee.web.controller.support.WorkList;
 
 import java.sql.ResultSet;

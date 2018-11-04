@@ -1,10 +1,11 @@
 package com.hancomee.spy.p2p.core;
 
-import com.hancomee.util.db.DB;
-import com.hancomee.util.Patterns;
+import com.boosteel.nativedb.NativeDB;
+import com.boosteel.util.support.Patterns;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +19,7 @@ import static com.hancomee.spy.p2p.core._UTIL.quotes;
 
 public class _db extends _base {
 
-    DB db = new DB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
+    NativeDB db = new NativeDB("jdbc:mariadb://localhost:3306/hancomee", "root", "ko9984");
     Set<String> existsNames = new HashSet<>();
 
     // (절대 변하면 안되는) 4가지 값을 문자열로 합쳐서 중복을 검사한다.
@@ -36,10 +37,19 @@ public class _db extends _base {
     @Test
     public void test() throws Exception {
 
-        save("D:\\files\\Download\\181014");
-
+        //save("D:\\files\\Download\\181020");
+        tour("D:\\files\\web_down");
     }
-
+    public void tour(String path) throws Exception {
+        try(DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(path))) {
+            for(Path p : stream) {
+                if(Files.isDirectory(p))
+                    tour(p.toAbsolutePath().toString());
+            }
+        } finally {
+            save(path);
+        }
+    }
     Pattern r_read = Pattern.compile("<---------------------------\t(.*?)\t--------------------------->");
 
     // 최초 저장은 6가지 값만 있으면 된다.

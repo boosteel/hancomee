@@ -1,7 +1,7 @@
 package com.hancomee.web.controller;
 
-import com.hancomee.util.HTTP;
-import com.hancomee.util.Patterns;
+import com.boosteel.http.HTTP;
+import com.boosteel.util.support.Patterns;
 import com.hancomee.web.domain.BayBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;

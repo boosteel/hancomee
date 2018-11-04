@@ -1,0 +1,81 @@
+
+.data-container {
+  .add {
+
+    float: right;
+
+    padding: 5px 22px;
+    margin-bottom: 15px;
+
+    font-size: 14px;
+    border: 2px solid #9ebad5;
+    background-color: white;
+    border-radius: 17px;
+
+    transition: background-color .3s ease;
+
+    &:hover {
+      background-color: #eaf1f9;
+    }
+  }
+}
+
+table.data-table {
+  width: 100%;
+
+  > thead, > tbody {
+    > tr {
+      > th, > td {
+        &:last-child {
+          width: 1%;
+
+          // 수정 삭제버튼
+          > span:first-child {
+            padding-right: 7px;
+            margin-right: 2px;
+            border-right: 1px solid;
+          }
+        }
+      }
+    }
+  }
+
+  > thead {
+    > tr {
+      > th {
+        padding: 6px 15px;
+        font-size: 14px;
+        background-color: $main-color-xs;
+        & + th {
+          border-left: 1px solid white;
+        }
+      }
+    }
+  }
+
+  > tbody {
+    > tr {
+
+      > td {
+        padding: 10px 15px;
+
+        label {
+          font-size: 12px;
+          & + .check-btn {
+            margin-left: 5px;
+          }
+        }
+      }
+
+      &.modify[data-form="modify"] + tr {
+        display: none;
+      }
+
+      & + tr {
+        > td {
+          border-top: 1px solid $main-color-xs;
+        }
+      }
+    }
+  }
+}

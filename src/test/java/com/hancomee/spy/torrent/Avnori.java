@@ -1,7 +1,7 @@
 package com.hancomee.spy.torrent;
 
-import com.hancomee.util.HTTP;
-import com.hancomee.util.Patterns;
+import com.boosteel.http.HTTP;
+import com.boosteel.util.support.Patterns;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;

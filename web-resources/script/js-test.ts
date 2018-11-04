@@ -1,35 +1,25 @@
-import {HTML} from "../lib/core/html";
 import {$ready} from "../lib/core/core";
+import {Forms} from "../lib/core/form/Forms";
+import {HTML} from "../lib/core/html";
+import selectAll = HTML.selectAll;
+import {_forEach, _map} from "../lib/core/_func/array";
+import register from "./jinyeosoo/root/register";
 import {DOM} from "../lib/core/dom";
-import {Access} from "../lib/core/access";
-import select = HTML.select;
-import createTemplate = HTML.createTemplate;
-import createFragment = HTML.createFragment;
-import htmlParser = HTML.htmlParser;
-import {Work} from "./hancomee/src/domain/Work";
-import nthChildren = HTML.nthChildren;
+import className = DOM.className;
+import {carousel} from "../lib/core/component/carousel";
 
 
 $ready(() => {
 
+    let ctrl = carousel(document.querySelector('.carousel-inner'));
 
-    type M<T> = {
+    ctrl.loop();
 
-        select: string[]
-        after: (t: T) => void
-        before: () => T
-    }
-
-    function a(d: M<any>) {
-        d.after(d.before());
-    }
-
-    a({
-        select: [],
-        after: (a) => {
-        },
-        before() {
-            return [];
-        }
+    document.getElementById('next').addEventListener('click', () => {
+        ctrl.right();
     })
-})
+
+    document.getElementById('prev').addEventListener('click', () => {
+        ctrl.left();
+    })
+});

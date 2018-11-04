@@ -1,0 +1,82 @@
+@import "../mixin";
+
+#intro {
+
+  .screen {
+    background: {
+      image: url(/img/boosteel/bg-gray.png);
+      repeat: no-repeat;
+      size: cover;
+      position: center 7rem;
+    }
+  }
+
+  .intro-img {
+    background: {
+      size: contain;
+      repeat: no-repeat;
+      position-x: right;
+      position-y: bottom;
+    }
+    text-align: right;
+
+    > img {
+      transform: rotate(4deg);
+      height: 55vh;
+      opacity: .8;
+    }
+  }
+
+  .b-explain {
+
+    .headline {
+      display: flex;
+      justify-content: center;
+
+      > span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+        width: 12rem;
+        height: 12rem;
+        border-radius: 50%;
+        border: 3px solid;
+        font-size: 1.7rem;
+        color: #8a8a8a;
+
+        > i {
+          margin-top: -.4rem;
+          font-size: .9rem;
+        }
+      }
+
+      .steel {
+        margin-left: -1.6rem;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-up(md) {
+  #intro {
+
+    .screen {
+      background: {
+        size: 70%;
+        position: 140% center;
+      }
+    }
+
+    .intro-img {
+      > img {
+        position: relative;
+        top: -70vh;
+        transform: rotate(20deg);
+        height: 180vh;
+        opacity: .8;
+      }
+    }
+  }
+}

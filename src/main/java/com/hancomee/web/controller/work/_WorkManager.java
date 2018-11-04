@@ -1,6 +1,6 @@
 package com.hancomee.web.controller.work;
 
-import com.hancomee.util.db.DB;
+import com.boosteel.nativedb.NativeDB;
 import com.hancomee.web.controller.support.WorkList;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import java.util.Map;
 @Component
 public class _WorkManager {
 
-    private DB db = new DB("jdbc:mariadb://115.23.187.44:3306/hancomee", "root", "ko9984");
+    private NativeDB db = new NativeDB("jdbc:mariadb://115.23.187.44:3306/hancomee", "root", "ko9984");
     private _WorkSQL SQL;
 
     public _WorkManager() {
@@ -25,7 +25,7 @@ public class _WorkManager {
 
 
     @Bean
-    public DB db() {
+    public NativeDB db() {
         return this.db;
     }
 

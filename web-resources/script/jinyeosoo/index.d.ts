@@ -1,0 +1,5 @@
+
+
+type InitData = {
+    aside: iEleMap
+}

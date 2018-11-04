@@ -1,8 +1,7 @@
 package com.hancomee.web.controller.work;
 
-import com.hancomee.util.db.DB;
-import com.hancomee.util.db.ResultSetAccess;
-import com.hancomee.util.db.SQL;
+import com.boosteel.nativedb.NativeDB;
+import com.boosteel.nativedb.core.ResultSetAccess;
 import com.hancomee.web.controller.support.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +15,7 @@ public class CustomerCtrl {
 
 
     @Autowired
-    DB workDB;
+    NativeDB workDB;
 
     @RequestMapping("get/{id}")
     @ResponseBody

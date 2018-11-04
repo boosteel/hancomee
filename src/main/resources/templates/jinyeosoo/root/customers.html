@@ -1,0 +1,29 @@
+<div id="customers">
+    <div class="page-title">고객 리스트</div>
+    <table>
+        <thead>
+        <tr>
+            <th>등록일</th>
+            <th>이름</th>
+            <th>생년월일</th>
+            <th>피부타입</th>
+            <th>휴대전화</th>
+            <th>주소</th>
+            <th>총결제액</th>
+            <th>결재횟수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-value="id:{{id}}" data-event="move">
+            <td>{{datetime | date : 'yyyy-MM-dd'}}</td>
+            <td>{{name}}</td>
+            <td>{{birth}}</td>
+            <td>{{$skin}}</td>
+            <td>{{mobile}}</td>
+            <td>{{address}}</td>
+            <td>{{account_total | number}}</td>
+            <td>{{account_count | number}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

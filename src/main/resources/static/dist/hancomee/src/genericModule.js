@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 17);
+/******/ 	return __webpack_require__(__webpack_require__.s = 23);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -424,6 +424,72 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
+    // 숫자 자리수 맞추기
+    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
+        'yyyy': function (d) { return d.getFullYear(); },
+        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
+        'M': function (d) { return d.getMonth() + 1; },
+        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
+        'd': function (d) { return d.getDate(); },
+        'dd': function (d) { return zeroFill(d.getDate()); },
+        'E': function (d) { return __day[d.getDay()]; },
+        'HH': function (d) { return zeroFill(d.getHours()); },
+        'hh': function (d) { return zeroFill(d.getHours()); },
+        'mm': function (d) { return zeroFill(d.getMinutes()); },
+        'ss': function (d) { return zeroFill(d.getSeconds()); },
+        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
+    };
+    function _toKor(date, now) {
+        if (now === void 0) { now = new Date().getTime(); }
+        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
+        if (duration > day)
+            return Math.floor(duration / day) + '일 전';
+        if (duration > hour)
+            return Math.floor(duration / hour) + '시간 전';
+        if (duration > minute)
+            return Math.floor(duration / minute) + '분 전';
+        if (duration > second)
+            return Math.floor(duration / second) + '초 전';
+    }
+    exports._toKor = _toKor;
+    function _dateFormat(_date, f) {
+        if (!_date)
+            return '';
+        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
+        if (!f)
+            return _datetime(d);
+        return f.replace(r_datetime, function ($1) {
+            if (temp = _switch[$1])
+                return temp(d);
+            else
+                return $1;
+        });
+    }
+    exports._dateFormat = _dateFormat;
+    ;
+    function _datetime(val) {
+        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
+            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
+    }
+    exports._datetime = _datetime;
+    function _date(val) {
+        var m = val.getMonth() + 1, d = val.getDate();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
+    }
+    exports._date = _date;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var DOM;
     (function (DOM) {
         var doc = document;
@@ -604,7 +670,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         function __toggleClass(array, values) {
             var l = values.length, i = 0, pos = -1, result = [], v, removal;
             for (; i < l; i++) {
-                if (removal = (v = values[i])[0] === '!') {
+                if (removal = ((v = values[i])[0] === '!')) {
                     if ((pos = array.indexOf(v.slice(1))) !== -1)
                         array.splice(pos, 1);
                 }
@@ -639,192 +705,72 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
-    // 숫자 자리수 맞추기
-    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
-        'yyyy': function (d) { return d.getFullYear(); },
-        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
-        'M': function (d) { return d.getMonth() + 1; },
-        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
-        'd': function (d) { return d.getDate(); },
-        'dd': function (d) { return zeroFill(d.getDate()); },
-        'E': function (d) { return __day[d.getDay()]; },
-        'HH': function (d) { return zeroFill(d.getHours()); },
-        'hh': function (d) { return zeroFill(d.getHours()); },
-        'mm': function (d) { return zeroFill(d.getMinutes()); },
-        'ss': function (d) { return zeroFill(d.getSeconds()); },
-        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
-    };
-    function _toKor(date, now) {
-        if (now === void 0) { now = new Date().getTime(); }
-        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
-        if (duration > day)
-            return Math.floor(duration / day) + '일 전';
-        if (duration > hour)
-            return Math.floor(duration / hour) + '시간 전';
-        if (duration > minute)
-            return Math.floor(duration / minute) + '분 전';
-        if (duration > second)
-            return Math.floor(duration / second) + '초 전';
-    }
-    exports._toKor = _toKor;
-    function _dateFormat(_date, f) {
-        if (!_date)
-            return '';
-        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
-        if (!f)
-            return _datetime(d);
-        return f.replace(r_datetime, function ($1) {
-            if (temp = _switch[$1])
-                return temp(d);
-            else
-                return $1;
-        });
-    }
-    exports._dateFormat = _dateFormat;
-    ;
-    function _datetime(val) {
-        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
-            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
-    }
-    exports._datetime = _datetime;
-    function _date(val) {
-        var m = val.getMonth() + 1, d = val.getDate();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
-    }
-    exports._date = _date;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, dom_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    function _makeArray(obj) {
-        var r = [], l = obj.length;
-        while (l-- > 0)
-            r[l] = obj[l];
-        return r;
-    }
-    exports._makeArray = _makeArray;
-    function _forEach(obj, h) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (h(obj[i], i++) === false)
-                break;
-        }
-        return obj;
-    }
-    exports._forEach = _forEach;
-    function _forEachReverse(obj, h) {
-        var i = obj.length;
-        while (i-- > 0) {
-            if (h(obj[i], i) === false)
-                break;
-        }
-        return obj;
-    }
-    exports._forEachReverse = _forEachReverse;
-    function _reduce(obj, h, r) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            r = h(r, obj[i], i++);
-        }
-        return r;
-    }
-    exports._reduce = _reduce;
-    function _map(obj, h) {
-        var r = [], i = 0, l = obj.length;
-        while (i < l) {
-            r[i] = h(obj[i], i++);
-        }
-        return r;
-    }
-    exports._map = _map;
-    function _colMap(values, size, handler) {
-        var r = [], v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
-        while (index < l) {
-            if (index % size === 0) {
-                v && (r[rIndex] = handler(v, rIndex++));
-                v = [];
-                vIndex = 0;
-            }
-            v[vIndex++] = values[index++];
-        }
-        v && (r[rIndex] = handler(v, rIndex++));
-        return r;
-    }
-    exports._colMap = _colMap;
-    function _colReduce(values, size, handler, r) {
-        var v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
-        while (index < l) {
-            if (index % size === 0) {
-                v && (r = handler(r, v, rIndex++));
-                v = [];
-                vIndex = 0;
-            }
-            v[vIndex++] = values[index++];
-        }
-        v && (r = handler(r, v, rIndex++));
-        return r;
-    }
-    exports._colReduce = _colReduce;
-    function _in(obj, filter, r) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (filter(obj[i], i++) === r)
-                return r;
-        }
-        return !r;
-    }
-    // true가 하나라도 있으면
-    function _inTrue(obj, filter) {
-        return _in(obj, filter, true);
-    }
-    exports._inTrue = _inTrue;
-    function _inFalse(obj, filter) {
-        return _in(obj, filter, false);
-    }
-    exports._inFalse = _inFalse;
-    function _everyTrue(obj, filter) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (filter(obj[i], i++) === false)
-                return false;
-        }
-        return true;
-    }
-    exports._everyTrue = _everyTrue;
-    function _everyFalse(obj, filter) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (filter(obj[i], i++) === true)
-                return false;
-        }
-        return true;
-    }
-    exports._everyFalse = _everyFalse;
+    var Toggle;
+    (function (Toggle) {
+        var className = dom_1.DOM.className;
+        var hasClass = dom_1.DOM.hasClass;
+        var r_dropdown = ['dropdown'], r_open = ['show', 'open'], active, act = function (dropdown, flag) {
+            className(dropdown, r_open, flag);
+            className(dropdown.querySelector('.dropdown-menu'), r_open, flag);
+            if (flag)
+                active = dropdown;
+            else
+                active = null;
+        };
+        (function () {
+            document.addEventListener('click', function (e) {
+                var ele = e.target, dropdown, btn = false, // 토글버튼인지 확인
+                dismiss = false; // dropdown 이하에 dismiss 설정 확인
+                // 순회
+                do {
+                    // dropdown 찾기
+                    if (hasClass(ele, r_dropdown)) {
+                        dropdown = ele;
+                        break;
+                    }
+                    // 끄기 버튼
+                    else if (ele.hasAttribute('data-dismiss'))
+                        dismiss = true;
+                    // 타켓 확인
+                    else if (ele.hasAttribute('data-toggle')) {
+                        if (ele.getAttribute('data-toggle') === 'dropdown')
+                            btn = dismiss = true;
+                        else
+                            return;
+                    }
+                } while (ele = ele.parentElement);
+                // 현재 활성화된게 있고, 찾은 dropdown과 다르다면 무조건 끈다.
+                if (active && active !== dropdown)
+                    act(active, false);
+                // ① dropdown 객체를 찾았을때
+                if (dropdown) {
+                    // 현재 열려져있다면 dismiss 체킹이 되어있을때만 없앤다.
+                    if (hasClass(dropdown, r_open)) {
+                        dismiss && act(dropdown, false);
+                    }
+                    // 아니라면 btn을 클릭했을 경우에만 켠다.
+                    else {
+                        btn && act(dropdown, true);
+                    }
+                }
+            });
+        })();
+    })(Toggle = exports.Toggle || (exports.Toggle = {}));
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-/* 6 */,
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(9), __webpack_require__(10), __webpack_require__(4), __webpack_require__(1), __webpack_require__(5), __webpack_require__(11), __webpack_require__(2), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(8), __webpack_require__(9), __webpack_require__(3), __webpack_require__(1), __webpack_require__(7), __webpack_require__(10), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var read = access_1.Access.read;
@@ -869,7 +815,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             var _a = this, l = _a.length, keys = _a.keys, i = 0, key;
             for (; i < l; i++) {
                 if (directive[key = keys[i]])
-                    directive[key](this[i], obj);
+                    directive[key](this[i], obj[key], obj);
                 else
                     $setText(this[i], read(key, obj));
             }
@@ -949,7 +895,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         HTML.nthChildren = nthChildren;
         function select(context, selector) {
             var sChar = selector[0], l = selector.length - 1;
-            if (sChar === '=') {
+            if (sChar === '!') {
+                var r_1 = context.querySelector(selector.substring(1));
+                r_1.parentNode.removeChild(r_1);
+                return r_1;
+            }
+            else if (sChar === '=') {
                 return createFragment(selector.substring(1));
             }
             // ① 'select[]'  ==> querySelectorAll()
@@ -981,10 +932,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             // ③ querySelector()
             else {
-                if (sChar === '#' && selector.indexOf(' ') === -1)
-                    return document.getElementById(selector.slice(1));
-                else
-                    return context.querySelector(selector);
+                return context.querySelector(selector);
             }
         }
         HTML.select = select;
@@ -1305,69 +1253,131 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, dom_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Toggle;
-    (function (Toggle) {
-        var className = dom_1.DOM.className;
-        var hasClass = dom_1.DOM.hasClass;
-        var r_dropdown = ['dropdown'], r_open = ['show', 'open'], active, act = function (dropdown, flag) {
-            className(dropdown, r_open, flag);
-            className(dropdown.querySelector('.dropdown-menu'), r_open, flag);
-            if (flag)
-                active = dropdown;
-            else
-                active = null;
-        };
-        (function () {
-            document.addEventListener('click', function (e) {
-                var ele = e.target, dropdown, btn = false, // 토글버튼인지 확인
-                dismiss = false; // dropdown 이하에 dismiss 설정 확인
-                // 순회
-                do {
-                    // dropdown 찾기
-                    if (hasClass(ele, r_dropdown)) {
-                        dropdown = ele;
-                        break;
-                    }
-                    // 끄기 버튼
-                    else if (ele.hasAttribute('data-dismiss'))
-                        dismiss = true;
-                    // 타켓 확인
-                    else if (ele.hasAttribute('data-toggle')) {
-                        if (ele.getAttribute('data-toggle') === 'dropdown')
-                            btn = dismiss = true;
-                        else
-                            return;
-                    }
-                } while (ele = ele.parentElement);
-                // 현재 활성화된게 있고, 찾은 dropdown과 다르다면 무조건 끈다.
-                if (active && active !== dropdown)
-                    act(active, false);
-                // ① dropdown 객체를 찾았을때
-                if (dropdown) {
-                    // 현재 열려져있다면 dismiss 체킹이 되어있을때만 없앤다.
-                    if (hasClass(dropdown, r_open)) {
-                        dismiss && act(dropdown, false);
-                    }
-                    // 아니라면 btn을 클릭했을 경우에만 켠다.
-                    else {
-                        btn && act(dropdown, true);
-                    }
-                }
-            });
-        })();
-    })(Toggle = exports.Toggle || (exports.Toggle = {}));
+    function _makeArray(obj) {
+        var r = [], l = obj.length;
+        while (l-- > 0)
+            r[l] = obj[l];
+        return r;
+    }
+    exports._makeArray = _makeArray;
+    function _forEach(obj, h) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (h(obj[i], i++) === false)
+                break;
+        }
+        return obj;
+    }
+    exports._forEach = _forEach;
+    function _selector(obj, h) {
+        var i = 0, l = obj.length, v;
+        while (i < l) {
+            if ((v = h(obj[i], i++)) !== undefined)
+                return v;
+        }
+        return undefined;
+    }
+    exports._selector = _selector;
+    function _forEachReverse(obj, h) {
+        var i = obj.length;
+        while (i-- > 0) {
+            if (h(obj[i], i) === false)
+                break;
+        }
+        return obj;
+    }
+    exports._forEachReverse = _forEachReverse;
+    function _reduce(obj, h, r) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            r = h(r, obj[i], i++);
+        }
+        return r;
+    }
+    exports._reduce = _reduce;
+    function _map(obj, h) {
+        var r = [], i = 0, l = obj.length;
+        while (i < l) {
+            r[i] = h(obj[i], i++);
+        }
+        return r;
+    }
+    exports._map = _map;
+    function _colMap(values, size, handler) {
+        var r = [], v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
+        while (index < l) {
+            if (index % size === 0) {
+                v && (r[rIndex] = handler(v, rIndex++));
+                v = [];
+                vIndex = 0;
+            }
+            v[vIndex++] = values[index++];
+        }
+        v && (r[rIndex] = handler(v, rIndex++));
+        return r;
+    }
+    exports._colMap = _colMap;
+    function _colReduce(values, size, handler, r) {
+        var v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
+        while (index < l) {
+            if (index % size === 0) {
+                v && (r = handler(r, v, rIndex++));
+                v = [];
+                vIndex = 0;
+            }
+            v[vIndex++] = values[index++];
+        }
+        v && (r = handler(r, v, rIndex++));
+        return r;
+    }
+    exports._colReduce = _colReduce;
+    function _in(obj, filter, r) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === r)
+                return r;
+        }
+        return !r;
+    }
+    // true가 하나라도 있으면
+    function _inTrue(obj, filter) {
+        return _in(obj, filter, true);
+    }
+    exports._inTrue = _inTrue;
+    function _inFalse(obj, filter) {
+        return _in(obj, filter, false);
+    }
+    exports._inFalse = _inFalse;
+    function _everyTrue(obj, filter) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === false)
+                return false;
+        }
+        return true;
+    }
+    exports._everyTrue = _everyTrue;
+    function _everyFalse(obj, filter) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === true)
+                return false;
+        }
+        return true;
+    }
+    exports._everyFalse = _everyFalse;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -1413,7 +1423,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1, number_1) {
@@ -1542,7 +1552,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -1558,8 +1568,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 12 */,
-/* 13 */
+/* 11 */,
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1757,113 +1767,24 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-/* 14 */,
-/* 15 */,
-/* 16 */,
-/* 17 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(18), __webpack_require__(3), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, spa_1, dom_1, array_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var className = dom_1.DOM.className;
-    var GenericModule = /** @class */ (function () {
-        function GenericModule(id, param) {
-            var _this = this;
-            this.param = param;
-            /*
-             *   이미 로드된 상황 (초기화)이고
-             *   쿼리없이 그대로 요청이 들어오면 기존에 작업중이던 화면을 그대로 내보내준다.
-             */
-            this.isLoad = false;
-            var div = document.createElement('div');
-            div.id = id;
-            this.element = div;
-            /*
-             *  모든 모듈이 공통적으로 가지는
-             *  ① 로딩 엘리먼트
-             *  ② 팝업 엘리먼트
-             */
-            div.innerHTML = '<div class="loading"></div><div id="pop1" class="popup"></div><div id="pop2" class="popup"></div>';
-            this.loadingElement = div.querySelector('.loading');
-            this.popElement = div.querySelector('#pop1');
-            this.pop2Element = div.querySelector('#pop2');
-            this._resolve = Promise.all([
-                // style과 html 로딩딩
-                spa_1.SPA.getStyle('/dist/hancomee/src/' + id + '.css'),
-                spa_1.SPA.getElement('hancomee/src/' + id)
-            ]).then(function (_a) {
-                var style = _a[0], frag = _a[1];
-                div.appendChild(style);
-                // <script>로 작성된 template html
-                /*
-                 *  존나 알 수 없는 일.
-                 *  병신같은 ie에서는 innerText와 (textConent, innerHTML) 값이 다르다..ㄷㄷ
-                 */
-                var templates = array_1._reduce(frag.querySelectorAll('script[type="text/html"]'), function (r, v) {
-                    frag.removeChild(v);
-                    v.id && (r[v.id] = v['innerText']);
-                    return r;
-                }, {});
-                // 하위 모듈 로직
-                _this.$init(div, frag, templates);
-                div.appendChild(frag);
-                return div;
-            });
-        }
-        // 로딩바
-        GenericModule.prototype.loading = function (flag) {
-            className(this.loadingElement, 'on', flag);
-            className(document.body, 'screen', flag);
-            return this;
-        };
-        // 팝업창
-        GenericModule.prototype.pop = function (element) {
-            var popElement = this.popElement, isOpen = !!element;
-            popElement.textContent = '';
-            isOpen && popElement.appendChild(element);
-            className(popElement, 'on', isOpen);
-            className(document.body, 'screen', isOpen);
-            return this;
-        };
-        // 팝업창
-        GenericModule.prototype.pop2 = function (element) {
-            var pop2Element = this.pop2Element, isOpen = !!element;
-            pop2Element.textContent = '';
-            isOpen && pop2Element.appendChild(element);
-            className(pop2Element, 'on', isOpen);
-            className(document.body, 'screen', isOpen);
-            return this;
-        };
-        GenericModule.prototype.init = function () {
-            return this._resolve;
-        };
-        GenericModule.prototype.load = function (param, search) {
-            // 이미 로드된 상태에서 쿼리없이 주소요청만 들어오면 기존 작업상태를 그대로 보낸다.
-            if (!this.isLoad || search) {
-                this.isLoad = true;
-                this.q = param;
-                return this.$load(param);
-            }
-        };
-        GenericModule.prototype.getParam = function () {
-            return new this.param();
-        };
-        return GenericModule;
-    }());
-    exports.GenericModule = GenericModule;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13), __webpack_require__(0), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, location_1, core_1, html_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12), __webpack_require__(0), __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, location_1, core_1, html_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var RESOLVE = Promise.resolve();
+    var SPAInfo = /** @class */ (function () {
+        function SPAInfo(pathname, param, index, beforeIndex, way) {
+            if (way === void 0) { way = beforeIndex === -1 ? index : index - beforeIndex; }
+            this.pathname = pathname;
+            this.param = param;
+            this.index = index;
+            this.beforeIndex = beforeIndex;
+            this.way = way;
+        }
+        return SPAInfo;
+    }());
     var Provider = /** @class */ (function () {
         // 클래스가 그대로 들어와도 되고, 객체가 들어와도 된다.
         function Provider(path, f) {
@@ -1896,50 +1817,55 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         function SPA(config) {
             this.config = config;
             this.isHash = false;
-            this.url = new location_1.URLManager(''); // Dummy
+            this.url = null; // Dummy
             this.list = [];
+            this.names = [];
             this._queue = Promise.resolve();
         }
+        // 모듈 등록
         SPA.prototype.register = function (url, module) {
+            this.names.push(url);
             this.list.push(new Provider(url, module));
             return this;
         };
         // 이 메서드를 통해 모듈변경이 이루어진다.
         SPA.prototype.run = function (path) {
-            var _a = this, url = _a.url, $active = _a.$active, m = new location_1.URLManager(path), pathname = m.pathname, search = m.search;
-            this.url = m; // 현재 url 갱신
+            var _this = this;
+            var _a = this, list = _a.list, names = _a.names, url = _a.url, $active = _a.$active, info = _a.info, config = _a.config, defaultURL = _a.config.defaultURL, newURL = new location_1.URLManager(path), pathname = newURL.pathname, search = newURL.search;
             //  ① 모듈변경
-            if (url.pathname !== pathname) {
-                var _b = this, list = _b.list, l = _b.list.length, _index_1 = 0, provider_1;
-                while (l-- > 0) {
-                    if (list[l].path === pathname) {
-                        provider_1 = list[l];
-                        _index_1 = l;
-                        break;
-                    }
+            if (!url || url.pathname !== pathname) {
+                var index = names.indexOf(pathname), provider_1 = list[index];
+                // 없는 모듈의 경우 :: defaultURL로 이동한다.
+                if (index === -1) {
+                    if (info == null)
+                        location.hash = defaultURL;
                 }
-                if (provider_1) {
-                    var _c = this, index_1 = _c.index, config_1 = _c.config, param_1 = location_1.Search.toObject(search, provider_1.param());
-                    this.index = _index_1; // 모듈 인덱스 갱신
+                else {
+                    var param_1 = this.param = location_1.Search.toObject(search, provider_1.param()), nInfo_1 = this.info = new SPAInfo(pathname, param_1, index, info ? info.index : -1);
+                    this.url = newURL;
                     this.$active = provider_1; // 현재 모듈 갱신
                     this._queue = this._queue
-                        .then(function () { return config_1.before && config_1.before(pathname, param_1, _index_1, index_1); })
+                        .then(function () { return config.before && config.before(nInfo_1); })
                         .then(function () { return Promise.all([
                         $active && $active.module.close(),
                         provider_1.init()
                     ]); })
                         .then(function (_a) {
                         var html = _a[1];
-                        return RESOLVE.then(function () { return provider_1.module.load(param_1, search); })
-                            .then(function () { return config_1.onChange(provider_1.element, $active && $active.element); });
+                        return RESOLVE.then(function () { return provider_1.module.load(param_1, search, provider_1.element); })
+                            .then(function () { return config.onChange(provider_1.element, $active && $active.element, nInfo_1); });
                     })
-                        .then(function () { return config_1.after && config_1.after(pathname, param_1, _index_1, index_1); });
+                        .then(function () { return config.after && config.after(nInfo_1); })
+                        .catch(function (e) {
+                        console.error(e.message);
+                        console.error(e.stack);
+                    });
                 }
             }
             // ② 모듈 재로딩
             else if ($active && !location_1.Search.equals(url.search, search)) {
                 this._queue = this._queue.then(function () {
-                    return $active.module.load(location_1.Search.toObject(search, $active.param()), search);
+                    return $active.module.load(_this.param = location_1.Search.toObject(search, $active.param()), search, $active.element);
                 });
             }
             return this._queue;
@@ -1948,7 +1874,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             var _this = this;
             if (!this.isHash) {
                 var handler = function () {
-                    location.hash && _this.run(location.hash.slice(1));
+                    _this.run(location.hash.slice(1));
                 };
                 window.addEventListener('hashchange', handler);
                 handler();
@@ -1980,6 +1906,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         // html 문서 가지고 오기
         // 이건 서버에서 매칭되는 컨트롤러가 만드시 있어야 한다.
         // /$template/{value}
+        function getFragment(url) {
+            return get('/templates/' + url).then(function (text) { return createFragment(text); });
+        }
+        SPA.getFragment = getFragment;
         function getElement(url) {
             return get('/templates/' + url).then(function (text) { return createFragment(text); });
         }
@@ -1995,6 +1925,115 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         SPA.getStyle = getStyle;
     })(SPA = exports.SPA || (exports.SPA = {}));
     exports.SPA = SPA;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13), __webpack_require__(4), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, spa_1, dom_1, array_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var className = dom_1.DOM.className;
+    var GenericModule = /** @class */ (function () {
+        function GenericModule(id, param) {
+            var _this = this;
+            this.param = param;
+            this.popCount = 0;
+            /*
+             *   이미 로드된 상황 (초기화)이고
+             *   쿼리없이 그대로 요청이 들어오면 기존에 작업중이던 화면을 그대로 내보내준다.
+             */
+            this.isLoad = false;
+            var div = document.createElement('div');
+            div.id = id;
+            this.element = div;
+            /*
+             *  모든 모듈이 공통적으로 가지는
+             *  ① 로딩 엘리먼트
+             *  ② 팝업 엘리먼트
+             */
+            div.innerHTML = '<div class="loading"></div><div id="pop1" class="popup"></div><div id="pop2" class="popup"></div>';
+            this.loadingElement = div.querySelector('.loading');
+            this.popElement = div.querySelector('#pop1');
+            this.pop2Element = div.querySelector('#pop2');
+            this._resolve = Promise.all([
+                // style과 html 로딩딩
+                spa_1.SPA.getStyle('/dist/hancomee/src/' + id + '.css'),
+                spa_1.SPA.getFragment('hancomee/src/' + id)
+            ]).then(function (_a) {
+                var style = _a[0], frag = _a[1];
+                div.appendChild(style);
+                // <script>로 작성된 template html
+                /*
+                 *  존나 알 수 없는 일.
+                 *  병신같은 ie에서는 innerText와 (textConent, innerHTML) 값이 다르다..ㄷㄷ
+                 */
+                var templates = array_1._reduce(frag.querySelectorAll('script[type="text/html"]'), function (r, v) {
+                    frag.removeChild(v);
+                    v.id && (r[v.id] = v['innerText']);
+                    return r;
+                }, {});
+                // 하위 모듈 로직
+                _this.$init(div, frag, templates);
+                div.appendChild(frag);
+                return div;
+            });
+        }
+        // 로딩바
+        GenericModule.prototype.loading = function (flag) {
+            className(this.loadingElement, 'on', flag);
+            return this.bodyScreen(flag);
+        };
+        // 팝업창
+        GenericModule.prototype.pop = function (element) {
+            var popElement = this.popElement, isOpen = !!element;
+            popElement.textContent = '';
+            isOpen && popElement.appendChild(element);
+            className(popElement, 'on', isOpen);
+            return this.bodyScreen(isOpen);
+        };
+        // 팝업창
+        GenericModule.prototype.pop2 = function (element) {
+            var pop2Element = this.pop2Element, isOpen = !!element;
+            pop2Element.textContent = '';
+            isOpen && pop2Element.appendChild(element);
+            className(pop2Element, 'on', isOpen);
+            return this.bodyScreen(isOpen);
+        };
+        GenericModule.prototype.bodyScreen = function (isOpen) {
+            this.popCount += isOpen ? 1 : -1;
+            className(document.body, 'screen', this.popCount > 0);
+            return this;
+        };
+        GenericModule.prototype.init = function () {
+            return this._resolve;
+        };
+        GenericModule.prototype.load = function (param, search) {
+            // 이미 로드된 상태에서 쿼리없이 주소요청만 들어오면 기존 작업상태를 그대로 보낸다.
+            if (!this.isLoad || search) {
+                this.isLoad = true;
+                this.q = param;
+                return this.$load(param);
+            }
+        };
+        GenericModule.prototype.getParam = function () {
+            return new this.param();
+        };
+        return GenericModule;
+    }());
+    exports.GenericModule = GenericModule;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
