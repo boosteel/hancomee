@@ -47,8 +47,9 @@ public class twitter extends AbstractSpy {
     public void run() throws Exception {
 
         //  3ZBzD5cPmRZtaVu
-        //tour();
-        run("Smsex26 ");
+        tour();
+        // gggp070 kochilchil Sxl_lly soosoojungj pinklove_00 Hyu_n101 cZRPIx0aHpsoZxz
+        //run("taetae__bitch");
 
     }
 
@@ -112,7 +113,7 @@ public class twitter extends AbstractSpy {
             m = m.replaceAll("\\\\n", " ").replaceAll("\\\\", "");
 
             // 리트윗은 제외
-            if (m.contains("\"text\":\"RT @")) {
+            if (m.contains("RT @")) {
                 out("리트윗 패스");
             } else list.add(new Mention(m));
         });
@@ -124,10 +125,12 @@ public class twitter extends AbstractSpy {
                 out("이미 받음 ============> " + m);
                 if (!result.isEmpty()) $save(result);
                 return;
+                //continue;
             } else {
                 m.readMedia((i, con, type) -> {
                     String t = con.getContentType();
                     if (t == null || !t.matches("(?i)^(video|image).*")) return;
+
                     out(screenName + " / " + count++ + ") " + m.text);
                     SpyData down = new SpyData()
                             .setPath(targetPath)
@@ -137,8 +140,15 @@ public class twitter extends AbstractSpy {
                             .setUser(screenName)
                             .setFilename(m.id + "-" + i)
                             .setFiletype(type);
+
+                    try {
+                        $down(con.getInputStream(), down, true);
+                    }  catch (Exception e) {
+                        if(e.getMessage().contains("403")) return;
+                        else throw e;
+                    }
+
                     result.add(down);
-                    $down(con.getInputStream(), down, true);
                 });
             }
         }

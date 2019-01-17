@@ -315,7 +315,7 @@ export namespace Events {
             }
 
             // target 자체를
-            if (v = target.getAttribute('data-self')) {
+            if (v = target.getAttribute('data-element')) {
                 // set{Value}()가 있으면 거기에 넣어준다.
                 if (typeof (fn = obj['set' + v[0].toUpperCase() + v.slice(1)]) === 'function')
                     fn(target);

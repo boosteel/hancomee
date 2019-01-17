@@ -16,11 +16,12 @@ public class _file extends _base {
     public void run() throws Exception {
 
 
-        String path = "D:\\files\\Download\\181020";
+        String path = "D:\\files\\Download\\181228";
 
-        tour("D:\\files\\web_down");
-        //forceThumb(path);
-        //videoInfo(path);
+
+        //tour("D:\\files\\web_down");
+        forceThumb(path);
+        videoInfo(path);
     }
 
     public void tour(String path) throws Exception {

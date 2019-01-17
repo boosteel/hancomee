@@ -1,0 +1,74 @@
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+
+  padding: 3rem 5rem;
+
+  [type="radio"], [type="checkbox"] {
+    display: none;
+    font-size: 0;
+    opacity: 0;
+
+    & + label {
+      border: 1px solid #888;
+      cursor: pointer;
+      padding: .5rem 1rem;
+      background-color: white;
+
+      & + input + label {
+        margin-left: .5rem;
+      }
+    }
+
+    &:checked {
+      & + label {
+        color: white;
+        background-color: #1c7430;
+      }
+    }
+  }
+
+
+  .ctrl {
+
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &.on {
+    .ctrl {
+      > span {
+        display: block;
+      }
+    }
+  }
+
+
+  > textarea, > input {
+    font-size: 18px;
+    border: 1px solid #bdbdbd;
+  }
+
+  > * {
+    & + * {
+      margin-top: 1rem;
+    }
+  }
+
+  > input {
+    padding: {
+      left: 1em;
+      right: 1em;
+    }
+    height: 40px;
+  }
+  > textarea {
+    padding: 1em;
+  }
+}
+
+textarea {
+  height: 60vh;
+}

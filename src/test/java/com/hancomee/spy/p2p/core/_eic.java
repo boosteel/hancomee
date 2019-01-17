@@ -24,7 +24,7 @@ public class _eic extends _base {
 
     @Test
     public void run() throws Exception {
-        String path = "D:\\files\\p2p\\ondisk\\180828";
+        String path = "D:\\files\\p2p\\jav\\190106";
 
         rename(path);
         imgDown(path);

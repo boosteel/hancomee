@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 public class power_review extends AbstractSpy {
 
 
-    Pattern r_id_content = Pattern.compile("<li id=\"power_review_([^\"]+).*?\"more-options\">([^<>]+).*?작성자 : ([^<>]+).*?등록일 : ([^<>]+).*?<span>도움이"),
+    Pattern r_id_content = Pattern.compile("<li id=\"power_review_([^\"]+).*?\"more-options\">([^<>]+).*?작성자 : ([^<>]+)(?:.*?등록일 : ([^<>]+))?.*?<span>도움이"),
             r_image = Pattern.compile("<img[^<>]+src=\"([^\"]+square::[^\"]+)");
 
     public power_review() {
@@ -46,6 +46,19 @@ public class power_review extends AbstractSpy {
         $push();
     }
 
+
+    @Test
+    public void ilovebikini() throws Exception {
+        String host = "www.ilovebikini.co.kr";
+        resolve("수영복/" + host);
+
+        for (int page : Range.range(101, 600))
+            read(host, page);
+
+        $push();
+    }
+
+
     //http://www.hypnotic.co.kr/shop/power_review.action.html?action_type=get_review_list&page_type=search&page=3&sort=&term=1&is_photo=&category=&searchword=&search_myreview=&write_time=
     public void read(String host, int page) throws Exception {
 
@@ -60,7 +73,6 @@ public class power_review extends AbstractSpy {
         Patterns.forEach(r_id_content, html, (i, g, id, _title, user, date) -> {
 
             String title = _title.length() > 33 ? _title.substring(0, 33) : _title;
-
 
             Patterns.forEach(r_image, g, (ii, gg, src) -> {
 
@@ -83,7 +95,8 @@ public class power_review extends AbstractSpy {
                             .setUser(user)
                             .setFilename($uuid)
                             .setFiletype(contentType.contains("image") ? imgType(contentType) : "jpg")
-                            .setDatetime(date.trim().replaceAll(". ", "-") + " 00:00:00");
+                            .setDatetime(date == null ? "2018-11-11 00:00:00" :
+                                    date.trim().replaceAll(". ", "-") + " 00:00:00");
 
                     $down(new URL(src).openStream(), d, true);
                     result.add(d);

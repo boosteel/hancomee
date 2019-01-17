@@ -31,6 +31,16 @@ public class widget extends AbstractSpy {
     }
 
     @Test
+    public void qng() throws Exception {
+        String host = "qng.co.kr";
+        resolve("숙녀복/" + host);
+
+        for(int page : Range.range(1, 500))
+            widget(3, 4, host, page);
+        $push();
+    }
+
+    @Test
     public void pinkcider() throws Exception {
         String host = "pinkcider.co.kr";
         resolve("수영복/" + host);

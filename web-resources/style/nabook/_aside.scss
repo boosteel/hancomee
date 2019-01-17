@@ -1,0 +1,117 @@
+
+
+aside {
+
+  $news-bg-color: #222;
+  $subject-bg-color: #333;
+
+  display: flex;
+  align-items: stretch;
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1042;
+
+  > .news, > .subject {
+    display: flex;
+
+    padding: 1rem;
+    flex-direction: column;
+    justify-content: stretch;
+
+    color: #999;
+  }
+
+  > .news {
+    width: $aside-news-width;
+    background-color: $news-bg-color;
+
+    .sections {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 2rem;
+    }
+
+    > div {
+      padding-top: .5rem;
+      & + div {
+        margin-top: 1rem;
+        border-top: 2px solid #505050;
+      }
+
+      > span {
+        padding: .2em;
+        white-space: nowrap;
+        cursor: pointer;
+
+        & + span {
+          border-top: 1px solid $news-bg-color;
+        }
+
+        &:hover {
+          color: #b7b7b7;
+        }
+      }
+    }
+
+    .news-list {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  #search {
+    padding: 0 1rem;
+    margin: {
+      left: auto;
+      right: 2rem;
+    }
+    width: 100%;
+    height: 36px;
+
+    font-size: 16px;
+    line-height: 1;
+    border-radius: 18px;
+    border: 0;
+  }
+
+  > .subject {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: $aside-subject-width;
+
+    background-color: $subject-bg-color;
+
+    // 제목 리스트
+    dl {
+
+      padding-top: .5rem;
+      margin-bottom: 0;
+
+      dt {
+        font-weight: normal;
+        font-size: 14px;
+
+        .news {
+          color: #bd9d3c;
+          cursor: pointer;
+        }
+
+        .datetime {
+          margin-left: .5rem;
+        }
+      }
+      dd {
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      & + dl {
+        border-top: 1px solid #444;
+      }
+    }
+  }
+
+}

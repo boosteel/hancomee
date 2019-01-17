@@ -1,3 +1,4 @@
+import {_forEach} from "./_func/array";
 
 
 export namespace DOM {
@@ -6,15 +7,15 @@ export namespace DOM {
 
     export function contains(parent: HTMLElement, target: HTMLElement) {
         let p;
-        while(p = target.parentNode) {
-            if(parent === p) return true;
+        while (p = target.parentNode) {
+            if (parent === p) return true;
         }
         return false;
     }
 
     export function closest(target: any,
-                             handler: (e: Element, index: number) => boolean,
-                             limit: Element = null): HTMLElement {
+                            handler: (e: Element, index: number) => boolean,
+                            limit: Element = null): HTMLElement {
         let index = 0;
         do {
             if (handler(target, index++)) return <HTMLElement>target;
@@ -171,7 +172,7 @@ export namespace DOM {
     export function className(element: Element, value: string | string[]): HTMLElement
     export function className(element, value, isAdd?) {
 
-        if(element == null) return element;
+        if (element == null) return element;
 
         let className = element.className.trim(),
             array = className ? className.split(c_r) : [],
@@ -219,10 +220,10 @@ export namespace DOM {
         return array.concat(result);
     }
 
-    export function eachAttrs<T extends Element>(ele: T, handler: (this: T, attrName: string, attrValue: string) => boolean|void) {
+    export function eachAttrs<T extends Element>(ele: T, handler: (this: T, attrName: string, attrValue: string) => boolean | void) {
         let {attributes, attributes: {length}} = ele;
-        while(length-- > 0)
-            if(handler.call(ele, attributes[length].name, attributes[length].value) === false) return;
+        while (length-- > 0)
+            if (handler.call(ele, attributes[length].name, attributes[length].value) === false) return;
     }
 
     export let attrMap = (function (r_data, r_up, fn) {
@@ -238,4 +239,22 @@ export namespace DOM {
         }
 
     })(/^data-/, /-([^-])/g, (_, i) => i.toUpperCase())
+
+
+    export function _classList(ele: HTMLElement, values: string[] | string, isAdd = true) {
+
+        let {classList} = ele;
+
+        if (typeof values === 'string') {
+            isAdd ? classList.add(values) : classList.remove(values);
+        }
+
+        else {
+            let l = values.length;
+            while (l-- > 0)
+                isAdd ? classList.add(values[l]) : classList.remove(values[l]);
+            return ele;
+        }
+
+    }
 }

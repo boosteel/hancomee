@@ -131,6 +131,7 @@ export class List extends GenericModule<Q> {
 
     $load(param: Q) {
         return Work.list(param.toString()).then((a: ServerData<Work>) => {
+            console.log(a);
             this.view.forEach(v => v(a));
         })
     }

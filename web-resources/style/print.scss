@@ -1,0 +1,74 @@
+@import "bagic-bootstrap";
+@import "_fonts/NanumGothic";
+@import "_fonts/roboto";
+@import "_fonts/russo-one";
+
+$img-src: '../../static/img/dot-black.jpg';
+
+body {
+  padding: 10rem;
+}
+
+%shudo {
+  position: relative;
+  &:after, &:before {
+    position: absolute;
+    display: block;
+    content: '';
+
+    background: {
+      image: url(#{$img-src});
+    }
+  }
+}
+
+.table-container {
+
+  display: flex;
+
+  > .table-half {
+    width: 50%;
+  }
+
+  .line {
+    position: relative;
+    @extend %shudo;
+    &:after {
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: {
+        repeat-y: no-repeat;
+      }
+    }
+  }
+}
+
+img {
+  width: 10cm;
+  height: .27mm;
+}
+
+@page {
+  margin: 0;
+  width: 21cm;
+  height: 29.7cm;
+}
+@media print {
+  body {
+    margin: 0;
+    border: initial;
+    border-radius: initial;
+    width: initial;
+    min-height: initial;
+    box-shadow: initial;
+    background: initial;
+    page-break-after: always;
+  }
+
+  img {
+    width: 10cm;
+    height: .27mm;
+  }
+}

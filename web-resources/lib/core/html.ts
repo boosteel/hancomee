@@ -193,7 +193,7 @@ export namespace HTML {
     }
 
     export function selectAll<T>(ele, arg: any[]): T
-    export function selectAll(ele, arg: any[]): any[]
+    export function selectAll(ele, arg: any[]): HTMLElement[]
     export function selectAll<T>(ele, arg: any[], handler: (...args: any[]) => T): T
     export function selectAll(ele, arg, handler?) {
         let

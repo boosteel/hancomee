@@ -16,7 +16,7 @@ import java.util.Map;
 @Component
 public class _WorkManager {
 
-    private NativeDB db = new NativeDB("jdbc:mariadb://115.23.187.44:3306/hancomee", "root", "ko9984");
+    private NativeDB db = new NativeDB("jdbc:mariadb://115.23.187.44:3306/hancomee?useOldAliasMetadataBehavior=true", "root", "ko9984");
     private _WorkSQL SQL;
 
     public _WorkManager() {

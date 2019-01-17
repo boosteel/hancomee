@@ -1,7 +1,6 @@
 package com.hancomee;
 
 import com.boosteel.nativedb.NativeDB;
-import com.hancomee.web.controller.JinyeosooController;
 import com.hancomee.web.controller.work._WorkManager;
 import org.junit.Test;
 
@@ -14,7 +13,6 @@ public class DBTest {
     public void test() throws Exception {
 
         out(db.getCon());
-        db.createRepository(JinyeosooController.SQL.class);
 
     }
 

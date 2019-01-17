@@ -303,7 +303,7 @@ export class View extends GenericModule<Q> {
 
                     // setText directive용
                     draft(e: H, item: WorkItem) {
-                        className(e, 'empty', !item.draft.length);
+                        className(e, 'empty', !item.draft || !item.draft.length);
                     }
 
                     print(e: H, item: WorkFile) {

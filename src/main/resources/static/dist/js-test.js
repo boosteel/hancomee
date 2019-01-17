@@ -60,12 +60,23 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 62);
+/******/ 	return __webpack_require__(__webpack_require__.s = 39);
 /******/ })
 /************************************************************************/
-/******/ ({
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ 0:
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.r_number = /^[+-]?\d+$/;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -351,11 +362,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-
-/***/ 1:
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, number_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Access;
@@ -408,105 +418,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-
-/***/ 10:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var bind = Function.prototype.bind;
-    function _newApply(cons, args) {
-        return new (bind.apply(cons, [null].concat(args)));
-    }
-    exports._newApply = _newApply;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 2:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.r_number = /^[+-]?\d+$/;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 3:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
-    // 숫자 자리수 맞추기
-    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
-        'yyyy': function (d) { return d.getFullYear(); },
-        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
-        'M': function (d) { return d.getMonth() + 1; },
-        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
-        'd': function (d) { return d.getDate(); },
-        'dd': function (d) { return zeroFill(d.getDate()); },
-        'E': function (d) { return __day[d.getDay()]; },
-        'HH': function (d) { return zeroFill(d.getHours()); },
-        'hh': function (d) { return zeroFill(d.getHours()); },
-        'mm': function (d) { return zeroFill(d.getMinutes()); },
-        'ss': function (d) { return zeroFill(d.getSeconds()); },
-        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
-    };
-    function _toKor(date, now) {
-        if (now === void 0) { now = new Date().getTime(); }
-        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
-        if (duration > day)
-            return Math.floor(duration / day) + '일 전';
-        if (duration > hour)
-            return Math.floor(duration / hour) + '시간 전';
-        if (duration > minute)
-            return Math.floor(duration / minute) + '분 전';
-        if (duration > second)
-            return Math.floor(duration / second) + '초 전';
-    }
-    exports._toKor = _toKor;
-    function _dateFormat(_date, f) {
-        if (!_date)
-            return '';
-        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
-        if (!f)
-            return _datetime(d);
-        return f.replace(r_datetime, function ($1) {
-            if (temp = _switch[$1])
-                return temp(d);
-            else
-                return $1;
-        });
-    }
-    exports._dateFormat = _dateFormat;
-    ;
-    function _datetime(val) {
-        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
-            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
-    }
-    exports._datetime = _datetime;
-    function _date(val) {
-        var m = val.getMonth() + 1, d = val.getDate();
-        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
-    }
-    exports._date = _date;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 4:
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -721,80 +633,238 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 return result;
             };
         })(/^data-/, /-([^-])/g, function (_, i) { return i.toUpperCase(); });
+        function _classList(ele, values, isAdd) {
+            if (isAdd === void 0) { isAdd = true; }
+            var classList = ele.classList;
+            if (typeof values === 'string') {
+                isAdd ? classList.add(values) : classList.remove(values);
+            }
+            else {
+                var l = values.length;
+                while (l-- > 0)
+                    isAdd ? classList.add(values[l]) : classList.remove(values[l]);
+                return ele;
+            }
+        }
+        DOM._classList = _classList;
     })(DOM = exports.DOM || (exports.DOM = {}));
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-
-/***/ 5:
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, dom_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Toggle;
-    (function (Toggle) {
-        var className = dom_1.DOM.className;
-        var hasClass = dom_1.DOM.hasClass;
-        var r_dropdown = ['dropdown'], r_open = ['show', 'open'], active, act = function (dropdown, flag) {
-            className(dropdown, r_open, flag);
-            className(dropdown.querySelector('.dropdown-menu'), r_open, flag);
-            if (flag)
-                active = dropdown;
-            else
-                active = null;
-        };
-        (function () {
-            document.addEventListener('click', function (e) {
-                var ele = e.target, dropdown, btn = false, // 토글버튼인지 확인
-                dismiss = false; // dropdown 이하에 dismiss 설정 확인
-                // 순회
-                do {
-                    // dropdown 찾기
-                    if (hasClass(ele, r_dropdown)) {
-                        dropdown = ele;
-                        break;
-                    }
-                    // 끄기 버튼
-                    else if (ele.hasAttribute('data-dismiss'))
-                        dismiss = true;
-                    // 타켓 확인
-                    else if (ele.hasAttribute('data-toggle')) {
-                        if (ele.getAttribute('data-toggle') === 'dropdown')
-                            btn = dismiss = true;
-                        else
-                            return;
-                    }
-                } while (ele = ele.parentElement);
-                // 현재 활성화된게 있고, 찾은 dropdown과 다르다면 무조건 끈다.
-                if (active && active !== dropdown)
-                    act(active, false);
-                // ① dropdown 객체를 찾았을때
-                if (dropdown) {
-                    // 현재 열려져있다면 dismiss 체킹이 되어있을때만 없앤다.
-                    if (hasClass(dropdown, r_open)) {
-                        dismiss && act(dropdown, false);
-                    }
-                    // 아니라면 btn을 클릭했을 경우에만 켠다.
-                    else {
-                        btn && act(dropdown, true);
-                    }
-                }
-            });
-        })();
-    })(Toggle = exports.Toggle || (exports.Toggle = {}));
+    var indexOf = Array.prototype.indexOf;
+    function _indexOf(obj, v) {
+        var l = obj.length;
+        while (l-- > 0)
+            if (obj[l] === v)
+                return l;
+        return -1;
+    }
+    exports._indexOf = _indexOf;
+    function _makeArray(obj) {
+        var r = [], l = obj.length;
+        while (l-- > 0)
+            r[l] = obj[l];
+        return r;
+    }
+    exports._makeArray = _makeArray;
+    function _forEach(obj, h) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (h(obj[i], i++) === false)
+                break;
+        }
+        return obj;
+    }
+    exports._forEach = _forEach;
+    function _selector(obj, h) {
+        var i = 0, l = obj.length, v;
+        while (i < l) {
+            if ((v = h(obj[i], i++)) !== undefined)
+                return v;
+        }
+        return undefined;
+    }
+    exports._selector = _selector;
+    function _forEachReverse(obj, h) {
+        var i = obj.length;
+        while (i-- > 0) {
+            if (h(obj[i], i) === false)
+                break;
+        }
+        return obj;
+    }
+    exports._forEachReverse = _forEachReverse;
+    function _reduce(obj, h, r) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            r = h(r, obj[i], i++);
+        }
+        return r;
+    }
+    exports._reduce = _reduce;
+    function _reduceN(obj, h, r) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            h(r, obj[i], i++);
+        }
+        return r;
+    }
+    exports._reduceN = _reduceN;
+    function _map(obj, h) {
+        var r = [], i = 0, l = obj.length;
+        while (i < l) {
+            r[i] = h(obj[i], i++);
+        }
+        return r;
+    }
+    exports._map = _map;
+    function _colMap(values, size, handler) {
+        var r = [], v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
+        while (index < l) {
+            if (index % size === 0) {
+                v && (r[rIndex] = handler(v, rIndex++));
+                v = [];
+                vIndex = 0;
+            }
+            v[vIndex++] = values[index++];
+        }
+        v && (r[rIndex] = handler(v, rIndex++));
+        return r;
+    }
+    exports._colMap = _colMap;
+    function _colReduce(values, size, handler, r) {
+        var v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
+        while (index < l) {
+            if (index % size === 0) {
+                v && (r = handler(r, v, rIndex++));
+                v = [];
+                vIndex = 0;
+            }
+            v[vIndex++] = values[index++];
+        }
+        v && (r = handler(r, v, rIndex++));
+        return r;
+    }
+    exports._colReduce = _colReduce;
+    function _in(obj, filter, r) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === r)
+                return r;
+        }
+        return !r;
+    }
+    // true가 하나라도 있으면
+    function _inTrue(obj, filter) {
+        return _in(obj, filter, true);
+    }
+    exports._inTrue = _inTrue;
+    function _inFalse(obj, filter) {
+        return _in(obj, filter, false);
+    }
+    exports._inFalse = _inFalse;
+    function _everyTrue(obj, filter) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === false)
+                return false;
+        }
+        return true;
+    }
+    exports._everyTrue = _everyTrue;
+    function _everyFalse(obj, filter) {
+        var i = 0, l = obj.length;
+        while (i < l) {
+            if (filter(obj[i], i++) === true)
+                return false;
+        }
+        return true;
+    }
+    exports._everyFalse = _everyFalse;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-
-/***/ 6:
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(8), __webpack_require__(9), __webpack_require__(3), __webpack_require__(1), __webpack_require__(7), __webpack_require__(10), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24, __day = ["일", "월", "화", "수", "목", "금", "토"], r_datetime = /yyyy|yy|M{1,2}|d{1,2}|E|HH|mm|ss|a\/p/gi, _zf = function (v) { return v < 10 ? '0' : ''; }, 
+    // 숫자 자리수 맞추기
+    zeroFill = function (t) { return _zf(t) + t; }, _switch = {
+        'yyyy': function (d) { return d.getFullYear(); },
+        'yy': function (d) { return zeroFill(d.getFullYear() % 1000); },
+        'M': function (d) { return d.getMonth() + 1; },
+        'MM': function (d) { return zeroFill(d.getMonth() + 1); },
+        'd': function (d) { return d.getDate(); },
+        'dd': function (d) { return zeroFill(d.getDate()); },
+        'E': function (d) { return __day[d.getDay()]; },
+        'HH': function (d) { return zeroFill(d.getHours()); },
+        'hh': function (d) { return zeroFill(d.getHours()); },
+        'mm': function (d) { return zeroFill(d.getMinutes()); },
+        'ss': function (d) { return zeroFill(d.getSeconds()); },
+        'a/p': function (d) { return d.getHours() < 12 ? "오전" : "오후"; },
+    };
+    function _toKor(date, now) {
+        if (now === void 0) { now = new Date().getTime(); }
+        var duration = now - (typeof date === 'number' ? date : new Date(date).getTime());
+        if (duration > day)
+            return Math.floor(duration / day) + '일 전';
+        if (duration > hour)
+            return Math.floor(duration / hour) + '시간 전';
+        if (duration > minute)
+            return Math.floor(duration / minute) + '분 전';
+        if (duration > second)
+            return Math.floor(duration / second) + '초 전';
+    }
+    exports._toKor = _toKor;
+    function _dateFormat(_date, f) {
+        if (!_date)
+            return '';
+        var d = typeof _date === 'number' ? new Date(_date) : _date, temp;
+        if (!f)
+            return _datetime(d);
+        return f.replace(r_datetime, function ($1) {
+            if (temp = _switch[$1])
+                return temp(d);
+            else
+                return $1;
+        });
+    }
+    exports._dateFormat = _dateFormat;
+    ;
+    function _datetime(val) {
+        var m = val.getMonth() + 1, d = val.getDate(), h = val.getHours(), s = val.getSeconds(), M = val.getMinutes();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d, ' ',
+            _zf(h), h, ':', _zf(s), s, ':', _zf(M), M].join('');
+    }
+    exports._datetime = _datetime;
+    function _date(val) {
+        var m = val.getMonth() + 1, d = val.getDate();
+        return [val.getFullYear(), '-', _zf(m), m, '-', _zf(d), d].join('');
+    }
+    exports._date = _date;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 6 */,
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10), __webpack_require__(9), __webpack_require__(5), __webpack_require__(2), __webpack_require__(4), __webpack_require__(11), __webpack_require__(0), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, StringBuffer_1, format_1, datetime_1, access_1, array_1, newApply_1, number_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var read = access_1.Access.read;
@@ -1277,312 +1347,72 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-
-/***/ 62:
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(0), __webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, carousel_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, dom_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    core_1.$ready(function () {
-        var ctrl = carousel_1.carousel(document.querySelector('.carousel-inner'));
-        ctrl.loop();
-        document.getElementById('next').addEventListener('click', function () {
-            ctrl.right();
-        });
-        document.getElementById('prev').addEventListener('click', function () {
-            ctrl.left();
-        });
-    });
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 63:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6), __webpack_require__(7), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, html_1, array_1, dom_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var selectAll = html_1.HTML.selectAll;
-    var className = dom_1.DOM.className;
-    var END = ['active', 'carousel-item-next', 'carousel-item-left',
-        'carousel-item-prev', 'carousel-item-right'];
-    function carousel(element) {
-        return selectAll(element, ['.carousel-item[]'], function (inner, _items) {
-            var $run = 0, $active = 1, items = array_1._map(_items, register), $timeIndex, $timeStop = true, $time = 3000, $timeLoop = function () {
-                carouselCTRL.left();
-                $timeStop || ($timeIndex = setTimeout($timeLoop, $time));
-            }, 
-            // 캐러셀 이동
-            carouselCTRL = {
-                left: function (target) {
-                    if (target === void 0) { target = $active === items.length - 1 ? 0 : $active + 1; }
-                    if ($run === 0) {
-                        items[target].left();
-                        items[$active].left();
+    var Toggle;
+    (function (Toggle) {
+        var className = dom_1.DOM.className;
+        var hasClass = dom_1.DOM.hasClass;
+        var r_dropdown = ['dropdown'], r_open = ['show', 'open'], active, act = function (dropdown, flag) {
+            className(dropdown, r_open, flag);
+            className(dropdown.querySelector('.dropdown-menu'), r_open, flag);
+            if (flag)
+                active = dropdown;
+            else
+                active = null;
+        };
+        (function () {
+            document.addEventListener('click', function (e) {
+                var ele = e.target, dropdown, btn = false, // 토글버튼인지 확인
+                dismiss = false; // dropdown 이하에 dismiss 설정 확인
+                // 순회
+                do {
+                    // dropdown 찾기
+                    if (hasClass(ele, r_dropdown)) {
+                        dropdown = ele;
+                        break;
                     }
-                    return carouselCTRL;
-                },
-                right: function (target) {
-                    if (target === void 0) { target = $active === 0 ? items.length - 1 : $active - 1; }
-                    if ($run === 0) {
-                        items[target].right();
-                        items[$active].right();
-                    }
-                    return carouselCTRL;
-                },
-                move: function (target) {
-                    if ($active !== target) {
-                        if ($active < target)
-                            carouselCTRL.left(target);
+                    // 끄기 버튼
+                    else if (ele.hasAttribute('data-dismiss'))
+                        dismiss = true;
+                    // 타켓 확인
+                    else if (ele.hasAttribute('data-toggle')) {
+                        if (ele.getAttribute('data-toggle') === 'dropdown')
+                            btn = dismiss = true;
                         else
-                            carouselCTRL.right(target);
+                            return;
                     }
-                    return carouselCTRL;
-                },
-                loop: function (time) {
-                    if (time === void 0) { time = $time; }
-                    $timeStop && ($timeIndex = setTimeout($timeLoop, $time = time));
-                    $timeStop = false;
-                    return carouselCTRL;
-                },
-                loopStop: function () {
-                    clearTimeout($timeIndex);
-                    $timeStop = true;
-                    return carouselCTRL;
-                },
-            };
-            // .caraousel-item 등록
-            function register(item, i) {
-                var classList = item.classList, isLeft = false, itemCTRL = {
-                    index: i,
-                    left: function () {
-                        isLeft = true;
-                        $run++;
-                        if (classList.contains('active'))
-                            classList.add('carousel-item-left');
-                        else {
-                            classList.add('carousel-item-next');
-                            item.offsetHeight;
-                            classList.add('carousel-item-left');
-                        }
-                    },
-                    right: function () {
-                        isLeft = false;
-                        $run++;
-                        if (classList.contains('active'))
-                            classList.add('carousel-item-right');
-                        else {
-                            classList.add('carousel-item-prev');
-                            item.offsetHeight;
-                            classList.add('carousel-item-right');
-                        }
-                    },
-                };
-                item.addEventListener('transitionend', function (e) {
-                    if ($run === 0)
-                        return;
-                    var wantActive = item.className.indexOf('active') === -1;
-                    className(item, END, false);
-                    if (wantActive) {
-                        className(item, 'active', true);
-                        $active = i;
+                } while (ele = ele.parentElement);
+                // 현재 활성화된게 있고, 찾은 dropdown과 다르다면 무조건 끈다.
+                if (active && active !== dropdown)
+                    act(active, false);
+                // ① dropdown 객체를 찾았을때
+                if (dropdown) {
+                    // 현재 열려져있다면 dismiss 체킹이 되어있을때만 없앤다.
+                    if (hasClass(dropdown, r_open)) {
+                        dismiss && act(dropdown, false);
                     }
-                    $run--;
-                });
-                if (item.className.indexOf('active') !== -1)
-                    $active = i;
-                return itemCTRL;
-            }
-            return carouselCTRL;
-        });
-    }
-    exports.carousel = carousel;
+                    // 아니라면 btn을 클릭했을 경우에만 켠다.
+                    else {
+                        btn && act(dropdown, true);
+                    }
+                }
+            });
+        })();
+    })(Toggle = exports.Toggle || (exports.Toggle = {}));
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-
-/***/ 7:
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function _makeArray(obj) {
-        var r = [], l = obj.length;
-        while (l-- > 0)
-            r[l] = obj[l];
-        return r;
-    }
-    exports._makeArray = _makeArray;
-    function _forEach(obj, h) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (h(obj[i], i++) === false)
-                break;
-        }
-        return obj;
-    }
-    exports._forEach = _forEach;
-    function _selector(obj, h) {
-        var i = 0, l = obj.length, v;
-        while (i < l) {
-            if ((v = h(obj[i], i++)) !== undefined)
-                return v;
-        }
-        return undefined;
-    }
-    exports._selector = _selector;
-    function _forEachReverse(obj, h) {
-        var i = obj.length;
-        while (i-- > 0) {
-            if (h(obj[i], i) === false)
-                break;
-        }
-        return obj;
-    }
-    exports._forEachReverse = _forEachReverse;
-    function _reduce(obj, h, r) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            r = h(r, obj[i], i++);
-        }
-        return r;
-    }
-    exports._reduce = _reduce;
-    function _map(obj, h) {
-        var r = [], i = 0, l = obj.length;
-        while (i < l) {
-            r[i] = h(obj[i], i++);
-        }
-        return r;
-    }
-    exports._map = _map;
-    function _colMap(values, size, handler) {
-        var r = [], v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
-        while (index < l) {
-            if (index % size === 0) {
-                v && (r[rIndex] = handler(v, rIndex++));
-                v = [];
-                vIndex = 0;
-            }
-            v[vIndex++] = values[index++];
-        }
-        v && (r[rIndex] = handler(v, rIndex++));
-        return r;
-    }
-    exports._colMap = _colMap;
-    function _colReduce(values, size, handler, r) {
-        var v, l = values.length, index = 0, rIndex = 0, vIndex = 0;
-        while (index < l) {
-            if (index % size === 0) {
-                v && (r = handler(r, v, rIndex++));
-                v = [];
-                vIndex = 0;
-            }
-            v[vIndex++] = values[index++];
-        }
-        v && (r = handler(r, v, rIndex++));
-        return r;
-    }
-    exports._colReduce = _colReduce;
-    function _in(obj, filter, r) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (filter(obj[i], i++) === r)
-                return r;
-        }
-        return !r;
-    }
-    // true가 하나라도 있으면
-    function _inTrue(obj, filter) {
-        return _in(obj, filter, true);
-    }
-    exports._inTrue = _inTrue;
-    function _inFalse(obj, filter) {
-        return _in(obj, filter, false);
-    }
-    exports._inFalse = _inFalse;
-    function _everyTrue(obj, filter) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (filter(obj[i], i++) === false)
-                return false;
-        }
-        return true;
-    }
-    exports._everyTrue = _everyTrue;
-    function _everyFalse(obj, filter) {
-        var i = 0, l = obj.length;
-        while (i < l) {
-            if (filter(obj[i], i++) === true)
-                return false;
-        }
-        return true;
-    }
-    exports._everyFalse = _everyFalse;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 8:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var StringBuffer = /** @class */ (function () {
-        function StringBuffer(init) {
-            this.array = [];
-            this.i = 0;
-            if (init)
-                this.append(init);
-        }
-        StringBuffer.prototype.reset = function () {
-            this.array = [];
-            this.i = 0;
-            return this;
-        };
-        StringBuffer.prototype.prepend = function (v) {
-            this.array.unshift(v);
-            this.i++;
-            return this;
-        };
-        StringBuffer.prototype.append = function (v) {
-            var array = this.array;
-            if (!Array.isArray(v))
-                array[this.i++] = v;
-            else {
-                var i = 0, u = this.i, l = v.length;
-                while (i < l)
-                    array[u++] = v[i++];
-                this.i = u;
-            }
-            return this;
-        };
-        StringBuffer.prototype.toString = function () {
-            return this.array.join('');
-        };
-        return StringBuffer;
-    }());
-    exports.StringBuffer = StringBuffer;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 9:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1, number_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(2), __webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, access_1, number_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
@@ -1707,6 +1537,221 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ })
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/******/ });
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var StringBuffer = /** @class */ (function () {
+        function StringBuffer(init) {
+            this.array = [];
+            this.i = 0;
+            if (init)
+                this.append(init);
+        }
+        StringBuffer.prototype.reset = function () {
+            this.array = [];
+            this.i = 0;
+            return this;
+        };
+        StringBuffer.prototype.prepend = function (v) {
+            this.array.unshift(v);
+            this.i++;
+            return this;
+        };
+        StringBuffer.prototype.append = function (v) {
+            var array = this.array;
+            if (!Array.isArray(v))
+                array[this.i++] = v;
+            else {
+                var i = 0, u = this.i, l = v.length;
+                while (i < l)
+                    array[u++] = v[i++];
+                this.i = u;
+            }
+            return this;
+        };
+        StringBuffer.prototype.toString = function () {
+            return this.array.join('');
+        };
+        return StringBuffer;
+    }());
+    exports.StringBuffer = StringBuffer;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var bind = Function.prototype.bind;
+    function _newApply(cons, args) {
+        return new (bind.apply(cons, [null].concat(args)));
+    }
+    exports._newApply = _newApply;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */,
+/* 31 */,
+/* 32 */,
+/* 33 */,
+/* 34 */,
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(40)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, core_1, carousel_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    core_1.$ready(function () {
+        var ctrl = carousel_1.carousel(document.querySelector('.carousel-inner'));
+        ctrl.loop();
+        document.getElementById('next').addEventListener('click', function () {
+            ctrl.right();
+        });
+        document.getElementById('prev').addEventListener('click', function () {
+            ctrl.left();
+        });
+    });
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(7), __webpack_require__(4), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, html_1, array_1, dom_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var selectAll = html_1.HTML.selectAll;
+    var className = dom_1.DOM.className;
+    var END = ['active', 'carousel-item-next', 'carousel-item-left',
+        'carousel-item-prev', 'carousel-item-right'];
+    function carousel(element) {
+        return selectAll(element, ['.carousel-item[]'], function (inner, _items) {
+            var $run = 0, $active = 1, items = array_1._map(_items, register), $timeIndex, $timeStop = true, $time = 3000, $timeLoop = function () {
+                carouselCTRL.left();
+                $timeStop || ($timeIndex = setTimeout($timeLoop, $time));
+            }, 
+            // 캐러셀 이동
+            carouselCTRL = {
+                left: function (target) {
+                    if (target === void 0) { target = $active === items.length - 1 ? 0 : $active + 1; }
+                    if ($run === 0) {
+                        items[target].left();
+                        items[$active].left();
+                    }
+                    return carouselCTRL;
+                },
+                right: function (target) {
+                    if (target === void 0) { target = $active === 0 ? items.length - 1 : $active - 1; }
+                    if ($run === 0) {
+                        items[target].right();
+                        items[$active].right();
+                    }
+                    return carouselCTRL;
+                },
+                move: function (target) {
+                    if ($active !== target) {
+                        if ($active < target)
+                            carouselCTRL.left(target);
+                        else
+                            carouselCTRL.right(target);
+                    }
+                    return carouselCTRL;
+                },
+                loop: function (time) {
+                    if (time === void 0) { time = $time; }
+                    $timeStop && ($timeIndex = setTimeout($timeLoop, $time = time));
+                    $timeStop = false;
+                    return carouselCTRL;
+                },
+                loopStop: function () {
+                    clearTimeout($timeIndex);
+                    $timeStop = true;
+                    return carouselCTRL;
+                },
+            };
+            // .caraousel-item 등록
+            function register(item, i) {
+                var classList = item.classList, isLeft = false, itemCTRL = {
+                    index: i,
+                    left: function () {
+                        isLeft = true;
+                        $run++;
+                        if (classList.contains('active'))
+                            classList.add('carousel-item-left');
+                        else {
+                            classList.add('carousel-item-next');
+                            item.offsetHeight;
+                            classList.add('carousel-item-left');
+                        }
+                    },
+                    right: function () {
+                        isLeft = false;
+                        $run++;
+                        if (classList.contains('active'))
+                            classList.add('carousel-item-right');
+                        else {
+                            classList.add('carousel-item-prev');
+                            item.offsetHeight;
+                            classList.add('carousel-item-right');
+                        }
+                    },
+                };
+                item.addEventListener('transitionend', function (e) {
+                    if ($run === 0)
+                        return;
+                    var wantActive = item.className.indexOf('active') === -1;
+                    className(item, END, false);
+                    if (wantActive) {
+                        className(item, 'active', true);
+                        $active = i;
+                    }
+                    $run--;
+                });
+                if (item.className.indexOf('active') !== -1)
+                    $active = i;
+                return itemCTRL;
+            }
+            return carouselCTRL;
+        });
+    }
+    exports.carousel = carousel;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ })
+/******/ ]);

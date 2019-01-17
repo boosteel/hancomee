@@ -37,8 +37,8 @@ public class _db extends _base {
     @Test
     public void test() throws Exception {
 
-        //save("D:\\files\\Download\\181020");
-        tour("D:\\files\\web_down");
+        save("D:\\files\\Download\\181228");
+        //tour("D:\\files\\web_down");
     }
     public void tour(String path) throws Exception {
         try(DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(path))) {

@@ -1,0 +1,20 @@
+
+@import "scroll";
+@import "variable";
+@import "../bagic-bootstrap";
+@import "aside";
+@import "nav";
+@import "form";
+
+
+
+body {
+  padding: {
+    left: $aside-width;
+  }
+  background-color: #f9f9f9;
+}
+main {
+
+}
+

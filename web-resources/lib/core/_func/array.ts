@@ -1,4 +1,13 @@
 
+let {indexOf} = Array.prototype;
+
+export function _indexOf(obj: ArrayLike<any>, v) {
+    let l = obj.length;
+    while(l-- > 0)
+        if(obj[l] === v) return l;
+    return -1;
+}
+
 export function _makeArray<T>(obj: ArrayLike<T>): T[] {
     let r = [], l = obj.length;
     while(l-- > 0) r[l] = obj[l];
@@ -41,6 +50,13 @@ export function _reduce<T, R>(obj: ArrayLike<T>, h: (r: R, t: T, i: number) => R
     return r;
 }
 
+export function _reduceN<T, R>(obj: ArrayLike<T>, h: (r: R, t: T, i: number) => any, r: R): R {
+    let i = 0, l = obj.length;
+    while(i < l) {
+        h(r, obj[i], i++);
+    }
+    return r;
+}
 
 export function _map<T, R>(obj: ArrayLike<T>, h: (t: T, i: number) => R): R[] {
     let r = [], i = 0, l = obj.length;

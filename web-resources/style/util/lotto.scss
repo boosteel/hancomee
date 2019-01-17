@@ -1,0 +1,80 @@
+@import "../bagic-bootstrap";
+
+body {
+}
+
+
+
+.lotto-table {
+
+  table-layout: fixed;
+
+  > tbody {
+    > tr {
+      > td {
+        width: 50px;
+        height: 50px;
+      }
+    }
+  }
+}
+
+
+#nums {
+
+  display: flex;
+  padding: 2rem 16rem;
+  background-color: #485869;
+
+  input {
+    flex-grow: 1;
+    border: 0;
+    padding: 1rem .5rem;
+    text-align: center;
+    border-radius: 28px;
+    font-size: 18px;
+
+    & + input {
+      margin-left: .5rem;
+    }
+
+    // 보너스
+    &:last-child {
+      background-color: #cbfffc;
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.list {
+  margin: 2rem 10rem;
+
+  table {
+    > thead, > tbody {
+      > tr {
+        > th, > td {
+
+        }
+      }
+    }
+
+    > thead {
+      > tr {
+        > th {
+          font-weight: normal;
+        }
+      }
+    }
+
+    > tbody {
+      > tr {
+        > td {
+
+        }
+      }
+    }
+
+  }
+}

@@ -1,9 +1,6 @@
 import {$extend} from "../../../../lib/core/core";
-import {_forEach, _reduce} from "../../../../lib/core/_func/array";
-import {guid} from "../../../../lib/core/util";
-import {FormValid} from "../../../../lib/core/form/FormValid";
+import {_reduce} from "../../../../lib/core/_func/array";
 import {_datetime} from "../../../../lib/core/_func/datetime";
-import {elementsFromPoint} from "../../../../lib/core/offset";
 
 
 function $get(url: string): Promise<any> {
