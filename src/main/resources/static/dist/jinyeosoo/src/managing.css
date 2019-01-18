@@ -1,0 +1,26 @@
+#managing .info {
+  margin-top: 25px; }
+
+#managing table.data-table > thead > tr > th:first-child, #managing table.data-table > thead > tr > td:first-child, #managing table.data-table > tbody > tr > th:first-child, #managing table.data-table > tbody > tr > td:first-child {
+  width: 18%; }
+
+#managing table.data-table > thead > tr > th:last-child, #managing table.data-table > thead > tr > td:last-child, #managing table.data-table > tbody > tr > th:last-child, #managing table.data-table > tbody > tr > td:last-child {
+  vertical-align: middle; }
+
+#managing table.data-table > tbody > tr > td {
+  padding: 10px 15px;
+  vertical-align: top; }
+  #managing table.data-table > tbody > tr > td:first-child > span {
+    display: block; }
+
+#managing table.data-table > tbody > tr.modify textarea {
+  height: 84px; }
+
+#managing .input {
+  display: flex; }
+  #managing .input > label {
+    font-size: 12px;
+    white-space: nowrap;
+    padding: 10px 10px 0 0; }
+  #managing .input:first-child {
+    margin-bottom: .5rem; }

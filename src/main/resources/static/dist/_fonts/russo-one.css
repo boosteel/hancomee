@@ -1,0 +1,9 @@
+/* russo-one-regular - latin */
+@font-face {
+  font-family: 'Russo One';
+  font-style: normal;
+  font-weight: 400;
+  src: url("/lib/fonts/russo-one/russo-one-v6-latin-regular.eot");
+  /* IE9 Compat Modes */
+  src: local("Russo One"), local("RussoOne-Regular"), url("/lib/fonts/russo-one/russo-one-v6-latin-regular.eot?#iefix") format("embedded-opentype"), url("/lib/fonts/russo-one/russo-one-v6-latin-regular.woff2") format("woff2"), url("/lib/fonts/russo-one/russo-one-v6-latin-regular.woff") format("woff"), url("/lib/fonts/russo-one/russo-one-v6-latin-regular.ttf") format("truetype"), url("/lib/fonts/russo-one/russo-one-v6-latin-regular.svg#RussoOne") format("svg");
+  /* Legacy iOS */ }

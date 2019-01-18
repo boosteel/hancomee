@@ -1,0 +1,11 @@
+#account .info {
+  margin-top: 25px; }
+
+#account table.data-table > thead > tr > th:nth-child(1), #account table.data-table > thead > tr > td:nth-child(1), #account table.data-table > tbody > tr > th:nth-child(1), #account table.data-table > tbody > tr > td:nth-child(1) {
+  width: 15%; }
+
+#account table.data-table > thead > tr > th:nth-child(2), #account table.data-table > thead > tr > td:nth-child(2), #account table.data-table > tbody > tr > th:nth-child(2), #account table.data-table > tbody > tr > td:nth-child(2) {
+  width: 15%; }
+
+#account table.data-table > thead > tr > th:nth-child(3), #account table.data-table > thead > tr > td:nth-child(3), #account table.data-table > tbody > tr > th:nth-child(3), #account table.data-table > tbody > tr > td:nth-child(3) {
+  width: 15%; }

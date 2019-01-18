@@ -1,0 +1,20 @@
+#customers table {
+  width: 100%; }
+  #customers table > thead > tr > th {
+    color: #42576b;
+    font-weight: normal;
+    background-color: #e5ebf1;
+    font-size: 14px; }
+  #customers table > tbody > tr > td, #customers table > tbody > tr > th, #customers table > thead > tr > td, #customers table > thead > tr > th {
+    padding: 7px;
+    vertical-align: middle;
+    text-align: center; }
+  #customers table > tbody > tr {
+    cursor: pointer; }
+    #customers table > tbody > tr > td {
+      padding: 11px 0;
+      font-size: 16px; }
+    #customers table > tbody > tr + tr > td {
+      border-top: 1px solid #e5ebf1; }
+    #customers table > tbody > tr:hover > td {
+      background-color: #f4f8fb; }

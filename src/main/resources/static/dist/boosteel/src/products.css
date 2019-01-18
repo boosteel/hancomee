@@ -1,0 +1,6 @@
+#products .cover {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position-x: right;
+  background-position-y: bottom;
+  background-image: url("/img/boosteel/top-bg3.png"); }

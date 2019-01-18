@@ -1,0 +1,74 @@
+.file-upload {
+  width: 40%;
+  box-shadow: 1px 3px 10px #636363; }
+  .file-upload > div {
+    padding: 25px;
+    background-color: white; }
+    .file-upload > div:first-child {
+      border-top-right-radius: 5px;
+      border-top-left-radius: 5px; }
+    .file-upload > div:last-child {
+      border-bottom-right-radius: 5px;
+      border-bottom-left-radius: 5px; }
+    .file-upload > div + div {
+      border-top: 1px solid #ececec; }
+    .file-upload > div.header {
+      padding-bottom: 15px; }
+  .file-upload .slide {
+    overflow: hidden;
+    position: relative;
+    height: 30px;
+    background-color: #ddd;
+    border-radius: 15px; }
+    .file-upload .slide .slide-bar {
+      position: relative;
+      width: 0;
+      height: inherit;
+      background-color: #4188ce;
+      transition: .05s ease width; }
+    .file-upload .slide + .slide {
+      margin-top: 20px; }
+    .file-upload .slide .info {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      color: white;
+      line-height: 30px;
+      text-align: center; }
+  .file-upload .footer .list {
+    overflow: auto;
+    height: 200px; }
+    .file-upload .footer .list > div {
+      padding: 3px 10px; }
+      .file-upload .footer .list > div::after {
+        display: block;
+        clear: both;
+        content: ""; }
+      .file-upload .footer .list > div.active {
+        background-color: #e1f1f9; }
+      .file-upload .footer .list > div + div {
+        border-top: 1px solid #f3f3f3; }
+    .file-upload .footer .list span {
+      display: inline-block;
+      line-height: 30px;
+      vertical-align: middle;
+      white-space: nowrap; }
+      .file-upload .footer .list span[data-name="name"] {
+        display: block;
+        padding: 0 10px;
+        overflow: hidden;
+        text-overflow: ellipsis; }
+      .file-upload .footer .list span[data-name="index"], .file-upload .footer .list span.icon-file {
+        float: left; }
+      .file-upload .footer .list span[data-name="index"] {
+        width: 30px;
+        text-align: center;
+        color: #999; }
+      .file-upload .footer .list span.icon-file {
+        width: 30px;
+        height: 30px; }
+      .file-upload .footer .list span[data-name="size"] {
+        float: right;
+        color: #5685ce; }

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <title>세상만사 3권</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Roboto+Mono:400,500|Material+Icons"
+          rel="stylesheet">
+    <link rel="stylesheet" href="/dist/nabook/main.css">
+
+    <script src="/lib/js/es6-promise.js"></script>
+    <script src="/dist/nabook/main.js"></script>
+</head>
+<body>
+
+<aside>
+    <div class="news">
+        <div class="sections"></div>
+        <div>
+            <span id="create" data-event="create">Create</span>
+        </div>
+        <div>
+            <input id="search">
+        </div>
+
+        <div>
+            <span id="select-check" class="chk-list">선택 컬럼</span>
+        </div>
+
+        <div class="news-list"></div>
+    </div>
+    <div class="subject"></div>
+</aside>
+
+<main>
+
+    <div class="form">
+        <div class="ctrl">
+            <div class="check">
+                <input type="checkbox" id="chk" name="chk" value="1" data-null="0">
+                <label for="chk">CHECK</label>
+            </div>
+            <span id="save" class="confirm">저장</span>
+        </div>
+        <div class="section">
+            <input type="radio" id="section1" name="section" value="정치">
+            <label for="section1">정치</label>
+            <input type="radio" id="section2" name="section" value="경제">
+            <label for="section2">경제</label>
+            <input type="radio" id="section3" name="section" value="사회">
+            <label for="section3">사회</label>
+            <input type="radio" id="section4" name="section" value="건강">
+            <label for="section4">건강</label>
+            <input type="radio" id="section5" name="section" value="국제">
+            <label for="section5">국제</label>
+            <input type="radio" id="section6" name="section" value="기타">
+            <label for="section6">기타</label>
+        </div>
+        <input type="hidden" id="id" name="id" data-type="number" identity>
+        <input id="url" name="url" placeholder="기사 URL" required>
+        <input id="news" name="news" placeholder="신문사 이름" required>
+        <input id="subject" name="subject" placeholder="기사 제목" required>
+        <input id="datetime" name="datetime" placeholder="기사날짜" data-type="date" required>
+        <textarea id="value" name="value" required></textarea>
+    </div>
+
+
+</main>
+
+</body>
+</html>

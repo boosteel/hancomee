@@ -1,0 +1,48 @@
+#search .search-box {
+  padding: 25px 60px;
+  width: 50%;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 5px; }
+
+#search .search-input {
+  margin-bottom: 25px; }
+
+#search .search-result {
+  margin: 0 20px; }
+
+#search input {
+  display: block;
+  padding: 10px 40px;
+  width: 100%;
+  height: 56px;
+  border: 2px solid #8397ab;
+  font-size: 20px;
+  outline: 0;
+  background-color: #f1f5f9;
+  border-radius: 28px; }
+
+#search table {
+  width: 100%; }
+  #search table > thead > tr > td, #search table > thead > tr > th, #search table > tbody > tr > td, #search table > tbody > tr > th {
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center; }
+    #search table > thead > tr > td:nth-child(1), #search table > thead > tr > th:nth-child(1), #search table > tbody > tr > td:nth-child(1), #search table > tbody > tr > th:nth-child(1) {
+      width: 10%; }
+    #search table > thead > tr > td:nth-child(2), #search table > thead > tr > th:nth-child(2), #search table > tbody > tr > td:nth-child(2), #search table > tbody > tr > th:nth-child(2) {
+      width: 20%; }
+    #search table > thead > tr > td:nth-child(3), #search table > thead > tr > th:nth-child(3), #search table > tbody > tr > td:nth-child(3), #search table > tbody > tr > th:nth-child(3) {
+      width: 35%; }
+    #search table > thead > tr > td:nth-child(4), #search table > thead > tr > th:nth-child(4), #search table > tbody > tr > td:nth-child(4), #search table > tbody > tr > th:nth-child(4) {
+      width: 35%; }
+  #search table > thead > tr > th {
+    padding: 5px;
+    color: #8397ab;
+    border-bottom: 1px solid #f1f5f9; }
+  #search table > tbody > tr {
+    cursor: pointer; }
+    #search table > tbody > tr > td {
+      padding: 15px 10px; }
+    #search table > tbody > tr:hover > td {
+      background-color: #f1f5f9; }

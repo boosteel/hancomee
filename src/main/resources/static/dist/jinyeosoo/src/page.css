@@ -1,0 +1,46 @@
+.form {
+  padding: 50px;
+  background-color: white; }
+  .form .title {
+    padding: 15px 0 5px;
+    margin: 0 0 25px;
+    border-bottom: 1px solid #ced4da; }
+
+.date-table {
+  padding: 20px;
+  background-color: white;
+  z-index: 1;
+  border: 1px solid #ddd;
+  box-shadow: 2px 2px 9px #999; }
+  .date-table .prev, .date-table .next, .date-table td {
+    cursor: pointer; }
+  .date-table .sel {
+    height: 30px;
+    text-align: center;
+    line-height: 30px; }
+    .date-table .sel .prev, .date-table .sel .next {
+      font-size: 12px;
+      color: seagreen; }
+    .date-table .sel .prev {
+      float: left; }
+    .date-table .sel .next {
+      float: right; }
+  .date-table table > thead > tr > td, .date-table table > thead > tr > th, .date-table table > tbody > tr > td, .date-table table > tbody > tr > th {
+    text-align: center;
+    font-weight: normal;
+    vertical-align: middle;
+    border: 1px solid #d0d0d0; }
+  .date-table table > thead > tr > th {
+    font-size: 12px;
+    background-color: #f1f1f1; }
+  .date-table table > tbody > tr > td {
+    color: #ddd; }
+    .date-table table > tbody > tr > td > span {
+      display: block;
+      width: 40px;
+      height: 35px;
+      line-height: 35px; }
+    .date-table table > tbody > tr > td.current {
+      color: #666; }
+    .date-table table > tbody > tr > td.today {
+      color: #333; }

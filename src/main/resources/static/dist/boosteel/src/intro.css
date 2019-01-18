@@ -1,0 +1,47 @@
+#intro .screen {
+  background-image: url(/img/boosteel/bg-gray.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center 7rem; }
+
+#intro .intro-img {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position-x: right;
+  background-position-y: bottom;
+  text-align: right; }
+  #intro .intro-img > img {
+    transform: rotate(4deg);
+    height: 55vh;
+    opacity: .8; }
+
+#intro .b-explain .headline {
+  display: flex;
+  justify-content: center; }
+  #intro .b-explain .headline > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 12rem;
+    height: 12rem;
+    border-radius: 50%;
+    border: 3px solid;
+    font-size: 1.7rem;
+    color: #8a8a8a; }
+    #intro .b-explain .headline > span > i {
+      margin-top: -.4rem;
+      font-size: .9rem; }
+  #intro .b-explain .headline .steel {
+    margin-left: -1.6rem; }
+
+@media (min-width: 768px) {
+  #intro .screen {
+    background-size: 70%;
+    background-position: 140% center; }
+  #intro .intro-img > img {
+    position: relative;
+    top: -70vh;
+    transform: rotate(20deg);
+    height: 180vh;
+    opacity: .8; } }
